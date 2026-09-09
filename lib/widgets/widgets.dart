@@ -7,6 +7,7 @@ export 'camera_scan_card_widget.dart';
 export 'circular_image_view.dart';
 export 'custom_input_box.dart';
 export 'file_preview_widget.dart';
+export 'gemini_model_selector_sheet.dart';
 export 'language_option_widget.dart';
 export 'otp_input_field.dart';
 export 'screen_header.dart';

@@ -62,10 +62,10 @@ class AiResponseCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               response,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 height: 1.5,
-                color: AppColors.textPrimary,
+                color: ScreenColorHelper.getHeadingText(context),
               ),
             ),
           ],

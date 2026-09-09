@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/core.dart';
 import '../../values/colors.dart';
 import '../../values/strings.dart';
-import '../../widgets/circular_image_view.dart';
 import '../../widgets/widgets.dart';
 import '../../helpers/helpers.dart';
 
@@ -117,7 +116,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     await prefs.setString('USER_GENDER', _gender);
 
     if (_selectedImageFile != null) {
-      await prefs.setString('USER_PHOTO_URI', _selectedImageFile!.path);
+      await UserProfileHelper.updatePhoto(_selectedImageFile!.path);
     }
 
     if (!mounted) return;

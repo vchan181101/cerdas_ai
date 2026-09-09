@@ -21,9 +21,9 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   final int _currentBottomNavIndex = 4; // Index 4 untuk Pengaturan / Setting
 
-  String _userName = 'Cerdas Pengguna';
-  String _userEmail = 'user.cerdas@gmail.com';
-  String _userInitials = 'CP';
+  String _userName = 'Sandra Bagus Nugroho';
+  String _userEmail = 'sandratika18@gmail.com';
+  String _userInitials = 'SB';
   String _selectedLang = 'Indonesia';
   String _cacheSizeText = '0.0 MB';
 
@@ -37,8 +37,8 @@ class _SettingScreenState extends State<SettingScreen> {
   // 1. Memuat Profil Pengguna & Data Preferensi
   Future<void> _loadUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    final name = prefs.getString(AppConstants.keyUserName) ?? 'Cerdas Pengguna';
-    final email = prefs.getString(AppConstants.keyUserEmail) ?? 'user.cerdas@gmail.com';
+    final name = prefs.getString(AppConstants.keyUserName) ?? 'Sandra Bagus Nugroho';
+    final email = prefs.getString(AppConstants.keyUserEmail) ?? 'sandratika18@gmail.com';
     final lang = prefs.getString('APP_LANG') ?? 'Indonesia';
 
     if (!mounted) return;
@@ -50,7 +50,7 @@ class _SettingScreenState extends State<SettingScreen> {
     });
   }
 
-  // Membuat Inisial Nama (Misal: "Cerdas Pengguna" -> "CP")
+  // Membuat Inisial Nama
   String _getInitials(String name) {
     List<String> parts = name.trim().split(RegExp(r'\s+'));
     if (parts.length >= 2) {
@@ -58,7 +58,7 @@ class _SettingScreenState extends State<SettingScreen> {
     } else if (parts.isNotEmpty && parts[0].isNotEmpty) {
       return parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
     }
-    return 'CP';
+    return 'SB';
   }
 
   // 2. Kalkulasi Ukuran Cache Aplikasi
@@ -103,11 +103,19 @@ class _SettingScreenState extends State<SettingScreen> {
       if (await dirExists(tempDir.path)) {
         final List<FileSystemEntity> entities = await tempDir.list().toList();
         for (final entity in entities) {
-          await entity.delete(recursive: true);
+          try {
+            await entity.delete(recursive: true);
+          } catch (e) {
+            // Abaikan file yang sedang digunakan
+          }
         }
       }
-      await _calculateCacheSize();
+      
       if (!mounted) return;
+      setState(() {
+        _cacheSizeText = '0.0 MB';
+      });
+      
       context.showSnackBar('Cache berhasil dibersihkan!');
     } catch (e) {
       LoggerUtil.error('Failed to clear cache', e);
@@ -131,8 +139,8 @@ class _SettingScreenState extends State<SettingScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Tutup',
-                style: TextStyle(
+            child: Text(AppStrings.btnClose,
+                style: const TextStyle(
                     color: AppColors.indigoPrimary, fontWeight: FontWeight.bold)),
           ),
         ],
@@ -146,13 +154,13 @@ class _SettingScreenState extends State<SettingScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Konfirmasi Keluar',
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        content: const Text('Apakah Anda yakin ingin keluar dari akun Cerdas AI?'),
+        title: Text(AppStrings.logoutConfirmTitle,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: Text(AppStrings.logoutConfirmMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Batal', style: TextStyle(color: AppColors.textMuted)),
+            child: Text(AppStrings.btnCancel, style: const TextStyle(color: AppColors.textMuted)),
           ),
           TextButton(
             onPressed: () async {
@@ -164,9 +172,9 @@ class _SettingScreenState extends State<SettingScreen> {
               context.showSnackBar('Berhasil keluar');
               Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
             },
-            child: const Text('Keluar',
+            child: Text(AppStrings.btnLogout,
                 style:
-                    TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                    const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -258,7 +266,7 @@ class _SettingScreenState extends State<SettingScreen> {
               padding: const EdgeInsets.all(20.0),
               child: Center(
                 child: Text(
-                  'Pengaturan',
+                  AppStrings.titlePengaturan,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -291,39 +299,91 @@ class _SettingScreenState extends State<SettingScreen> {
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
                             children: [
-                              // Avatar Circle dengan Inisial
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  color: ScreenColorHelper.getPrimaryAction(context),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    _userInitials,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+                              // Avatar Circle dengan Foto atau Inisial
+                              ValueListenableBuilder<String?>(
+                                valueListenable: userPhotoNotifier,
+                                builder: (context, photoPath, child) {
+                                  if (photoPath != null && File(photoPath).existsSync()) {
+                                    return Container(
+                                      width: 56,
+                                      height: 56,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: ScreenColorHelper.getPrimaryAction(context), width: 2),
+                                      ),
+                                      child: ClipOval(
+                                        child: Image.file(
+                                          File(photoPath),
+                                          width: 56,
+                                          height: 56,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return Container(
+                                    width: 56,
+                                    height: 56,
+                                    decoration: BoxDecoration(
+                                      color: ScreenColorHelper.getPrimaryAction(context),
+                                      shape: BoxShape.circle,
                                     ),
-                                  ),
-                                ),
+                                    child: Center(
+                                      child: Text(
+                                        _userInitials,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      _userName,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: ScreenColorHelper.getHeadingText(context),
-                                      ),
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            _userName,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: ScreenColorHelper.getHeadingText(context),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        // Badge Status Upgrade
+                                        ValueListenableBuilder<String>(
+                                          valueListenable: userTierNotifier,
+                                          builder: (context, tier, child) {
+                                            if (tier == 'Free') return const SizedBox();
+                                            return Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: ScreenColorHelper.getPrimaryAction(context),
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                tier.toUpperCase(),
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
@@ -354,8 +414,25 @@ class _SettingScreenState extends State<SettingScreen> {
 
                     const SizedBox(height: 20),
 
+                    // UPGRADE PLUS SECTION
+                    Card(
+                      elevation: 1,
+                      color: const Color(0xFFE0F2FE),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      child: _buildSettingItem(
+                        title: AppStrings.titleUpgradePlus,
+                        textColor: const Color(0xFF0369A1),
+                        trailingIcon: Icons.auto_awesome_rounded,
+                        onTap: () {
+                          context.pushNamed('/upgrade-plus');
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
                     // SECTION 1: PENGATURAN UMUM
-                    _buildSectionHeader('PENGATURAN UMUM'),
+                    _buildSectionHeader(AppStrings.headerGeneral),
                     Card(
                       elevation: 1,
                       color: ScreenColorHelper.getSurfaceColor(context),
@@ -364,7 +441,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       child: Column(
                         children: [
                           _buildSettingItem(
-                            title: 'Ubah Kata Sandi',
+                            title: AppStrings.menuChangePassword,
                             onTap: () => context.pushNamed('/ubah-kata-sandi'),
                           ),
                           Divider(height: 1, color: AppColors.inputBorder.withValues(alpha: 0.1)),
@@ -394,31 +471,16 @@ class _SettingScreenState extends State<SettingScreen> {
                     const SizedBox(height: 20),
 
                     // SECTION 2: DATA & PENYIMPANAAN
-                    _buildSectionHeader('DATA & PENYIMPANAAN'),
+                    _buildSectionHeader(AppStrings.headerDataStorage),
                     Card(
                       elevation: 1,
                       color: ScreenColorHelper.getSurfaceColor(context),
                       shape:
                           RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      child: Column(
-                        children: [
-                          _buildSettingItem(
-                            title: AppStrings.titleDokumenTersimpan,
-                            onTap: () => context.pushNamed('/dokumen-tersimpan'),
-                          ),
-                          Divider(height: 1, color: AppColors.inputBorder.withValues(alpha: 0.1)),
-                          _buildSettingItem(
-                            title: 'Bersihkan Cache',
-                            trailingText: _cacheSizeText,
-                            onTap: _clearAppCache,
-                          ),
-                          Divider(height: 1, color: AppColors.inputBorder.withValues(alpha: 0.1)),
-                          _buildSettingItem(
-                            title: 'Sampah',
-                            trailingIcon: Icons.delete_outline,
-                            onTap: () => context.pushNamed('/sampah'),
-                          ),
-                        ],
+                      child: _buildSettingItem(
+                        title: AppStrings.menuClearCache,
+                        trailingText: _cacheSizeText,
+                        onTap: _clearAppCache,
                       ),
                     ),
 
@@ -434,17 +496,17 @@ class _SettingScreenState extends State<SettingScreen> {
                       child: Column(
                         children: [
                           _buildSettingItem(
-                            title: 'Kebijakan Privasi',
+                            title: AppStrings.menuPrivacyPolicy,
                             onTap: () => _showInfoDialog(
-                              'Kebijakan Privasi',
+                              AppStrings.menuPrivacyPolicy,
                               'Cerdas AI berkomitmen melindungi data dan privasi pengguna. Semua informasi, dokumen, dan riwayat pertanyaan Anda tersimpan secara aman dan terenkripsi.',
                             ),
                           ),
                           Divider(height: 1, color: AppColors.inputBorder.withValues(alpha: 0.1)),
                           _buildSettingItem(
-                            title: 'Syarat & Ketentuan',
+                            title: AppStrings.menuTerms,
                             onTap: () => _showInfoDialog(
-                              'Syarat & Ketentuan',
+                              AppStrings.menuTerms,
                               'Dengan menggunakan Cerdas AI, Anda menyetujui penggunaan layanan untuk tujuan yang sah dan tidak melanggar hukum. Hak cipta dokumen milik pengguna masing-masing.',
                             ),
                           ),
@@ -471,10 +533,10 @@ class _SettingScreenState extends State<SettingScreen> {
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(16.0),
-                          child: const Center(
+                          child: Center(
                             child: Text(
-                              'Keluar dari Akun',
-                              style: TextStyle(
+                              AppStrings.menuLogout,
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFFEF4444),
@@ -525,6 +587,7 @@ class _SettingScreenState extends State<SettingScreen> {
     String? trailingText,
     IconData trailingIcon = Icons.chevron_right,
     required VoidCallback onTap,
+    Color? textColor,
   }) {
     return InkWell(
       onTap: onTap,
@@ -537,7 +600,8 @@ class _SettingScreenState extends State<SettingScreen> {
               title,
               style: TextStyle(
                 fontSize: 14,
-                color: ScreenColorHelper.getHeadingText(context),
+                fontWeight: textColor != null ? FontWeight.bold : FontWeight.normal,
+                color: textColor ?? ScreenColorHelper.getHeadingText(context),
               ),
             ),
             Row(
@@ -549,7 +613,11 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   const SizedBox(width: 8),
                 ],
-                Icon(trailingIcon, size: 20, color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.3)),
+                Icon(
+                  trailingIcon,
+                  size: 20,
+                  color: textColor?.withValues(alpha: 0.8) ?? ScreenColorHelper.getBodyText(context).withValues(alpha: 0.3),
+                ),
               ],
             ),
           ],

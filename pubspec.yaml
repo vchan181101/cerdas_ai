@@ -25,6 +25,7 @@ dependencies:
   path_provider: ^2.1.5
   open_file: ^4.0.0
   google_generative_ai: ^0.4.7
+  flutter_dotenv: ^5.2.1
   http: ^1.2.0
 
   # // Security
@@ -52,3 +53,4 @@ flutter:
 
   assets:
     - asset/
+    - .env

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../helpers/helpers.dart';
-import '../values/colors.dart';
 import '../values/strings.dart';
 
 /// Data Model untuk Hasil Pencarian

@@ -68,7 +68,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      AppStrings.titlePasswordBaru ?? 'Buat Password Baru',
+                      AppStrings.titlePasswordBaru,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -105,7 +105,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
                 // 3. Title & Subtitle
                 Text(
-                  AppStrings.headingSandiBaru ?? 'Buat Kata Sandi Baru',
+                  AppStrings.headingSandiBaru,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 22,
@@ -115,7 +115,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  AppStrings.descSandiBaru ?? 'Kata sandi baru Anda harus berbeda dari kata sandi yang digunakan sebelumnya.',
+                  AppStrings.descSandiBaru,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: ScreenColorHelper.getBodyText(context),
@@ -126,7 +126,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
                 // 4. Form Input Password Baru
                 Text(
-                  AppStrings.labelPasswordBaru ?? 'Kata Sandi Baru',
+                  AppStrings.labelPasswordBaru,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
                 ),
                 const SizedBox(height: 8),
@@ -137,7 +137,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   style: TextStyle(color: ScreenColorHelper.getHeadingText(context)),
                   decoration: ScreenStyleHelper.modernInputDecoration(
                     context: context,
-                    hintText: AppStrings.hintPasswordBaru ?? 'Masukkan kata sandi baru',
+                    hintText: AppStrings.hintPasswordBaru,
                     prefixIcon: Icons.lock_outline_rounded,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -168,7 +168,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
                 // 5. Form Input Konfirmasi Password Baru
                 Text(
-                  AppStrings.labelKonfirmasiPasswordBaru ?? 'Konfirmasi Kata Sandi Baru',
+                  AppStrings.labelKonfirmasiPasswordBaru,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
                 ),
                 const SizedBox(height: 8),
@@ -179,7 +179,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   style: TextStyle(color: ScreenColorHelper.getHeadingText(context)),
                   decoration: ScreenStyleHelper.modernInputDecoration(
                     context: context,
-                    hintText: AppStrings.hintKonfirmasiPasswordBaru ?? 'Ulangi kata sandi baru',
+                    hintText: AppStrings.hintKonfirmasiPasswordBaru,
                     prefixIcon: Icons.lock_outline_rounded,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -221,7 +221,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
                 // 7. Tombol Simpan Password
                 AppButton(
-                  text: (AppStrings.btnSimpanPassword ?? 'SIMPAN PASSWORD').toUpperCase(),
+                  text: AppStrings.btnSimpanPassword.toUpperCase(),
                   isLoading: _isLoading,
                   icon: Icons.save_rounded,
                   onPressed: _performSaveNewPassword,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // --- INITIALIZER ---
 import 'initialize_date_formatting.dart';
@@ -12,14 +13,25 @@ import 'widgets/widgets.dart';     // lib/widgets
 import 'screens/screens.dart';     // lib/screens (Orkestrasi semua screen)
 import 'package:cerdas_ai/helpers/helpers.dart'; // lib/helpers
 
+// Ambil API key dari environment
+const apiKey = String.fromEnvironment('API_KEY');
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables (.env)
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint("Warning: .env file not found or failed to load. $e");
+  }
 
   // 1. Inisialisasi format tanggal lokal (Indonesia) melalui helper terpisah
   await initializeAppDateFormatting();
 
-  // 2. Load Tema & Bahasa Terakhir
+  // 2. Load Tema, Bahasa & Profil Terakhir
   await ThemeHelper.loadSavedTheme();
+  await UserProfileHelper.loadSavedProfile();
 
   // 3. Pengujian Security & Database SQLite saat aplikasi pertama kali berjalan
   await _testSecurityAndDatabase();
@@ -88,7 +100,7 @@ class _MyAppState extends State<MyApp> {
                 '/login-ios': (context) => const LoginWithIosScreen(),
                 '/dashboard': (context) => const DashboardScreen(),
                 '/aktivitas': (context) => const ActivityScreen(),
-                '/informasi': (context) => const InformasiScreen(),
+                '/belajar': (context) => const BelajarScreen(),
                 '/keterangan': (context) => const KeteranganScreen(),
                 '/notifikasi': (context) => const NotificationScreen(),
                 '/setting': (context) => const SettingScreen(),
@@ -98,6 +110,9 @@ class _MyAppState extends State<MyApp> {
                 '/dokumen-tersimpan': (context) => const KelolaDokumenScreen(),
                 '/sampah': (context) => const SampahScreen(),
                 '/tentang-aplikasi': (context) => const AboutScreen(),
+                '/foto-informasi': (context) => const PhotoInformationScreen(),
+                '/upgrade-plus': (context) => const UpgradePlusScreen(),
+                '/gemini-model-selector': (context) => const GeminiModelSelectorScreen(),
 
                 // Demo & Gallery Routes
                 '/animation-gallery': (context) => const AnimationGalleryScreen(),
@@ -111,6 +126,7 @@ class _MyAppState extends State<MyApp> {
                 '/demo-profile-avatar': (context) => const ProfileAvatarDemoScreen(),
                 '/demo-notification': (context) => const NotificationDemoScreen(),
                 '/demo-network-check': (context) => const NetworkCheckExampleScreen(),
+                '/demo-gemini': (context) => const GeminiDemoScreen(),
               },
             );
           },

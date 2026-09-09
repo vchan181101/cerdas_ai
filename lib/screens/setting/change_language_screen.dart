@@ -73,52 +73,32 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
     Navigator.pop(context);
   }
 
-  // 3. Menyiapkan Dataset Bahasa Berdasarkan Benua (Sesuai Java activity_ubahbahasa)
+  // 3. Menyiapkan Dataset Bahasa Sesuai Permintaan Terbaru
   void _setupData() {
     _languageList.addAll([
-      // Benua Amerika
-      LanguageItem.header('BENUA AMERIKA'),
-      LanguageItem.language('English (United States)', 'en-US'),
-      LanguageItem.language('Español (América Latina)', 'es-419'),
-      LanguageItem.language('Português (Brasil)', 'pt-BR'),
-      LanguageItem.language('Français (Canada)', 'fr-CA'),
-
-      // Benua Australia
-      LanguageItem.header('BENUA AUSTRALIA'),
-      LanguageItem.language('English (Australia)', 'en-AU'),
-      LanguageItem.language('Māori (New Zealand)', 'mi'),
-
-      // Benua Asia
-      LanguageItem.header('BENUA ASIA'),
-      LanguageItem.language('Indonesia', 'in'),
-      LanguageItem.language('English (India)', 'en-IN'),
-      LanguageItem.language('Bahasa Melayu (Malaysia)', 'ms'),
-      LanguageItem.language('日本語 - Japanese', 'ja'),
-      LanguageItem.language('한국어 - Korean', 'ko'),
-      LanguageItem.language('中文 - Chinese', 'zh'),
-      LanguageItem.language('العربية - Arabic', 'ar'),
-      LanguageItem.language('हिन्दी - Hindi', 'hi'),
-      LanguageItem.language('ไทย - Thai', 'th'),
-      LanguageItem.language('Tiếng Việt - Vietnamese', 'vi'),
-
-      // Benua Eropa
-      LanguageItem.header('BENUA EROPA'),
-      LanguageItem.language('English (United Kingdom)', 'en-GB'),
-      LanguageItem.language('Español (España)', 'es-ES'),
-      LanguageItem.language('Français (France)', 'fr-FR'),
-      LanguageItem.language('Deutsch (Deutschland)', 'de-DE'),
-      LanguageItem.language('Русский - Russian', 'ru'),
-      LanguageItem.language('Italiano (Italia)', 'it'),
-      LanguageItem.language('Nederlands (Nederland)', 'nl'),
-      LanguageItem.language('Türkçe - Turkish', 'tr'),
-
-      // Benua Afrika
-      LanguageItem.header('BENUA AFRIKA'),
-      LanguageItem.language('Kiswahili - Swahili', 'sw'),
-      LanguageItem.language('Afrikaans', 'af'),
-      LanguageItem.language('Hausa', 'ha'),
-      LanguageItem.language('Amharic', 'am'),
-      LanguageItem.language('isiZulu - Zulu', 'zu'),
+      LanguageItem.language('Indonesia', 'id'),
+      LanguageItem.language('English', 'en'),
+      LanguageItem.language('Italy', 'it'),
+      LanguageItem.language('Turkey', 'tr'),
+      LanguageItem.language('Español', 'es'),
+      LanguageItem.language('Mandarin (Chinese)', 'zh'),
+      LanguageItem.language('Korean', 'ko'),
+      LanguageItem.language('Hindi', 'hi'),
+      LanguageItem.language('Japanese', 'ja'),
+      LanguageItem.language('Arabic', 'ar'),
+      LanguageItem.language('Français', 'fr'),
+      LanguageItem.language('Russian', 'ru'),
+      LanguageItem.language('Thai', 'th'),
+      LanguageItem.language('Portugal', 'pt'),
+      LanguageItem.language('Vietnam', 'vi'),
+      LanguageItem.language('Kamboja', 'km'),
+      LanguageItem.language('Laos', 'lo'),
+      
+      LanguageItem.header('SCANDINAVIA'),
+      LanguageItem.language('Dansk - Denmark', 'da'),
+      LanguageItem.language('Norsk - Norway', 'no'),
+      LanguageItem.language('Svenska - Sweden', 'sv'),
+      LanguageItem.language('Suomi - Finlandia', 'fi'),
     ]);
   }
 

@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../core/core.dart';
 import '../../menu/menu.dart';
 import '../../values/values.dart';
 import '../../widgets/widgets.dart';
-import '../../helpers/color/screen_color_helper.dart';
+import '../../helpers/helpers.dart';
 
 /// Model Data untuk Item Informasi Foto/Produk Katalog
 class PhotoInfoItem {
@@ -143,6 +145,36 @@ class _PhotoInformationScreenState extends State<PhotoInformationScreen> {
           ),
         ),
         actions: [
+          ValueListenableBuilder<String?>(
+            valueListenable: userPhotoNotifier,
+            builder: (context, photoPath, child) {
+              return GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/setting'),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: ScreenColorHelper.getPrimaryAction(context), width: 1.5),
+                    ),
+                    child: photoPath != null && File(photoPath).existsSync()
+                        ? ClipOval(
+                            child: Image.file(
+                              File(photoPath),
+                              width: 32,
+                              height: 32,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : const CircularImageView(
+                            imagePath: 'asset/ic_user.png',
+                            size: 32,
+                          ),
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.more_horiz_rounded, color: ScreenColorHelper.getHeadingText(context)),
             onPressed: () {},

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../adapters/history_adapter.dart';
-import '../../helpers/color/color_helper.dart';
+import '../../helpers/helpers.dart';
 import '../../menu/menu.dart';
 import '../../models/history_item.dart';
 import '../../values/colors.dart';
@@ -88,45 +88,39 @@ class _ActivityScreenState extends State<ActivityScreen> {
     });
   }
 
-  void _clearAllHistory() {
-    if (_allHistoryList.isEmpty) return;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Hapus Semua Riwayat?'),
-        content: const Text('Tindakan ini akan menghapus seluruh catatan aktivitas Anda.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                _allHistoryList.clear();
-                _filteredList.clear();
-              });
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Seluruh riwayat berhasil dihapus')),
-              );
-            },
-            child: const Text('Hapus', style: TextStyle(color: Colors.redAccent)),
-          ),
-        ],
-      ),
+  void _handleItemClick(HistoryItem item) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${AppStrings.menuInformasi}: ${item.title}')),
     );
   }
 
-  void _handleItemClick(HistoryItem item) {
+  void _handleDeleteItem(HistoryItem item) {
+    setState(() {
+      _allHistoryList.removeWhere((element) => element.id == item.id);
+      _applyFilters();
+    });
+    
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Membuka: ${item.title}')),
+      SnackBar(
+        content: Text('Riwayat "${item.title}" dihapus'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _allHistoryList.add(item);
+              _applyFilters();
+            });
+          },
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final headingColor = ScreenColorHelper.getHeadingText(context);
+    final bodyColor = ScreenColorHelper.getBodyText(context);
+
     return Scaffold(
       backgroundColor: ScreenColorHelper.getBackgroundColor(context),
       body: SafeArea(
@@ -138,32 +132,26 @@ class _ActivityScreenState extends State<ActivityScreen> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(width: 28),
                         Text(
                           AppStrings.titleAktivitas,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: ScreenColorHelper.getHeadingText(context),
+                            color: headingColor,
                           ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete_outline, color: ScreenColorHelper.getBodyText(context), size: 28),
-                          tooltip: AppStrings.actionHapus,
-                          onPressed: _clearAllHistory,
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _searchController,
-                      style: TextStyle(fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
+                      style: TextStyle(fontSize: 14, color: headingColor),
                       decoration: InputDecoration(
                         hintText: AppStrings.hintSearchRiwayat,
-                        hintStyle: TextStyle(color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.5), fontSize: 14),
-                        prefixIcon: Icon(Icons.search, color: ScreenColorHelper.getBodyText(context)),
+                        hintStyle: TextStyle(color: bodyColor.withValues(alpha: 0.5), fontSize: 14),
+                        prefixIcon: Icon(Icons.search, color: bodyColor),
                         filled: true,
                         fillColor: ScreenColorHelper.getSurfaceColor(context),
                         contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -198,13 +186,14 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           ? Center(
                               child: Text(
                                 'Tidak ada riwayat aktivitas ditemukan',
-                                style: TextStyle(color: ScreenColorHelper.getBodyText(context), fontSize: 14),
+                                style: TextStyle(color: bodyColor, fontSize: 14),
                               ),
                             )
                           : SingleChildScrollView(
                               child: HistoryAdapter(
                                 historyList: _filteredList,
                                 onItemClick: _handleItemClick,
+                                onDelete: _handleDeleteItem,
                               ),
                             ),
                     ),

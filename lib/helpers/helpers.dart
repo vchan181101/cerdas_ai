@@ -14,6 +14,7 @@ export 'input_box_helper.dart';
 export 'xml/xml_helper.dart';
 export 'locale_helper.dart';
 export 'theme_helper.dart';
+export 'user_profile_helper.dart';
 export '../core/extensions/context_extension.dart';
 
 /// Catatan: Tambahkan file baru di folder lib/helpers/ lalu daftarkan 

@@ -44,10 +44,10 @@ class BottomNavMenu {
     ),
     BottomNavItemModel(
       id: idGlobal,
-      title: 'Informasi',
-      icon: Icons.public_outlined,
-      activeIcon: Icons.public,
-      routeName: '/informasi',
+      title: 'Belajar',
+      icon: Icons.school_outlined,
+      activeIcon: Icons.school,
+      routeName: '/belajar',
     ),
     BottomNavItemModel(
       id: idNotification,

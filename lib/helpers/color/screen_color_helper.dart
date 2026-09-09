@@ -33,7 +33,7 @@ class ScreenColorHelper {
   static Color getHeadingText(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
         ? Colors.white
-        : AppColors.textPrimary;
+        : Colors.black;
   }
 
   /// Alias untuk compatibility
@@ -42,8 +42,8 @@ class ScreenColorHelper {
   /// Warna untuk teks deskripsi yang lebih redup
   static Color getBodyText(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
-        ? Colors.white70
-        : AppColors.textMuted;
+        ? Colors.white
+        : Colors.black;
   }
 
   /// Alias untuk compatibility

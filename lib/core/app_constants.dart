@@ -1,16 +1,29 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class AppConstants {
   // Application Info
   static const String appName = 'Cerdas AI';
   static const String appVersion = '1.0.0';
   
   // 🔑 GOOGLE GEMINI API CONFIGURATION
-  // Masukkan API Key dari Google AI Studio di sini
-  static const String geminiApiKey = String.fromEnvironment(
-    'GEMINI_API_KEY',
-    defaultValue: 'MASUKKAN_API_KEY_GEMINI_ANDA_DI_SINI',
-  );
-  static const String geminiModel = 'gemini-1.5-flash'; // atau 'gemini-2.0-flash'
-  static const String _apiKey = String.fromEnvironment('GEMINI_API_KEY');
+  // Sistem akan mencoba mengambil dari --dart-define dulu, lalu dari .env
+  static String get geminiApiKey {
+    const fromEnv = String.fromEnvironment('GEMINI_API_KEY');
+    if (fromEnv.isNotEmpty) return fromEnv;
+    
+    try {
+      return dotenv.env['GEMINI_API_KEY'] ?? 'MASUKKAN_API_KEY_GEMINI_ANDA_DI_SINI';
+    } catch (_) {
+      return 'MASUKKAN_API_KEY_GEMINI_ANDA_DI_SINI';
+    }
+  }
+  
+  // Model Mapping based on Tier
+  static const String modelFree = 'gemini-1.5-flash';
+  static const String modelPlus = 'gemini-1.5-flash-8b';
+  static const String modelPro = 'gemini-1.5-pro';
+  static const String modelUltra = 'gemini-1.5-pro'; // High Quota / Pay-as-you-go
+
 
 
   // Storage Keys
@@ -19,6 +32,7 @@ class AppConstants {
   static const String keyUserEmail = 'USER_EMAIL';
   static const String keyUserName = 'USER_NAME';
   static const String keyThemeMode = 'THEME_MODE';
+  static const String keyChatHistory = 'CHAT_HISTORY';
   
   // Timeout values
   static const int apiTimeout = 30000; // 30 seconds

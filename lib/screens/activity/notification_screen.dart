@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../adapters/notification_adapter.dart';
-import '../../helpers/color/color_helper.dart';
+import '../../helpers/helpers.dart';
 import '../../menu/menu.dart';
-import '../../models/notification_item.dart';
-import '../../values/colors.dart';
-import '../../values/strings.dart';
-import '../../widgets/bottom_navigation_view_widget.dart';
+import '../../values/values.dart';
+import '../../widgets/widgets.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -18,164 +15,126 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   final int _currentBottomNavIndex = 3; // Index 3 untuk Notifikasi
 
-  // List Data Notifikasi menggunakan model bersama
-  final List<NotificationItem> _notificationList = [
-    NotificationItem(
-      id: "1",
-      title: "Jawaban AI Siap",
-      description: "Ringkasan Laporan_Keuangan_Q3.pdf telah berhasil dianalisis.",
-      time: "10:30",
-      type: "AI_SUCCESS",
-      isRead: false,
-    ),
-    NotificationItem(
-      id: "2",
-      title: "Dokumen Berhasil Diproses",
-      description: "Slide Presentasi_Proyek.pptx sudah selesai dipindai.",
-      time: "08:15",
-      type: "DOC_SUCCESS",
-      isRead: false,
-    ),
-    NotificationItem(
-      id: "3",
-      title: "Update Fitur Baru",
-      description: "Kini kamu bisa mengupload format Word (.doc/.docx) lebih lancar.",
-      time: "Kemarin, 17:45",
-      type: "UPDATE",
-      isRead: false,
-    ),
-    NotificationItem(
-      id: "4",
-      title: "Penyimpanan Ditingkatkan",
-      description: "Akses cepat analisis suara dan dokumen kini aktif 100%.",
-      time: "20 Okt 2026",
-      type: "UPDATE",
-      isRead: true,
-    ),
+  final List<Map<String, String>> _notificationList = [
+    {
+      'title': 'Pembaruan Sistem',
+      'desc': 'Cerdas AI kini lebih cepat dengan model Flash terbaru.',
+      'time': '2 jam yang lalu',
+    },
+    {
+      'title': 'Upgrade Berhasil',
+      'desc': 'Selamat! Akun Anda kini sudah menjadi Cerdas AI Plus.',
+      'time': '1 hari yang lalu',
+    },
+    {
+      'title': 'Tips Keamanan',
+      'desc': 'Jangan lupa untuk memperbarui kata sandi Anda secara berkala.',
+      'time': '3 hari yang lalu',
+    },
+    {
+      'title': 'Fitur Baru: Analisis Suara',
+      'desc': 'Sekarang Anda bisa bertanya menggunakan mikrofon di Dashboard.',
+      'time': '4 hari yang lalu',
+    },
+    {
+      'title': 'Promo Cerdas AI Pro',
+      'desc': 'Dapatkan diskon 50% untuk langganan tahunan pertama Anda.',
+      'time': '5 hari yang lalu',
+    },
+    {
+      'title': 'Pesan dari Tim Support',
+      'desc': 'Kami telah memverifikasi identitas Anda. Terima kasih.',
+      'time': '1 minggu yang lalu',
+    },
+    {
+      'title': 'Laporan Mingguan',
+      'desc': 'Anda telah menghemat 10 jam kerja minggu ini dengan Cerdas AI.',
+      'time': '1 minggu yang lalu',
+    },
+    {
+      'title': 'Maintenance Selesai',
+      'desc': 'Server telah diperbarui untuk performa maksimal.',
+      'time': '2 minggu yang lalu',
+    },
   ];
-
-  // Aksi Tandai Semua Dibaca
-  void _markAllAsRead() {
-    setState(() {
-      for (int i = 0; i < _notificationList.length; i++) {
-        _notificationList[i] = _notificationList[i].copyWith(isRead: true);
-      }
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Semua notifikasi telah ditandai dibaca')),
-    );
-  }
-
-  // Dialog Fitur Update
-  void _showUpdateFeatureDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        content: Text(
-          '$message\n\nTerima kasih telah menggunakan Cerdas AI!',
-          style: const TextStyle(fontSize: 14, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Tutup',
-              style: TextStyle(
-                color: AppColors.indigoPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Handle Klik Item Notifikasi via Adapter
-  void _handleNotificationClick(NotificationItem item) {
-    final index = _notificationList.indexWhere((element) => element.id == item.id);
-    if (index != -1) {
-      setState(() {
-        _notificationList[index] = _notificationList[index].copyWith(isRead: true);
-      });
-    }
-
-    if (item.type == 'UPDATE') {
-      _showUpdateFeatureDialog(item.title, item.description);
-    } else {
-      Navigator.pushReplacementNamed(context, '/dashboard');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final headingColor = ScreenColorHelper.getHeadingText(context);
+    final bodyColor = ScreenColorHelper.getBodyText(context);
+    final primaryColor = ScreenColorHelper.getPrimaryAction(context);
+
     return Scaffold(
       backgroundColor: ScreenColorHelper.getBackgroundColor(context),
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    Center(
-                      child: Text(
-                        AppStrings.titleNotifikasi,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: ScreenColorHelper.getHeadingText(context),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: InkWell(
-                        onTap: _markAllAsRead,
-                        borderRadius: BorderRadius.circular(4),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            AppStrings.actionTandaiDibaca,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: ScreenColorHelper.getPrimaryAction(context),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child: _notificationList.isEmpty
-                          ? Center(
-                              child: Text(
-                                'Belum ada notifikasi',
-                                style: TextStyle(
-                                  color: ScreenColorHelper.getBodyText(context),
-                                  fontSize: 14,
-                                ),
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              child: NotificationAdapter(
-                                notificationList: _notificationList,
-                                onItemClick: _handleNotificationClick,
-                              ),
-                            ),
-                    ),
-                  ],
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: Text(
+                  AppStrings.titleNotifikasi,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: headingColor,
+                  ),
                 ),
               ),
+            ),
+
+            // Daftar Notifikasi
+            Expanded(
+              child: _notificationList.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.notifications_off_outlined, size: 64, color: bodyColor.withValues(alpha: 0.2)),
+                          const SizedBox(height: 16),
+                          Text('Belum ada notifikasi baru', style: TextStyle(color: bodyColor)),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                      itemCount: _notificationList.length,
+                      itemBuilder: (context, index) {
+                        final item = _notificationList[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          elevation: 1,
+                          color: ScreenColorHelper.getSurfaceColor(context),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          child: ListTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: primaryColor.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(Icons.notifications_active_rounded, color: primaryColor, size: 20),
+                            ),
+                            title: Text(
+                              item['title']!,
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: headingColor),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(item['desc']!, style: TextStyle(fontSize: 13, color: bodyColor)),
+                                const SizedBox(height: 4),
+                                Text(item['time']!, style: TextStyle(fontSize: 11, color: bodyColor.withValues(alpha: 0.5))),
+                              ],
+                            ),
+                            isThreeLine: true,
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
