@@ -167,8 +167,8 @@ class AppStrings {
   static String get hintSearchRiwayat => _get({'id': 'Cari riwayat pertanyaan..', 'en': 'Search question history..'});
   static String get filterSemua => _get({'id': 'Semua', 'en': 'All'});
   static String get filterDokumen => _get({'id': 'Dokumen', 'en': 'Documents'});
-  static String get filterFoto => _get({'id': 'Foto', 'en': 'Photos'});
-  static String get filterTeks => _get({'id': 'Teks', 'en': 'Text'});
+  static String get filterBelajar => _get({'id': 'Belajar', 'en': 'Learn'});
+  static String get filterTanya => _get({'id': 'Tanya', 'en': 'Ask'});
   static String get actionHapus => _get({'id': 'Hapus', 'en': 'Delete'});
 
   static String get aiAnalyzingText => _get({'id': 'Cerdas AI sedang menganalisis foto/dokumen Anda...', 'en': 'Cerdas AI is analyzing your photo/document...'});

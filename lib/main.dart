@@ -87,6 +87,17 @@ class _MyAppState extends State<MyApp> {
               // Halaman Pertama yang Dimuat
               home: const SplashScreen(),
 
+              // Wrapper Global untuk Zoom In/Out di semua layar
+              builder: (context, child) {
+                return InteractiveViewer(
+                  panEnabled: true,
+                  scaleEnabled: true,
+                  minScale: 1.0,
+                  maxScale: 4.0,
+                  child: child!,
+                );
+              },
+
               // Rute Navigasi Aplikasi (Terintegrasi dari Screens Barrel)
               routes: {
                 '/splash': (context) => const SplashScreen(),

@@ -63,21 +63,28 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
           'color': const Color(0xFFEF4444),
           'icon': Icons.picture_as_pdf,
         };
+      case 'BELAJAR':
       case 'FOTO':
       case 'GAMBAR':
         return {
           'color': const Color(0xFF10B981),
-          'icon': Icons.photo_library,
+          'icon': Icons.school_outlined,
+        };
+      case 'TANYA':
+      case 'TEKS':
+        return {
+          'color': const Color(0xFF3B82F6),
+          'icon': Icons.question_answer_outlined,
         };
       case 'PPT':
         return {
           'color': const Color(0xFFF59E0B),
           'icon': Icons.slideshow,
         };
-      default: // Teks
+      default:
         return {
-          'color': const Color(0xFF3B82F6),
-          'icon': Icons.send,
+          'color': const Color(0xFF6B7280),
+          'icon': Icons.history_rounded,
         };
     }
   }

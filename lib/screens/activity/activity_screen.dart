@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../adapters/history_adapter.dart';
+import '../../core/app_constants.dart';
 import '../../helpers/helpers.dart';
 import '../../menu/menu.dart';
 import '../../models/history_item.dart';
@@ -18,56 +21,85 @@ class ActivityScreen extends StatefulWidget {
 class _ActivityScreenState extends State<ActivityScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // Tag Filter Aktif: 'semua', 'dokumen', 'foto', 'teks'
+  // Tag Filter Aktif: 'semua', 'dokumen', 'belajar', 'tanya'
   String _activeFilter = 'semua';
   final int _currentBottomNavIndex = 1; // Index 1 untuk Aktivitas
 
-  // Master Dataset Simulasi Riwayat menggunakan model bersama
-  final List<HistoryItem> _allHistoryList = [
-    HistoryItem(
-      id: '1',
-      title: 'Ringkasan Laporan Keuangan Q3 2025.pdf',
-      timestamp: '24 Agu 2026, 14:20',
-      category: 'dokumen',
-      snippet: 'Analisis profitabilitas dan arus kas kuartal ketiga.',
-    ),
-    HistoryItem(
-      id: '2',
-      title: 'Analisis Diagram Arsitektur Cloud.png',
-      timestamp: '24 Agu 2026, 11:05',
-      category: 'foto',
-      snippet: 'Deteksi komponen AWS Lambda dan S3 Bucket.',
-    ),
-    HistoryItem(
-      id: '3',
-      title: 'Bagaimana cara kerja algoritma Support Vector Machine?',
-      timestamp: '23 Agu 2026, 09:15',
-      category: 'teks',
-      snippet: 'Penjelasan mengenai hyperplane dan margin maksimal.',
-    ),
-    HistoryItem(
-      id: '4',
-      title: 'Draft Proposal Proyek Imperial World Kingdom.docx',
-      timestamp: '22 Agu 2026, 16:45',
-      category: 'dokumen',
-      snippet: 'Rencana pengembangan kawasan residensial pintar.',
-    ),
-    HistoryItem(
-      id: '5',
-      title: 'Foto Papan Tulis Rapat Karang Taruna',
-      timestamp: '20 Agu 2026, 19:30',
-      category: 'foto',
-      snippet: 'Hasil diskusi kegiatan bakti sosial warga.',
-    ),
-  ];
-
+  // Master Dataset
+  final List<HistoryItem> _allHistoryList = [];
   List<HistoryItem> _filteredList = [];
 
   @override
   void initState() {
     super.initState();
-    _filteredList = List.from(_allHistoryList);
+    _loadInitialData();
     _searchController.addListener(_applyFilters);
+  }
+
+  Future<void> _loadInitialData() async {
+    // 1. Tambahkan Data Simulasi Default
+    _allHistoryList.addAll([
+      HistoryItem(
+        id: 'sim_1',
+        title: 'Ringkasan Laporan Keuangan Q3 2025.pdf',
+        timestamp: '24 Agu 2026, 14:20',
+        category: 'dokumen',
+        snippet: 'Analisis profitabilitas dan arus kas kuartal ketiga.',
+      ),
+      HistoryItem(
+        id: 'sim_2',
+        title: 'Biologi: Struktur Sel Manusia',
+        timestamp: '24 Agu 2026, 11:05',
+        category: 'belajar',
+        snippet: 'Materi kartu pembelajaran mengenai komponen sel dan organel.',
+      ),
+    ]);
+
+    // 2. Muat Riwayat dari AI Dashboard
+    await _loadAiHistory();
+    
+    _applyFilters();
+  }
+
+  Future<void> _loadAiHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? historyJson = prefs.getString(AppConstants.keyChatHistory);
+    
+    if (historyJson != null) {
+      try {
+        final List<dynamic> decoded = jsonDecode(historyJson);
+        final List<String> extensions = ['pdf', 'pptx', 'docx', 'xlsx'];
+        int count = 0;
+
+        for (var chat in decoded.reversed) {
+          final String question = chat['q'] ?? "Pencarian AI";
+          final String answer = chat['a'] ?? "";
+          final String ext = extensions[count % extensions.length];
+          
+          // Tambahkan sebagai kategori Dokumen sesuai permintaan
+          _allHistoryList.add(HistoryItem(
+            id: 'ai_${count}_${DateTime.now().millisecondsSinceEpoch}',
+            title: '${question.toString().replaceAll(' ', '_').split('?')[0]}.$ext',
+            timestamp: 'Baru saja',
+            category: 'dokumen',
+            snippet: answer,
+          ));
+
+          // Tambahkan juga ke kategori Tanya untuk history lengkap
+          _allHistoryList.add(HistoryItem(
+            id: 'qa_${count}_${DateTime.now().millisecondsSinceEpoch}',
+            title: question,
+            timestamp: 'Baru saja',
+            category: 'tanya',
+            snippet: answer,
+          ));
+
+          count++;
+        }
+      } catch (e) {
+        debugPrint('Error loading AI history in ActivityScreen: $e');
+      }
+    }
   }
 
   @override
@@ -77,6 +109,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
   }
 
   void _applyFilters() {
+    if (!mounted) return;
     final query = _searchController.text.toLowerCase().trim();
 
     setState(() {
@@ -92,6 +125,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${AppStrings.menuInformasi}: ${item.title}')),
     );
+    // Bisa diteruskan ke halaman detail jika diperlukan
   }
 
   void _handleDeleteItem(HistoryItem item) {
@@ -174,9 +208,9 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           const SizedBox(width: 8),
                           _buildFilterChip(label: AppStrings.filterDokumen, filterKey: 'dokumen'),
                           const SizedBox(width: 8),
-                          _buildFilterChip(label: AppStrings.filterFoto, filterKey: 'foto'),
+                          _buildFilterChip(label: AppStrings.filterBelajar, filterKey: 'belajar'),
                           const SizedBox(width: 8),
-                          _buildFilterChip(label: AppStrings.filterTeks, filterKey: 'teks'),
+                          _buildFilterChip(label: AppStrings.filterTanya, filterKey: 'tanya'),
                         ],
                       ),
                     ),

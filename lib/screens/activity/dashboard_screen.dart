@@ -20,6 +20,7 @@ import '../../widgets/attachment_preview_card.dart';
 import '../../widgets/circular_image_view.dart';
 import '../../widgets/bottom_navigation_view_widget.dart';
 import '../../widgets/language_option_widget.dart';
+import 'custom_camera_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -57,6 +58,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   final int _currentBottomNavIndex = 0;
   bool _isListening = false;
+  bool _isArgumentsHandled = false;
+  final FocusNode _promptFocusNode = FocusNode();
 
   String? _cachedAnswer;
 
@@ -73,8 +76,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isArgumentsHandled) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is String && args.isNotEmpty) {
+        _promptController.text = args;
+        // Focus the text field when receiving a question from another screen
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _promptFocusNode.requestFocus();
+        });
+      }
+      _isArgumentsHandled = true;
+    }
+  }
+
+  @override
   void dispose() {
     _promptController.dispose();
+    _promptFocusNode.dispose();
     _flutterTts.stop();
     super.dispose();
   }
@@ -131,7 +151,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _takePhotoWithCamera() async {
-    final XFile? photo = await _imagePicker.pickImage(source: ImageSource.camera);
+    final XFile? photo = await Navigator.push<XFile>(
+      context,
+      MaterialPageRoute(builder: (context) => const CustomCameraScreen()),
+    );
+
     if (photo != null) {
       _showAttachmentPreview(
         file: File(photo.path),
@@ -753,6 +777,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       // Input Text
                       TextField(
                         controller: _promptController,
+                        focusNode: _promptFocusNode,
                         maxLines: null,
                         minLines: 2,
                         style: TextStyle(fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
