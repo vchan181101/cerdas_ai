@@ -43,6 +43,7 @@ class AppStrings {
   });
 
   static String get btnBack => _get({'id': 'Kembali', 'en': 'Back', 'it': 'Indietro', 'fr': 'Retour', 'es': 'Atrás'});
+  static String get btnSimpan => _get({'id': 'Simpan', 'en': 'Save', 'it': 'Salva', 'fr': 'Enregistrer', 'es': 'Guardar'});
   static String get dividerOr => _get({'id': 'atau masuk dengan', 'en': 'or sign in with', 'es': 'o iniciar sesión con'});
 
   // ===========================================================================
@@ -176,7 +177,6 @@ class AppStrings {
   static String get promptEmptyAlert => _get({'id': 'Ketik pertanyaan atau unggah foto/file terlebih dahulu', 'en': 'Please type a question or upload a photo/file first'});
   static String get micFeatureAlert => _get({'id': 'Fitur rekam suara tidak tersedia di perangkat ini.', 'en': 'Voice recording feature is not available on this device.'});
   static String get micErrorPrefix => _get({'id': 'Kesalahan rekam suara', 'en': 'Voice recording error'});
-  static String get driveFeatureAlert => _get({'id': 'Membuka Google Drive...', 'en': 'Opening Google Drive...'});
   
   static String get historySearchHint => _get({
     'id': 'Cari percakapan lama...',
@@ -378,7 +378,7 @@ class AppStrings {
   static String get labelFoto => _get({'id': 'Foto', 'en': 'Photo', 'it': 'Foto'});
   static String get labelKamera => _get({'id': 'Kamera', 'en': 'Camera', 'it': 'Fotocamera'});
   static String get labelFile => _get({'id': 'File', 'en': 'File', 'it': 'File'});
-  static String get labelDrive => _get({'id': 'Drive', 'en': 'Drive', 'it': 'Drive'});
+  static String get labelRepository => _get({'id': 'Repository', 'en': 'Repository'});
   static String get labelThinkHarder => _get({'id': 'Berpikir Lebih Keras', 'en': 'Think Harder'});
 
   // ===========================================================================

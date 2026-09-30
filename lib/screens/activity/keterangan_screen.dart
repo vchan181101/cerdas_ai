@@ -24,8 +24,18 @@ class KeteranganScreen extends StatefulWidget {
 class _KeteranganScreenState extends State<KeteranganScreen> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
+  
+  // Tag Controllers
+  final List<TextEditingController> _tagControllers = List.generate(3, (_) => TextEditingController());
+  
   bool _isEditing = false;
   bool _isInitialized = false;
+  bool _showCustomTagInputs = false;
+
+  // Permanent Tags
+  String _tag1 = "Kategori";
+  String _tag2 = "Tingkat";
+  String _tag3 = "Mapel";
 
   @override
   void initState() {
@@ -48,6 +58,12 @@ class _KeteranganScreenState extends State<KeteranganScreen> {
         _contentController.text = args?['EXTRA_CONTENT'] ?? 
             "Ini adalah deskripsi detail mengenai dokumen yang dianalisis oleh AI.";
       }
+
+      // Initialize Permanent Tags from arguments
+      _tag1 = args?['EXTRA_KATEGORI'] ?? "Kategori";
+      _tag2 = args?['EXTRA_TINGKAT'] ?? "Tingkat";
+      _tag3 = args?['EXTRA_MAPEL'] ?? "Mapel";
+
       _isInitialized = true;
     }
   }
@@ -56,6 +72,9 @@ class _KeteranganScreenState extends State<KeteranganScreen> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
+    for (var controller in _tagControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -65,8 +84,6 @@ class _KeteranganScreenState extends State<KeteranganScreen> {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     final String? displayImageUri = widget.imageUri ?? args?['EXTRA_IMAGE_URI'];
-    final List<String> displayTags = widget.tags ?? (args?['EXTRA_TAGS'] as List<String>?) ?? 
-        ["#tag1", "#tag2", "#tag3", "#tag4", "#tag5", "#tag6"];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -213,10 +230,91 @@ class _KeteranganScreenState extends State<KeteranganScreen> {
                     // 5. Tags Section
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: displayTags.map((tag) => _buildTag(context, tag)).toList(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              // Permanent Tags (Read-only)
+                              _buildTag(context, _tag1, isPermanent: true),
+                              _buildTag(context, _tag2, isPermanent: true),
+                              _buildTag(context, _tag3, isPermanent: true),
+                              
+                              // Custom Tags that are already typed (when not editing)
+                              if (!_showCustomTagInputs)
+                                ..._tagControllers
+                                    .where((c) => c.text.isNotEmpty)
+                                    .map((c) => _buildTag(context, c.text)),
+
+                              // Add Tags Button
+                              if (!_showCustomTagInputs)
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _showCustomTagInputs = true;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    child: const Text(
+                                      "Add Tags +",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          
+                          // Custom Tag Inputs (Shown when Add Tags is clicked)
+                          if (_showCustomTagInputs) ...[
+                            const SizedBox(height: 16),
+                            const Text(
+                              "Tambah hingga 3 Tag kustom:",
+                              style: TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: List.generate(3, (index) {
+                                return Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: TextField(
+                                      controller: _tagControllers[index],
+                                      style: const TextStyle(fontSize: 13),
+                                      decoration: InputDecoration(
+                                        hintText: "#tag${index + 4}",
+                                        isDense: true,
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showCustomTagInputs = false;
+                                  });
+                                },
+                                child: const Text("Selesai"),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -284,7 +382,7 @@ class _KeteranganScreenState extends State<KeteranganScreen> {
               borderRadius: BorderRadius.circular(4),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),
@@ -300,25 +398,20 @@ class _KeteranganScreenState extends State<KeteranganScreen> {
     );
   }
 
-  Widget _buildTag(BuildContext context, String label) {
-    return GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Tag $label diklik")),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: const Color(0xFFE2E8F0),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
-          ),
+  Widget _buildTag(BuildContext context, String label, {bool isPermanent = false}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isPermanent ? const Color(0xFFE2E8F0).withValues(alpha: 0.6) : const Color(0xFFE2E8F0),
+        borderRadius: BorderRadius.circular(8),
+        border: isPermanent ? Border.all(color: Colors.grey.withValues(alpha: 0.3)) : null,
+      ),
+      child: Text(
+        label.startsWith('#') ? label : '#$label',
+        style: TextStyle(
+          fontSize: 14,
+          color: isPermanent ? Colors.black54 : Colors.black87,
+          fontWeight: isPermanent ? FontWeight.w500 : FontWeight.normal,
         ),
       ),
     );
@@ -400,7 +493,7 @@ class _KeteranganScreenState extends State<KeteranganScreen> {
               border: Border.all(color: Colors.grey.shade200),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
+                  color: Colors.black.withValues(alpha: 0.03),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),

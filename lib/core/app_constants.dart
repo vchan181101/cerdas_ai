@@ -6,13 +6,18 @@ class AppConstants {
   static const String appVersion = '1.0.0';
   
   // 🔑 GOOGLE GEMINI API CONFIGURATION
-  // Sistem akan mencoba mengambil dari --dart-define dulu, lalu dari .env
+  // Sistem akan mencoba mengambil dari --dart-define (GEMINI_API_KEY / API_KEY), lalu dari .env
   static String get geminiApiKey {
-    const fromEnv = String.fromEnvironment('GEMINI_API_KEY');
-    if (fromEnv.isNotEmpty) return fromEnv;
+    const fromGeminiEnv = String.fromEnvironment('GEMINI_API_KEY');
+    if (fromGeminiEnv.isNotEmpty) return fromGeminiEnv;
+
+    const fromApiEnv = String.fromEnvironment('API_KEY');
+    if (fromApiEnv.isNotEmpty) return fromApiEnv;
     
     try {
-      return dotenv.env['GEMINI_API_KEY'] ?? 'MASUKKAN_API_KEY_GEMINI_ANDA_DI_SINI';
+      return dotenv.env['GEMINI_API_KEY'] ??
+          dotenv.env['API_KEY'] ??
+          'MASUKKAN_API_KEY_GEMINI_ANDA_DI_SINI';
     } catch (_) {
       return 'MASUKKAN_API_KEY_GEMINI_ANDA_DI_SINI';
     }

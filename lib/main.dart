@@ -32,6 +32,7 @@ void main() async {
   // 2. Load Tema, Bahasa & Profil Terakhir
   await ThemeHelper.loadSavedTheme();
   await UserProfileHelper.loadSavedProfile();
+  await LocaleHelper.loadSavedLocale();
 
   // 3. Pengujian Security & Database SQLite saat aplikasi pertama kali berjalan
   await _testSecurityAndDatabase();
@@ -113,8 +114,16 @@ class _MyAppState extends State<MyApp> {
                 '/aktivitas': (context) => const ActivityScreen(),
                 '/belajar': (context) => const BelajarScreen(),
                 '/keterangan': (context) => const KeteranganScreen(),
+                '/document-view': (context) => DocumentViewScreen(),
+                '/repository': (context) => const RepositoryScreen(),
                 '/notifikasi': (context) => const NotificationScreen(),
+                '/notification': (context) => const NotificationScreen(),
+                '/quizz': (context) => const QuizzScreen(),
+                '/quiz': (context) => const QuizzScreen(),
+                '/quiz-detail': (context) => const QuizDetailScreen(),
+                '/quiz-exam': (context) => const QuizExamScreen(),
                 '/setting': (context) => const SettingScreen(),
+                '/settings': (context) => const SettingScreen(),
                 '/edit-profil': (context) => const EditProfileScreen(),
                 '/ubah-bahasa': (context) => const ChangeLanguageScreen(),
                 '/ubah-kata-sandi': (context) => const ChangePasswordScreen(),
@@ -138,6 +147,7 @@ class _MyAppState extends State<MyApp> {
                 '/demo-notification': (context) => const NotificationDemoScreen(),
                 '/demo-network-check': (context) => const NetworkCheckExampleScreen(),
                 '/demo-gemini': (context) => const GeminiDemoScreen(),
+                '/gemini-chat': (context) => const GeminiChatScreen(),
               },
             );
           },

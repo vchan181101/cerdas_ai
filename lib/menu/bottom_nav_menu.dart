@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav_style.dart';
+import '../values/strings.dart';
 
 /// Representation dari `<item>` pada res/menu/bottom_nav_menu.xml
 class BottomNavItemModel {
   final int id;
   final String title;
-  final IconData icon;
-  final IconData activeIcon;
+  final IconData? icon;
+  final IconData? activeIcon;
+  final String? assetIcon;
   final String routeName;
 
   const BottomNavItemModel({
     required this.id,
     required this.title,
-    required this.icon,
-    required this.activeIcon,
+    this.icon,
+    this.activeIcon,
+    this.assetIcon,
     required this.routeName,
   });
 }
@@ -23,7 +26,8 @@ class BottomNavMenu {
   static const int idDashboard = 0;
   static const int idActivity = 1;
   static const int idGlobal = 2;
-  static const int idNotification = 3;
+  static const int idQuizz = 3;
+  static const int idNotification = 3; // Alias untuk backwards compatibility
   static const int idSetting = 4;
 
   /// Daftar item menu konversi dari res/menu/bottom_nav_menu.xml
@@ -50,11 +54,12 @@ class BottomNavMenu {
       routeName: '/belajar',
     ),
     BottomNavItemModel(
-      id: idNotification,
-      title: 'Notifikasi',
-      icon: Icons.notifications_outlined,
-      activeIcon: Icons.notifications,
-      routeName: '/notifikasi',
+      id: idQuizz,
+      title: 'Quizz',
+      assetIcon: 'asset/ic_quizz.png',
+      icon: Icons.quiz_outlined,
+      activeIcon: Icons.quiz,
+      routeName: '/quizz',
     ),
     BottomNavItemModel(
       id: idSetting,
@@ -68,10 +73,46 @@ class BottomNavMenu {
   /// Menghasilkan list BottomNavigationBarItem untuk BottomNavigationBar Widget
   static List<BottomNavigationBarItem> getNavigationBarItems() {
     return menuItems.map((item) {
+      String itemLabel = item.title;
+      if (item.id == idActivity) {
+        itemLabel = AppStrings.titleAktivitas;
+      } else if (item.id == idGlobal) {
+        itemLabel = AppStrings.menuBelajar;
+      } else if (item.id == idSetting) {
+        itemLabel = AppStrings.titlePengaturan;
+      }
+
+      if (item.assetIcon != null) {
+        return BottomNavigationBarItem(
+          icon: Image.asset(
+            item.assetIcon!,
+            width: 24,
+            height: 24,
+            color: BottomNavStyle.inactiveColor,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => Icon(
+              item.icon ?? Icons.quiz_outlined,
+              color: BottomNavStyle.inactiveColor,
+            ),
+          ),
+          activeIcon: Image.asset(
+            item.assetIcon!,
+            width: 24,
+            height: 24,
+            color: BottomNavStyle.activeColor,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => Icon(
+              item.activeIcon ?? Icons.quiz,
+              color: BottomNavStyle.activeColor,
+            ),
+          ),
+          label: itemLabel,
+        );
+      }
       return BottomNavigationBarItem(
-        icon: Icon(item.icon),
-        activeIcon: Icon(item.activeIcon),
-        label: item.title,
+        icon: Icon(item.icon!),
+        activeIcon: Icon(item.activeIcon!),
+        label: itemLabel,
       );
     }).toList();
   }

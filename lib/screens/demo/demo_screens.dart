@@ -17,3 +17,4 @@ export 'slide_out_right_example_screen.dart';
 export 'dark_mode_demo_screen.dart';
 export 'animation_gallery_screen.dart';
 export 'gemini_demo_screen.dart';
+export 'gemini_chat_screen.dart';

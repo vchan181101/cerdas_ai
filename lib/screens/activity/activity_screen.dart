@@ -122,10 +122,21 @@ class _ActivityScreenState extends State<ActivityScreen> {
   }
 
   void _handleItemClick(HistoryItem item) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${AppStrings.menuInformasi}: ${item.title}')),
+    Navigator.pushNamed(
+      context,
+      '/document-view',
+      arguments: {
+        'title': item.title,
+        'content': item.snippet, // Menggunakan snippet sebagai isi simulasi
+        'category': item.category,
+      },
     );
-    // Bisa diteruskan ke halaman detail jika diperlukan
+  }
+
+  void _handleDownloadItem(HistoryItem item) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Mengunduh "${item.title}"...')),
+    );
   }
 
   void _handleDeleteItem(HistoryItem item) {
@@ -228,6 +239,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                 historyList: _filteredList,
                                 onItemClick: _handleItemClick,
                                 onDelete: _handleDeleteItem,
+                                onDownload: _handleDownloadItem,
                               ),
                             ),
                     ),

@@ -321,13 +321,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       },
                     ),
                     _buildHorizontalItem(
-                      imageAsset: 'asset/ic_drive.png',
-                      label: AppStrings.labelDrive,
+                      imageAsset: 'asset/ic_repository.png',
+                      label: AppStrings.labelRepository,
                       onTap: () {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(AppStrings.driveFeatureAlert)),
-                        );
+                        Navigator.pushNamed(context, '/repository');
                       },
                     ),
                   ],
@@ -581,7 +579,486 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // 5. Pemrosesan Pertanyaan AI
+  // 5. Menu Profil Modern (3 Kolom: Notifikasi, Setting, Keluar)
+  void _showProfileMenu(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = ScreenColorHelper.getSurfaceColor(context);
+    final headingColor = ScreenColorHelper.getHeadingText(context);
+    final bodyColor = ScreenColorHelper.getBodyText(context);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          padding: EdgeInsets.only(
+            top: 8,
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(sheetContext).padding.bottom + 20,
+          ),
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.15),
+                blurRadius: 16,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Drag Handle
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: bodyColor.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+
+                // Profil Header Mini Card
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      ValueListenableBuilder<String?>(
+                        valueListenable: userPhotoNotifier,
+                        builder: (context, photoPath, _) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppColors.navyPrimary, width: 2),
+                            ),
+                            child: photoPath != null && File(photoPath).existsSync()
+                                ? ClipOval(
+                                    child: Image.file(
+                                      File(photoPath),
+                                      width: 48,
+                                      height: 48,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : const CircularImageView(
+                                    imagePath: 'asset/ic_user.png',
+                                    size: 48,
+                                  ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Akun Pengguna',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : headingColor,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            ValueListenableBuilder<String>(
+                              valueListenable: userTierNotifier,
+                              builder: (context, tier, _) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.navyPrimary.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    'Status: $tier',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.navyPrimary,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: isDark ? Colors.white60 : bodyColor.withValues(alpha: 0.6),
+                        ),
+                        onPressed: () => Navigator.pop(sheetContext),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+                Divider(
+                  color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.08),
+                  height: 1,
+                ),
+                const SizedBox(height: 14),
+
+                // Label Pilihan Kolom
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12, left: 4),
+                  child: Text(
+                    'PILIHAN MENU PROFIL (3 KOLOM)',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
+                      color: bodyColor.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ),
+
+                // 3 Kolom Pilihan (Side by Side Card Columns)
+                Row(
+                  children: [
+                    // Kolom 1: Notifikasi
+                    Expanded(
+                      child: _buildProfileMenuColumnCard(
+                        key: const ValueKey('profile_menu_col_notifikasi'),
+                        context: sheetContext,
+                        title: 'Kolom\nNotifikasi',
+                        icon: Icons.notifications_active_outlined,
+                        iconColor: const Color(0xFF3B82F6),
+                        bgColor: const Color(0xFF3B82F6).withValues(alpha: 0.08),
+                        borderColor: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                        onTap: () {
+                          Navigator.pop(sheetContext);
+                          Navigator.pushNamed(context, '/notifikasi');
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Kolom 2: Setting
+                    Expanded(
+                      child: _buildProfileMenuColumnCard(
+                        key: const ValueKey('profile_menu_col_setting'),
+                        context: sheetContext,
+                        title: 'Kolom\nSetting',
+                        icon: Icons.settings_outlined,
+                        iconColor: const Color(0xFF10B981),
+                        bgColor: const Color(0xFF10B981).withValues(alpha: 0.08),
+                        borderColor: const Color(0xFF10B981).withValues(alpha: 0.3),
+                        onTap: () {
+                          Navigator.pop(sheetContext);
+                          Navigator.pushNamed(context, '/setting');
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Kolom 3: Keluar
+                    Expanded(
+                      child: _buildProfileMenuColumnCard(
+                        key: const ValueKey('profile_menu_col_keluar'),
+                        context: sheetContext,
+                        title: 'Kolom\nKeluar',
+                        icon: Icons.logout_rounded,
+                        iconColor: const Color(0xFFEF4444),
+                        bgColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
+                        borderColor: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                        onTap: () {
+                          Navigator.pop(sheetContext);
+                          _handleLogout(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Daftar Item Menu Vertikal Detail
+                _buildProfileMenuItemTile(
+                  key: const ValueKey('profile_menu_tile_notifikasi'),
+                  context: sheetContext,
+                  title: 'Kolom Notifikasi',
+                  subtitle: 'Buka tampilan notifikasi & pesan aktivitas',
+                  icon: Icons.notifications_outlined,
+                  color: const Color(0xFF3B82F6),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    Navigator.pushNamed(context, '/notifikasi');
+                  },
+                ),
+                const SizedBox(height: 8),
+                _buildProfileMenuItemTile(
+                  key: const ValueKey('profile_menu_tile_setting'),
+                  context: sheetContext,
+                  title: 'Kolom Setting',
+                  subtitle: 'Buka tampilan setting, tema & akun',
+                  icon: Icons.settings_outlined,
+                  color: const Color(0xFF10B981),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    Navigator.pushNamed(context, '/setting');
+                  },
+                ),
+                const SizedBox(height: 8),
+                _buildProfileMenuItemTile(
+                  key: const ValueKey('profile_menu_tile_keluar'),
+                  context: sheetContext,
+                  title: 'Kolom Keluar',
+                  subtitle: 'Keluar akun dengan proses loading otomatis',
+                  icon: Icons.logout_rounded,
+                  color: const Color(0xFFEF4444),
+                  isDestructive: true,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _handleLogout(context);
+                  },
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProfileMenuColumnCard({
+    Key? key,
+    required BuildContext context,
+    required String title,
+    required IconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    required Color borderColor,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final headingColor = ScreenColorHelper.getHeadingText(context);
+
+    return InkWell(
+      key: key,
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: borderColor, width: 1.2),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : headingColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileMenuItemTile({
+    Key? key,
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final headingColor = ScreenColorHelper.getHeadingText(context);
+    final bodyColor = ScreenColorHelper.getBodyText(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: key,
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: isDestructive
+                ? (isDark
+                    ? const Color(0xFF7F1D1D).withValues(alpha: 0.2)
+                    : const Color(0xFFFEF2F2))
+                : (isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.black.withValues(alpha: 0.02)),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDestructive
+                  ? const Color(0xFFEF4444).withValues(alpha: 0.3)
+                  : (isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.06)),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: isDestructive
+                            ? const Color(0xFFEF4444)
+                            : (isDark ? Colors.white : headingColor),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDestructive
+                            ? const Color(0xFFEF4444).withValues(alpha: 0.8)
+                            : (isDark ? Colors.white70 : bodyColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: isDestructive
+                    ? const Color(0xFFEF4444)
+                    : (isDark ? Colors.white38 : bodyColor.withValues(alpha: 0.4)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 6. Penanganan Keluar Akun (Loading & Navigasi ke Login)
+  Future<void> _handleLogout(BuildContext context) async {
+    // Tampilkan Dialog Loading Proses Keluar Akun
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) {
+        final isDark = Theme.of(dialogCtx).brightness == Brightness.dark;
+        return PopScope(
+          canPop: false,
+          child: Dialog(
+            backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.navyPrimary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 3.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.navyPrimary),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Sedang Keluar Akun...',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Memproses sesi dan mengamankan akun Anda...',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    try {
+      // 1. Bersihkan status login dan token di SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(AppConstants.keyIsLoggedIn, false);
+      await prefs.remove(AppConstants.keyAuthToken);
+    } catch (e) {
+      debugPrint('Error saat membersihkan sesi: $e');
+    }
+
+    // 2. Beri jeda loading agar animasi proses terlihat jelas & natural
+    await Future.delayed(const Duration(milliseconds: 1200));
+
+    if (!context.mounted) return;
+
+    // 3. Tutup dialog loading
+    Navigator.of(context, rootNavigator: true).pop();
+
+    // 4. Beri feedback snackbar
+    context.showSnackBar('Berhasil keluar dari akun');
+
+    // 5. Arahkan otomatis ke LoginScreen dan bersihkan backstack
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+  }
+
+  // 7. Pemrosesan Pertanyaan AI
   Future<void> _processUserQuery() async {
     final prompt = _promptController.text.trim();
 
@@ -702,12 +1179,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
+                  // Icon Pen untuk membuat baris baru
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _promptController.text += '\n';
+                      });
+                      // Opsional: berikan fokus ke TextField jika belum
+                      _promptFocusNode.requestFocus();
+                    },
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: ScreenColorHelper.getSurfaceColor(context),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.navyPrimary.withValues(alpha: 0.2), width: 1),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'asset/ic_pen.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
                   ValueListenableBuilder<String?>(
                     valueListenable: userPhotoNotifier,
                     builder: (context, photoPath, child) {
                       return GestureDetector(
+                        key: const ValueKey('dashboard_profile_avatar_btn'),
                         onTap: () {
-                          Navigator.pushNamed(context, '/setting');
+                          _showProfileMenu(context);
                         },
                         child: Container(
                           decoration: BoxDecoration(

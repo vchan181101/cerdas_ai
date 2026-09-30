@@ -7,12 +7,14 @@ class HistoryAdapter extends StatelessWidget {
   final List<HistoryItem> historyList;
   final ValueChanged<HistoryItem> onItemClick;
   final ValueChanged<HistoryItem>? onDelete;
+  final ValueChanged<HistoryItem>? onDownload;
 
   const HistoryAdapter({
     super.key,
     required this.historyList,
     required this.onItemClick,
     this.onDelete,
+    this.onDownload,
   });
 
   @override
@@ -27,23 +29,26 @@ class HistoryAdapter extends StatelessWidget {
           item: item,
           onTap: () => onItemClick(item),
           onDelete: onDelete != null ? () => onDelete!(item) : null,
+          onDownload: onDownload != null ? () => onDownload!(item) : null,
         );
       },
     );
   }
 }
 
-/// Widget Item Tunggal dengan fitur Custom Slidable (Geser kiri muncul hapus)
+/// Widget Item Tunggal dengan fitur Custom Slidable (Geser kiri muncul Download & Hapus)
 class HistoryItemTile extends StatefulWidget {
   final HistoryItem item;
   final VoidCallback onTap;
   final VoidCallback? onDelete;
+  final VoidCallback? onDownload;
 
   const HistoryItemTile({
     super.key,
     required this.item,
     required this.onTap,
     this.onDelete,
+    this.onDownload,
   });
 
   @override
@@ -52,7 +57,14 @@ class HistoryItemTile extends StatefulWidget {
 
 class _HistoryItemTileState extends State<HistoryItemTile> {
   double _dragOffset = 0.0;
-  final double _maxDragDistance = 100.0; // Lebar area tombol hapus
+  final double _buttonWidth = 80.0;
+  late double _maxDragDistance;
+
+  @override
+  void initState() {
+    super.initState();
+    _maxDragDistance = _buttonWidth * 2; // Total width for 2 buttons
+  }
 
   // Dynamic color & icon berdasarkan kategori
   Map<String, dynamic> _getCategoryStyle(String category) {
@@ -103,7 +115,7 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
 
   void _onHorizontalDragEnd(DragEndDetails details) {
     setState(() {
-      // Snapping logic: Jika geser cukup jauh, tetap buka. Jika tidak, tutup kembali.
+      // Snapping logic
       if (_dragOffset < -(_maxDragDistance / 2)) {
         _dragOffset = -_maxDragDistance;
       } else {
@@ -122,42 +134,85 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
       margin: const EdgeInsets.only(bottom: 12.0),
       child: Stack(
         children: [
-          // Layer Bawah: Tombol Hapus (Akan terlihat saat kartu digeser)
+          // Layer Bawah: Tombol Download & Hapus (Akan terlihat saat kartu digeser)
           Positioned.fill(
             child: Align(
               alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  if (widget.onDelete != null) widget.onDelete!();
-                  setState(() {
-                    _dragOffset = 0; // Tutup kembali setelah klik hapus
-                  });
-                },
-                child: Container(
-                  width: _maxDragDistance,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEF4444),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.delete_forever_rounded, color: Colors.white, size: 28),
-                        SizedBox(height: 4),
-                        Text(
-                          'HAPUS',
-                          style: TextStyle(
-                            color: Colors.white, 
-                            fontSize: 10, 
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.0,
-                          ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Tombol Download
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.onDownload != null) widget.onDownload!();
+                      setState(() {
+                        _dragOffset = 0;
+                      });
+                    },
+                    child: Container(
+                      width: _buttonWidth,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.download_rounded, color: Colors.white, size: 24),
+                            SizedBox(height: 4),
+                            Text(
+                              'DOWNLOAD',
+                              style: TextStyle(
+                                color: Colors.white, 
+                                fontSize: 8, 
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(width: 4),
+                  // Tombol Hapus
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.onDelete != null) widget.onDelete!();
+                      setState(() {
+                        _dragOffset = 0;
+                      });
+                    },
+                    child: Container(
+                      width: _buttonWidth,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEF4444),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.delete_forever_rounded, color: Colors.white, size: 24),
+                            SizedBox(height: 4),
+                            Text(
+                              'HAPUS',
+                              style: TextStyle(
+                                color: Colors.white, 
+                                fontSize: 8, 
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -179,7 +234,6 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    // Jika sedang terbuka, klik kartu akan menutup kembali
                     if (_dragOffset != 0) {
                       setState(() => _dragOffset = 0);
                     } else {
@@ -192,12 +246,11 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Container Icon Kategori
                         Container(
                           width: 42,
                           height: 42,
                           decoration: BoxDecoration(
-                            color: categoryColor.withOpacity(0.12),
+                            color: categoryColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
@@ -209,12 +262,10 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
 
                         const SizedBox(width: 14),
 
-                        // Detail Konten Riwayat
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Row Label Kategori & Timestamp
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -238,7 +289,6 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
 
                               const SizedBox(height: 6),
 
-                              // Title / Judul Riwayat
                               Text(
                                 widget.item.title,
                                 maxLines: 1,
@@ -252,7 +302,6 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
 
                               const SizedBox(height: 4),
 
-                              // Snippet / Ringkasan Isi
                               Text(
                                 widget.item.snippet,
                                 maxLines: 2,
