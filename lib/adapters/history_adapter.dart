@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../helpers/color/screen_color_helper.dart';
 import '../models/history_item.dart';
 import '../values/colors.dart';
 
@@ -66,38 +66,70 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
     _maxDragDistance = _buttonWidth * 2; // Total width for 2 buttons
   }
 
-  // Dynamic color & icon berdasarkan kategori
-  Map<String, dynamic> _getCategoryStyle(String category) {
-    switch (category.toUpperCase()) {
-      case 'DOKUMEN':
-      case 'PDF':
-        return {
-          'color': const Color(0xFFEF4444),
-          'icon': Icons.picture_as_pdf,
-        };
-      case 'BELAJAR':
-      case 'FOTO':
-      case 'GAMBAR':
-        return {
-          'color': const Color(0xFF10B981),
-          'icon': Icons.school_outlined,
-        };
-      case 'TANYA':
-      case 'TEKS':
-        return {
-          'color': const Color(0xFF3B82F6),
-          'icon': Icons.question_answer_outlined,
-        };
-      case 'PPT':
-        return {
-          'color': const Color(0xFFF59E0B),
-          'icon': Icons.slideshow,
-        };
-      default:
-        return {
-          'color': const Color(0xFF6B7280),
-          'icon': Icons.history_rounded,
-        };
+  // Dynamic color & icon berdasarkan kategori dan nama file
+  Map<String, dynamic> _getCategoryStyle(String category, [String? title]) {
+    final catUpper = category.toUpperCase();
+    final titleUpper = (title ?? widget.item.title).toUpperCase();
+
+    if (catUpper == 'PDF' || titleUpper.endsWith('.PDF')) {
+      return {
+        'color': const Color(0xFFEF4444),
+        'icon': Icons.picture_as_pdf,
+        'label': 'DOKUMEN',
+      };
+    } else if (catUpper == 'EXCEL' || catUpper == 'XLSX' || catUpper == 'XLS' ||
+        titleUpper.endsWith('.XLSX') || titleUpper.endsWith('.XLS')) {
+      return {
+        'color': const Color(0xFF10B981),
+        'icon': Icons.table_chart,
+        'label': 'EXCEL',
+      };
+    } else if (catUpper == 'WORD' || catUpper == 'DOCX' || catUpper == 'DOC' ||
+        titleUpper.endsWith('.DOCX') || titleUpper.endsWith('.DOC')) {
+      return {
+        'color': const Color(0xFF3B82F6),
+        'icon': Icons.description,
+        'label': 'WORD',
+      };
+    } else if (catUpper == 'PPT' || catUpper == 'PPTX' ||
+        titleUpper.endsWith('.PPTX') || titleUpper.endsWith('.PPT')) {
+      return {
+        'color': const Color(0xFFEF4444), // In Gambar 2 item 5, PPT is styled red DOKUMEN with slideshow icon
+        'icon': Icons.slideshow,
+        'label': 'DOKUMEN',
+      };
+    } else if (catUpper == 'FOTO' || catUpper == 'GAMBAR' ||
+        catUpper == 'PNG' || catUpper == 'JPG' || catUpper == 'JPEG' ||
+        titleUpper.endsWith('.PNG') || titleUpper.endsWith('.JPG') || titleUpper.endsWith('.JPEG') || titleUpper.endsWith('.WEBP')) {
+      return {
+        'color': const Color(0xFFF97316),
+        'icon': Icons.image,
+        'label': 'FOTO',
+      };
+    } else if (catUpper == 'BELAJAR') {
+      return {
+        'color': const Color(0xFF10B981),
+        'icon': Icons.school_outlined,
+        'label': 'BELAJAR',
+      };
+    } else if (catUpper == 'TANYA' || catUpper == 'TEKS') {
+      return {
+        'color': const Color(0xFF3B82F6),
+        'icon': Icons.question_answer_outlined,
+        'label': 'TANYA',
+      };
+    } else if (catUpper == 'DOKUMEN') {
+      return {
+        'color': const Color(0xFFEF4444),
+        'icon': Icons.description,
+        'label': 'DOKUMEN',
+      };
+    } else {
+      return {
+        'color': const Color(0xFF6B7280),
+        'icon': Icons.insert_drive_file,
+        'label': category.toUpperCase(),
+      };
     }
   }
 
@@ -129,6 +161,10 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
     final style = _getCategoryStyle(widget.item.category);
     final Color categoryColor = style['color'];
     final IconData categoryIcon = style['icon'];
+    final String categoryLabel = style['label'] ?? widget.item.category.toUpperCase();
+    final surfaceColor = ScreenColorHelper.getSurfaceColor(context);
+    final headingColor = ScreenColorHelper.getHeadingText(context);
+    final bodyColor = ScreenColorHelper.getBodyText(context);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12.0),
@@ -228,9 +264,12 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
               child: Card(
                 margin: EdgeInsets.zero,
                 elevation: 1,
-                color: AppColors.white,
+                color: surfaceColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                    color: AppColors.inputBorder.withValues(alpha: 0.15),
+                  ),
                 ),
                 child: InkWell(
                   onTap: () {
@@ -270,7 +309,7 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    widget.item.category.toUpperCase(),
+                                    categoryLabel,
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -279,9 +318,9 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
                                   ),
                                   Text(
                                     widget.item.timestamp,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 12,
-                                      color: AppColors.textMuted,
+                                      color: bodyColor.withValues(alpha: 0.6),
                                     ),
                                   ),
                                 ],
@@ -293,10 +332,10 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
                                 widget.item.title,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: headingColor,
                                 ),
                               ),
 
@@ -306,9 +345,9 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
                                 widget.item.snippet,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
-                                  color: AppColors.textMuted,
+                                  color: bodyColor.withValues(alpha: 0.7),
                                   height: 1.3,
                                 ),
                               ),

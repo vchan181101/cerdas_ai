@@ -33,11 +33,38 @@ class DashboardScreen extends StatefulWidget {
 class ChatHistoryItem {
   final String question;
   final String answer;
-  ChatHistoryItem({required this.question, required this.answer});
+  final String? fileName;
+  final String? filePath;
+  final String? fileType;
+  final String? timestamp;
 
-  Map<String, dynamic> toJson() => {'q': question, 'a': answer};
+  ChatHistoryItem({
+    required this.question,
+    required this.answer,
+    this.fileName,
+    this.filePath,
+    this.fileType,
+    this.timestamp,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'q': question,
+    'a': answer,
+    if (fileName != null) 'fileName': fileName,
+    if (filePath != null) 'filePath': filePath,
+    if (fileType != null) 'fileType': fileType,
+    if (timestamp != null) 'timestamp': timestamp,
+  };
+
   factory ChatHistoryItem.fromJson(Map<String, dynamic> json) => 
-      ChatHistoryItem(question: json['q'], answer: json['a']);
+      ChatHistoryItem(
+        question: json['q'] ?? '',
+        answer: json['a'] ?? '',
+        fileName: json['fileName'] ?? json['file_name'],
+        filePath: json['filePath'] ?? json['file_path'],
+        fileType: json['fileType'] ?? json['file_type'],
+        timestamp: json['timestamp'],
+      );
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
@@ -181,10 +208,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     fileName.endsWith('.png') || 
                     fileName.endsWith('.webp');
 
+      IconData icon = Icons.description;
+      if (isImage) {
+        icon = Icons.image;
+      } else if (fileName.endsWith('.pdf')) {
+        icon = Icons.picture_as_pdf;
+      } else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) {
+        icon = Icons.table_chart;
+      } else if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) {
+        icon = Icons.slideshow;
+      } else if (fileName.endsWith('.doc') || fileName.endsWith('.docx')) {
+        icon = Icons.description;
+      }
+
       _showAttachmentPreview(
         file: file,
         name: result.files.single.name,
-        icon: isImage ? Icons.image : Icons.description,
+        icon: icon,
         isImage: isImage,
       );
     }
@@ -734,7 +774,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: _buildProfileMenuColumnCard(
                         key: const ValueKey('profile_menu_col_notifikasi'),
                         context: sheetContext,
-                        title: 'Kolom\nNotifikasi',
+                        title: 'Notifikasi',
                         icon: Icons.notifications_active_outlined,
                         iconColor: const Color(0xFF3B82F6),
                         bgColor: const Color(0xFF3B82F6).withValues(alpha: 0.08),
@@ -751,7 +791,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: _buildProfileMenuColumnCard(
                         key: const ValueKey('profile_menu_col_setting'),
                         context: sheetContext,
-                        title: 'Kolom\nSetting',
+                        title: 'Setting',
                         icon: Icons.settings_outlined,
                         iconColor: const Color(0xFF10B981),
                         bgColor: const Color(0xFF10B981).withValues(alpha: 0.08),
@@ -768,7 +808,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: _buildProfileMenuColumnCard(
                         key: const ValueKey('profile_menu_col_keluar'),
                         context: sheetContext,
-                        title: 'Kolom\nKeluar',
+                        title: 'Keluar',
                         icon: Icons.logout_rounded,
                         iconColor: const Color(0xFFEF4444),
                         bgColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
@@ -788,7 +828,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _buildProfileMenuItemTile(
                   key: const ValueKey('profile_menu_tile_notifikasi'),
                   context: sheetContext,
-                  title: 'Kolom Notifikasi',
+                  title: 'Notifikasi',
                   subtitle: 'Buka tampilan notifikasi & pesan aktivitas',
                   icon: Icons.notifications_outlined,
                   color: const Color(0xFF3B82F6),
@@ -801,7 +841,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _buildProfileMenuItemTile(
                   key: const ValueKey('profile_menu_tile_setting'),
                   context: sheetContext,
-                  title: 'Kolom Setting',
+                  title: 'Setting',
                   subtitle: 'Buka tampilan setting, tema & akun',
                   icon: Icons.settings_outlined,
                   color: const Color(0xFF10B981),
@@ -814,7 +854,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _buildProfileMenuItemTile(
                   key: const ValueKey('profile_menu_tile_keluar'),
                   context: sheetContext,
-                  title: 'Kolom Keluar',
+                  title: 'Keluar',
                   subtitle: 'Keluar akun dengan proses loading otomatis',
                   icon: Icons.logout_rounded,
                   color: const Color(0xFFEF4444),
@@ -1098,6 +1138,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return;
     }
 
+    final String? currentAttachmentName = _attachmentName.isNotEmpty ? _attachmentName : null;
+    final String? currentAttachmentPath = _attachmentFile?.path;
+    String? currentFileType;
+    if (currentAttachmentName != null) {
+      currentFileType = currentAttachmentName.contains('.')
+          ? currentAttachmentName.split('.').last.toUpperCase()
+          : 'DOKUMEN';
+    } else if (_isImageAttachment) {
+      currentFileType = 'JPG';
+    }
+
+    final String effectivePrompt = prompt.isNotEmpty
+        ? prompt
+        : (_attachmentName.isNotEmpty 
+            ? "Analisis dokumen $_attachmentName" 
+            : "Analisis gambar ini secara detail.");
+
     String response;
     try {
       if (_attachmentFile != null && _isImageAttachment) {
@@ -1107,8 +1164,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           prompt: prompt.isEmpty ? "Analisis gambar ini secara detail." : prompt,
         );
       } else {
-        // Analisis Teks Saja
-        response = await GeminiService.generateText(prompt);
+        // Analisis Teks Saja / Dokumen
+        response = await GeminiService.generateText(effectivePrompt);
       }
     } catch (e) {
       response = "Terjadi kesalahan: $e";
@@ -1116,21 +1173,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (!mounted) return;
 
+    final String historyQuestion = prompt.isNotEmpty 
+        ? prompt 
+        : (currentAttachmentName ?? (_isImageAttachment ? "Analisis Gambar" : "Analisis Dokumen"));
+
     setState(() {
       _isAiThinking = false;
       _aiResponseText = response;
       
       // Simpan otomatis ke Riwayat Percakapan (Tambahkan ke paling atas)
-      final String historyQuestion = prompt.isNotEmpty 
-          ? prompt 
-          : (_isImageAttachment ? "Analisis Gambar" : "Analisis Dokumen");
-          
-      // Hapus jika sudah ada (agar pindah ke atas)
       _chatHistory.removeWhere((item) => item.question == historyQuestion);
-      _chatHistory.insert(0, ChatHistoryItem(question: historyQuestion, answer: response));
+      _chatHistory.insert(
+        0,
+        ChatHistoryItem(
+          question: historyQuestion,
+          answer: response,
+          fileName: currentAttachmentName,
+          filePath: currentAttachmentPath,
+          fileType: currentFileType,
+          timestamp: 'Baru saja',
+        ),
+      );
     });
 
     await _saveChatHistory(); // Simpan secara permanen
+
+    // Simpan otomatis ke UPLOADED_DOCUMENTS jika terdapat upload file/dokumen/gambar
+    if (currentAttachmentName != null || _attachmentFile != null) {
+      await _saveUploadedDocument(
+        fileName: currentAttachmentName ?? (_isImageAttachment ? "Foto_Unggahan.jpg" : "Dokumen_Unggahan.pdf"),
+        filePath: currentAttachmentPath ?? '',
+        fileSnippet: response,
+        fileType: currentFileType ?? 'DOKUMEN',
+        isImage: _isImageAttachment,
+      );
+    }
 
     if (mounted) {
       context.showSnackBar(AppStrings.chatSavedAlert);
@@ -1138,6 +1215,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     _speakText(response);
     _clearAttachment();
+  }
+
+  Future<void> _saveUploadedDocument({
+    required String fileName,
+    required String filePath,
+    required String fileSnippet,
+    required String fileType,
+    required bool isImage,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? existingJson = prefs.getString(AppConstants.keyUploadedDocuments);
+      List<dynamic> list = [];
+      if (existingJson != null) {
+        try {
+          list = jsonDecode(existingJson);
+        } catch (_) {}
+      }
+      
+      final String ext = fileType.toUpperCase();
+      String category = 'DOKUMEN';
+      if (['PNG', 'JPG', 'JPEG', 'WEBP'].contains(ext)) {
+        category = 'FOTO';
+      } else if (['XLS', 'XLSX'].contains(ext)) {
+        category = 'EXCEL';
+      } else if (['DOC', 'DOCX'].contains(ext)) {
+        category = 'WORD';
+      } else if (['PPT', 'PPTX'].contains(ext)) {
+        category = 'PPT';
+      } else if (ext == 'PDF') {
+        category = 'PDF';
+      }
+
+      final newItem = {
+        'id': 'up_${DateTime.now().millisecondsSinceEpoch}',
+        'title': fileName,
+        'category': category,
+        'ext': ext,
+        'filePath': filePath,
+        'snippet': fileSnippet.length > 200 ? '${fileSnippet.substring(0, 200)}...' : fileSnippet,
+        'timestamp': 'Baru saja',
+      };
+
+      list.removeWhere((item) => item['title'] == fileName);
+      list.insert(0, newItem);
+      await prefs.setString(AppConstants.keyUploadedDocuments, jsonEncode(list));
+    } catch (e) {
+      debugPrint('Error saving uploaded document: $e');
+    }
   }
 
   @override
