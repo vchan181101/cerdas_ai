@@ -6,6 +6,8 @@ class HistoryItem {
   final String timestamp;
   bool isFavorite;
   bool isInTrash;
+  final String? filePath;
+  final String? ext;
 
   HistoryItem({
     required this.id,
@@ -15,6 +17,8 @@ class HistoryItem {
     required this.timestamp,
     this.isFavorite = false,
     this.isInTrash = false,
+    this.filePath,
+    this.ext,
   });
 
   // Method copyWith untuk immutability / update state dengan aman di Flutter
@@ -26,6 +30,8 @@ class HistoryItem {
     String? timestamp,
     bool? isFavorite,
     bool? isInTrash,
+    String? filePath,
+    String? ext,
   }) {
     return HistoryItem(
       id: id ?? this.id,
@@ -35,6 +41,8 @@ class HistoryItem {
       timestamp: timestamp ?? this.timestamp,
       isFavorite: isFavorite ?? this.isFavorite,
       isInTrash: isInTrash ?? this.isInTrash,
+      filePath: filePath ?? this.filePath,
+      ext: ext ?? this.ext,
     );
   }
 
@@ -48,6 +56,8 @@ class HistoryItem {
       timestamp: json['timestamp'] as String,
       isFavorite: json['isFavorite'] as bool? ?? false,
       isInTrash: json['isInTrash'] as bool? ?? false,
+      filePath: json['filePath'] as String?,
+      ext: json['ext'] as String?,
     );
   }
 
@@ -61,6 +71,8 @@ class HistoryItem {
       'timestamp': timestamp,
       'isFavorite': isFavorite,
       'isInTrash': isInTrash,
+      if (filePath != null) 'filePath': filePath,
+      if (ext != null) 'ext': ext,
     };
   }
 }

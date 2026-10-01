@@ -38,6 +38,7 @@ class AppConstants {
   static const String keyUserName = 'USER_NAME';
   static const String keyThemeMode = 'THEME_MODE';
   static const String keyChatHistory = 'CHAT_HISTORY';
+  static const String keyUploadedDocuments = 'UPLOADED_DOCUMENTS';
   
   // Timeout values
   static const int apiTimeout = 30000; // 30 seconds
