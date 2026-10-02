@@ -25,14 +25,20 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   int _startSeconds = 60;
   bool _canResend = false;
   String _userEmail = '';
+  bool _isFromRegister = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Membaca argumen email dari halaman sebelumnya
+    // Membaca argumen email dan alur flow dari halaman sebelumnya
     final args = ModalRoute.of(context)?.settings.arguments;
-    if (args is Map<String, dynamic> && args.containsKey('email')) {
-      _userEmail = args['email'] ?? '';
+    if (args is Map<String, dynamic>) {
+      if (args.containsKey('email')) {
+        _userEmail = args['email'] ?? '';
+      }
+      if (args['flow'] == 'register' || args['isFromRegister'] == true) {
+        _isFromRegister = true;
+      }
     }
   }
 
@@ -107,12 +113,20 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       const SnackBar(content: Text('Kode OTP Berhasil Diverifikasi!')),
     );
 
-    // Navigasi ke Halaman Password Baru
-    Navigator.pushReplacementNamed(
-      context,
-      '/password-baru',
-      arguments: {'email': _userEmail},
-    );
+    // Navigasi sesuai alur pendaftaran (Register) atau lupa kata sandi
+    if (_isFromRegister) {
+      Navigator.pushReplacementNamed(
+        context,
+        '/akun-telah-dibuat',
+        arguments: {'email': _userEmail},
+      );
+    } else {
+      Navigator.pushReplacementNamed(
+        context,
+        '/password-baru',
+        arguments: {'email': _userEmail},
+      );
+    }
   }
 
   // Kirim Ulang Kode OTP
@@ -157,15 +171,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // 1. Top Bar / Tombol Kembali
-                Row(
+                Stack(
+                  alignment: Alignment.center,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.navyPrimary),
-                      onPressed: _isLoading ? null : () => Navigator.pop(context),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.navyPrimary),
+                        onPressed: _isLoading ? null : () => Navigator.pop(context),
+                      ),
                     ),
-                    const SizedBox(width: 8),
                     const Text(
                       'Verifikasi OTP',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -228,9 +246,31 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(4, (index) {
-                    return SizedBox(
+                    return Container(
                       width: 64,
                       height: 64,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFFFFE8D6), // Oranye lembut
+                            AppColors.white,   // Putih
+                          ],
+                        ),
+                        border: Border.all(
+                          color: const Color(0xFFFFCCA0),
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.orangeAccent.withValues(alpha: 0.12),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
                       child: KeyboardListener(
                         focusNode: FocusNode(),
                         onKeyEvent: (event) {
@@ -249,19 +289,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           enabled: !_isLoading,
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
+                          cursorColor: AppColors.black,
                           maxLength: 1,
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.navyPrimary,
+                            color: AppColors.black,
                           ),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           decoration: InputDecoration(
                             counterText: '',
-                            filled: true,
-                            fillColor: AppColors.white.withValues(alpha: 0.8),
+                            filled: false,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide.none,

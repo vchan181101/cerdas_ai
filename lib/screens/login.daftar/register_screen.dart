@@ -101,11 +101,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = false);
       
       if (context.mounted) {
-        context.showSnackBar('Pendaftaran Berhasil! Menuju ke Ekstraksi Foto.');
+        context.showSnackBar('Pendaftaran Berhasil! Silakan verifikasi kode OTP.');
       }
 
-      // Navigasi ke Layar Foto Informasi (Ekstraksi Foto)
-      Navigator.pushReplacementNamed(context, '/foto-informasi');
+      // Navigasi ke Layar Verifikasi OTP
+      Navigator.pushNamed(
+        context,
+        '/kode-verifikasi',
+        arguments: {
+          'email': _emailController.text.trim(),
+          'flow': 'register',
+          'isFromRegister': true,
+        },
+      );
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -135,11 +143,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // 1. Header
-                  ScreenHeader(title: AppStrings.titleDaftar),
+                  ScreenHeader(
+                    title: AppStrings.titleDaftar,
+                    centerTitle: true,
+                  ),
                   
                   const SizedBox(height: 8),
                   Text(
                     AppStrings.subtitleDaftar,
+                    textAlign: TextAlign.center,
                     style: TextStyle(color: bodyColor.withValues(alpha: 0.6), fontSize: 13),
                   ),
                   const SizedBox(height: 32),
@@ -228,7 +240,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _alamatController,
                     hintText: AppStrings.hintAlamat,
                     prefixIcon: Icon(Icons.map_outlined, size: 20, color: bodyColor),
-                    maxLines: 2,
                     validator: (value) => value == null || value.trim().isEmpty ? 'Alamat wajib diisi' : null,
                   ),
                   const SizedBox(height: 20),

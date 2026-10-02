@@ -122,6 +122,9 @@ class AppStrings {
   static String get btnDaftar => _get({'id': 'Daftar', 'en': 'Register'});
   static String get promptSudahPunyaAkun => _get({'id': 'Sudah punya akun? ', 'en': 'Already have an account? '});
   static String get actionMasuk => _get({'id': 'Masuk', 'en': 'Login'});
+  static String get headingAkunDibuat => _get({'id': 'Akun Telah Dibuat!', 'en': 'Account Created!'});
+  static String get descAkunDibuat => _get({'id': 'Akun Anda telah berhasil dibuat. Silakan masuk untuk mulai menggunakan layanan Cerdas AI.', 'en': 'Your account has been successfully created. Please log in to start using Cerdas AI.'});
+  static String get btnLanjutkan => _get({'id': 'Lanjutkan', 'en': 'Continue'});
 
   // ===========================================================================
   // PASSWORD RECOVERY
@@ -135,7 +138,7 @@ class AppStrings {
   static String get labelKonfirmasiPasswordBaru => _get({'id': 'Konfirmasi Kata Sandi Baru', 'en': 'Confirm New Password'});
   static String get hintKonfirmasiPasswordBaru => _get({'id': 'Ulangi kata sandi baru Anda', 'en': 'Repeat new password'});
   static String get btnSimpanPassword => _get({'id': 'Simpan Kata Sandi', 'en': 'Save Password'});
-  static String get titlePasswordBaru => _get({'id': 'Buat Password Baru', 'en': 'Create New Password'});
+  static String get titlePasswordBaru => _get({'id': 'Buat Kata Sandi Baru', 'en': 'Create New Password'});
   static String get headingPasswordDiubah => _get({'id': 'Kata Sandi Telah Berubah!', 'en': 'Password Changed!'});
   static String get descPasswordDiubah => _get({'id': 'Kata sandi Anda telah berhasil diperbarui.', 'en': 'Your password has been successfully updated.'});
   static String get btnKembaliLogin => _get({'id': 'Kembali ke Halaman Login', 'en': 'Back to Login'});
@@ -166,6 +169,7 @@ class AppStrings {
   static String get descAttachment => _get({'id': 'Lampirkan File', 'en': 'Attach File'});
   static String get titleAktivitas => _get({'id': 'Aktivitas', 'en': 'Activity', 'it': 'Attività', 'fr': 'Activé', 'es': 'Actividad'});
   static String get hintSearchRiwayat => _get({'id': 'Cari riwayat pertanyaan..', 'en': 'Search question history..'});
+  static String get hintSearchRepositoryFile => _get({'id': 'Cari riwayat repository file..', 'en': 'Search repository file history..'});
   static String get filterSemua => _get({'id': 'Semua', 'en': 'All'});
   static String get filterDokumen => _get({'id': 'Dokumen', 'en': 'Documents'});
   static String get filterBelajar => _get({'id': 'Belajar', 'en': 'Learn'});

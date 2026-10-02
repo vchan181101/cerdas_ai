@@ -6,6 +6,7 @@ class ScreenHeader extends StatelessWidget {
   final bool showBackButton;
   final VoidCallback? onBackTap;
   final List<Widget>? actions;
+  final bool centerTitle;
 
   const ScreenHeader({
     super.key,
@@ -13,10 +14,43 @@ class ScreenHeader extends StatelessWidget {
     this.showBackButton = true,
     this.onBackTap,
     this.actions,
+    this.centerTitle = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (centerTitle) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (showBackButton)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                  onPressed: onBackTap ?? () => Navigator.pop(context),
+                ),
+              ),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: ScreenStyleHelper.getScreenTitleStyle(context),
+            ),
+            if (actions != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: actions!,
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
       child: Row(

@@ -1,3 +1,4 @@
+export 'account_created_screen.dart';
 export 'forgot_password_screen.dart';
 export 'login_screen.dart';
 export 'login_with_google_screen.dart';

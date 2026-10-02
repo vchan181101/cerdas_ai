@@ -8,6 +8,7 @@ class HistoryAdapter extends StatelessWidget {
   final ValueChanged<HistoryItem> onItemClick;
   final ValueChanged<HistoryItem>? onDelete;
   final ValueChanged<HistoryItem>? onDownload;
+  final bool enableSlidable;
 
   const HistoryAdapter({
     super.key,
@@ -15,6 +16,7 @@ class HistoryAdapter extends StatelessWidget {
     required this.onItemClick,
     this.onDelete,
     this.onDownload,
+    this.enableSlidable = true,
   });
 
   @override
@@ -30,6 +32,7 @@ class HistoryAdapter extends StatelessWidget {
           onTap: () => onItemClick(item),
           onDelete: onDelete != null ? () => onDelete!(item) : null,
           onDownload: onDownload != null ? () => onDownload!(item) : null,
+          enableSlidable: enableSlidable,
         );
       },
     );
@@ -42,6 +45,7 @@ class HistoryItemTile extends StatefulWidget {
   final VoidCallback onTap;
   final VoidCallback? onDelete;
   final VoidCallback? onDownload;
+  final bool enableSlidable;
 
   const HistoryItemTile({
     super.key,
@@ -49,6 +53,7 @@ class HistoryItemTile extends StatefulWidget {
     required this.onTap,
     this.onDelete,
     this.onDownload,
+    this.enableSlidable = true,
   });
 
   @override
@@ -166,6 +171,112 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
     final headingColor = ScreenColorHelper.getHeadingText(context);
     final bodyColor = ScreenColorHelper.getBodyText(context);
 
+    final cardWidget = Card(
+      margin: EdgeInsets.zero,
+      elevation: 1,
+      color: surfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: AppColors.inputBorder.withValues(alpha: 0.15),
+        ),
+      ),
+      child: InkWell(
+        onTap: () {
+          if (widget.enableSlidable && _dragOffset != 0) {
+            setState(() => _dragOffset = 0);
+          } else {
+            widget.onTap();
+          }
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: categoryColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  categoryIcon,
+                  color: categoryColor,
+                  size: 22,
+                ),
+              ),
+
+              const SizedBox(width: 14),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          categoryLabel,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: categoryColor,
+                          ),
+                        ),
+                        Text(
+                          widget.item.timestamp,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: bodyColor.withValues(alpha: 0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    Text(
+                      widget.item.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: headingColor,
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      widget.item.snippet,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: bodyColor.withValues(alpha: 0.7),
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (!widget.enableSlidable) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 12.0),
+        child: cardWidget,
+      );
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12.0),
       child: Stack(
@@ -261,104 +372,7 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
               duration: const Duration(milliseconds: 100),
               curve: Curves.easeOut,
               transform: Matrix4.translationValues(_dragOffset, 0, 0),
-              child: Card(
-                margin: EdgeInsets.zero,
-                elevation: 1,
-                color: surfaceColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(
-                    color: AppColors.inputBorder.withValues(alpha: 0.15),
-                  ),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    if (_dragOffset != 0) {
-                      setState(() => _dragOffset = 0);
-                    } else {
-                      widget.onTap();
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: categoryColor.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            categoryIcon,
-                            color: categoryColor,
-                            size: 22,
-                          ),
-                        ),
-
-                        const SizedBox(width: 14),
-
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    categoryLabel,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: categoryColor,
-                                    ),
-                                  ),
-                                  Text(
-                                    widget.item.timestamp,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: bodyColor.withValues(alpha: 0.6),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              Text(
-                                widget.item.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: headingColor,
-                                ),
-                              ),
-
-                              const SizedBox(height: 4),
-
-                              Text(
-                                widget.item.snippet,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: bodyColor.withValues(alpha: 0.7),
-                                  height: 1.3,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              child: cardWidget,
             ),
           ),
         ],

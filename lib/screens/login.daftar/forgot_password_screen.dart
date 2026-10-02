@@ -70,15 +70,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // 1. Header Top Bar (Tombol Kembali & Judul)
-                  Row(
+                  Stack(
+                    alignment: Alignment.center,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.navyPrimary),
-                        onPressed: _isLoading ? null : () => Navigator.pop(context),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.navyPrimary),
+                          onPressed: _isLoading ? null : () => Navigator.pop(context),
+                        ),
                       ),
-                      const SizedBox(width: 8),
                       const Text(
                         'Lupa Password',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -125,7 +129,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Masukkan email terdaftar Anda di bawah ini untuk menerima kode verifikasi OTP.',
+                    'Masukkan Email anda untuk reset password.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.textMuted,
@@ -224,11 +228,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                       child: const Text(
-                        'KIRIM KODE VERIFIKASI',
+                        'Kirim Kode Verifikasi',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
                         ),
                       ),
                     ),
@@ -236,21 +239,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 40),
 
                   // 7. Footer Kembali Ke Login
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Ingat kata sandi Anda? ',
-                        style: TextStyle(color: AppColors.textMuted, fontSize: 14),
-                      ),
-                      GestureDetector(
-                        onTap: _isLoading
-                            ? null
-                            : () {
-                          Navigator.pushReplacementNamed(context, '/login');
-                        },
-                        child: const Text(
-                          'Masuk',
+                  Center(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: _isLoading
+                          ? null
+                          : () {
+                              Navigator.pushReplacementNamed(context, '/login');
+                            },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        child: Text(
+                          'Kembali Ke Halaman Login.',
                           style: TextStyle(
                             color: AppColors.orangeAccent,
                             fontWeight: FontWeight.bold,
@@ -258,7 +258,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),

@@ -108,6 +108,7 @@ class _MyAppState extends State<MyApp> {
                 '/kode-verifikasi': (context) => const OtpVerificationScreen(),
                 '/password-baru': (context) => const NewPasswordScreen(),
                 '/password-telah-diubah': (context) => const PasswordChangedScreen(),
+                '/akun-telah-dibuat': (context) => const AccountCreatedScreen(),
                 '/login-google': (context) => const LoginWithGoogleScreen(),
                 '/login-ios': (context) => const LoginWithIosScreen(),
                 '/dashboard': (context) => const DashboardScreen(),
@@ -131,6 +132,7 @@ class _MyAppState extends State<MyApp> {
                 '/sampah': (context) => const SampahScreen(),
                 '/tentang-aplikasi': (context) => const AboutScreen(),
                 '/foto-informasi': (context) => const PhotoInformationScreen(),
+                '/kamera': (context) => const CustomCameraScreen(),
                 '/upgrade-plus': (context) => const UpgradePlusScreen(),
                 '/gemini-model-selector': (context) => const GeminiModelSelectorScreen(),
 

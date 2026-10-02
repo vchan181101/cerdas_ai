@@ -11,3 +11,4 @@ export 'quiz_exam_screen.dart';
 export 'photo_information_screen.dart';
 export 'setting_screen.dart';
 export 'splash_screen.dart';
+export 'custom_camera_screen.dart';

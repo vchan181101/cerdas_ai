@@ -60,15 +60,19 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // 1. Top Bar / Tombol Kembali
-                Row(
+                Stack(
+                  alignment: Alignment.center,
                   children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back_ios_new_rounded, color: ScreenColorHelper.getHeadingText(context)),
-                      onPressed: _isLoading ? null : () => Navigator.pop(context),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back_ios_new_rounded, color: ScreenColorHelper.getHeadingText(context)),
+                        onPressed: _isLoading ? null : () => Navigator.pop(context),
+                      ),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       AppStrings.titlePasswordBaru,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

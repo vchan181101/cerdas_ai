@@ -43,6 +43,7 @@ class CustomInputBox extends StatelessWidget {
       onTap: onTap,
       readOnly: readOnly,
       maxLines: maxLines,
+      textAlignVertical: TextAlignVertical.center,
       style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
       decoration: InputBoxHelper.buildInputDecoration(
         context: context,
