@@ -28,6 +28,7 @@ class HistoryAdapter extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = historyList[index];
         return HistoryItemTile(
+          key: ValueKey('history_item_${item.id}'),
           item: item,
           onTap: () => onItemClick(item),
           onDelete: onDelete != null ? () => onDelete!(item) : null,
@@ -62,13 +63,26 @@ class HistoryItemTile extends StatefulWidget {
 
 class _HistoryItemTileState extends State<HistoryItemTile> {
   double _dragOffset = 0.0;
+  bool _isDragging = false;
   final double _buttonWidth = 80.0;
-  late double _maxDragDistance;
+
+  bool get _hasActions => widget.onDownload != null || widget.onDelete != null;
+
+  double get _maxDragDistance {
+    int buttonCount = 0;
+    if (widget.onDownload != null) buttonCount++;
+    if (widget.onDelete != null) buttonCount++;
+    if (buttonCount == 0) return 0.0;
+    return (buttonCount * _buttonWidth) + ((buttonCount - 1) * 4.0);
+  }
 
   @override
-  void initState() {
-    super.initState();
-    _maxDragDistance = _buttonWidth * 2; // Total width for 2 buttons
+  void didUpdateWidget(HistoryItemTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.item.id != widget.item.id) {
+      _dragOffset = 0.0;
+      _isDragging = false;
+    }
   }
 
   // Dynamic color & icon berdasarkan kategori dan nama file
@@ -123,6 +137,14 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
         'icon': Icons.question_answer_outlined,
         'label': 'TANYA',
       };
+    } else if (catUpper == 'QUIZ' || catUpper == 'KUIS' ||
+        catUpper == 'UTS' || catUpper == 'UAS' || catUpper == 'LATIHAN' ||
+        catUpper == 'UJIAN' || catUpper == 'PREDIKSI') {
+      return {
+        'color': const Color(0xFF8B5CF6),
+        'icon': Icons.assignment_outlined,
+        'label': 'QUIZ',
+      };
     } else if (catUpper == 'DOKUMEN') {
       return {
         'color': const Color(0xFFEF4444),
@@ -138,12 +160,24 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
     }
   }
 
-  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+  void _onHorizontalDragStart(DragStartDetails details) {
+    if (!widget.enableSlidable || !_hasActions) return;
     setState(() {
+      _isDragging = true;
+    });
+  }
+
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    if (!widget.enableSlidable || !_hasActions) return;
+    final maxDist = _maxDragDistance;
+    if (maxDist <= 0) return;
+
+    setState(() {
+      _isDragging = true;
       _dragOffset += details.delta.dx;
       // Batasi: hanya bisa geser ke kiri (negatif), maksimal sejauh _maxDragDistance
-      if (_dragOffset < -_maxDragDistance) {
-        _dragOffset = -_maxDragDistance;
+      if (_dragOffset < -maxDist) {
+        _dragOffset = -maxDist;
       } else if (_dragOffset > 0) {
         _dragOffset = 0;
       }
@@ -151,13 +185,30 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
   }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
+    if (!widget.enableSlidable || !_hasActions) return;
+    final maxDist = _maxDragDistance;
+    if (maxDist <= 0) return;
+
     setState(() {
-      // Snapping logic
-      if (_dragOffset < -(_maxDragDistance / 2)) {
-        _dragOffset = -_maxDragDistance;
+      _isDragging = false;
+      final velocity = details.primaryVelocity ?? 0;
+      if (velocity < -200) {
+        // Fling cepat ke kiri -> buka menu tombol
+        _dragOffset = -maxDist;
+      } else if (velocity > 200) {
+        // Fling cepat ke kanan -> tutup kembali normal
+        _dragOffset = 0;
+      } else if (_dragOffset < -(maxDist / 2)) {
+        _dragOffset = -maxDist;
       } else {
         _dragOffset = 0;
       }
+    });
+  }
+
+  void _onHorizontalDragCancel() {
+    setState(() {
+      _isDragging = false;
     });
   }
 
@@ -270,7 +321,7 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
       ),
     );
 
-    if (!widget.enableSlidable) {
+    if (!widget.enableSlidable || !_hasActions) {
       return Container(
         margin: const EdgeInsets.only(bottom: 12.0),
         child: cardWidget,
@@ -279,103 +330,111 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12.0),
-      child: Stack(
-        children: [
-          // Layer Bawah: Tombol Download & Hapus (Akan terlihat saat kartu digeser)
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // Tombol Download
-                  GestureDetector(
-                    onTap: () {
-                      if (widget.onDownload != null) widget.onDownload!();
-                      setState(() {
-                        _dragOffset = 0;
-                      });
-                    },
-                    child: Container(
-                      width: _buttonWidth,
-                      height: double.infinity,
-                      decoration: BoxDecoration(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          clipBehavior: Clip.hardEdge,
+          children: [
+            // Layer Bawah: Tombol Download & Hapus (Akan terlihat saat kartu digeser)
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Tombol Download
+                    if (widget.onDownload != null)
+                      Material(
                         color: Colors.blueAccent,
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.download_rounded, color: Colors.white, size: 24),
-                            SizedBox(height: 4),
-                            Text(
-                              'DOWNLOAD',
-                              style: TextStyle(
-                                color: Colors.white, 
-                                fontSize: 8, 
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            setState(() => _dragOffset = 0);
+                            widget.onDownload!();
+                          },
+                          child: SizedBox(
+                            width: _buttonWidth,
+                            height: double.infinity,
+                            child: const Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.download_rounded, color: Colors.white, size: 24),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'DOWNLOAD',
+                                    style: TextStyle(
+                                      color: Colors.white, 
+                                      fontSize: 8, 
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  // Tombol Hapus
-                  GestureDetector(
-                    onTap: () {
-                      if (widget.onDelete != null) widget.onDelete!();
-                      setState(() {
-                        _dragOffset = 0;
-                      });
-                    },
-                    child: Container(
-                      width: _buttonWidth,
-                      height: double.infinity,
-                      decoration: BoxDecoration(
+                    if (widget.onDownload != null && widget.onDelete != null)
+                      const SizedBox(width: 4),
+                    // Tombol Hapus
+                    if (widget.onDelete != null)
+                      Material(
                         color: const Color(0xFFEF4444),
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.delete_forever_rounded, color: Colors.white, size: 24),
-                            SizedBox(height: 4),
-                            Text(
-                              'HAPUS',
-                              style: TextStyle(
-                                color: Colors.white, 
-                                fontSize: 8, 
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            setState(() => _dragOffset = 0);
+                            widget.onDelete!();
+                          },
+                          child: SizedBox(
+                            width: _buttonWidth,
+                            height: double.infinity,
+                            child: const Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.delete_forever_rounded, color: Colors.white, size: 24),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'HAPUS',
+                                    style: TextStyle(
+                                      color: Colors.white, 
+                                      fontSize: 8, 
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Layer Atas: Kartu Konten
-          GestureDetector(
-            onHorizontalDragUpdate: _onHorizontalDragUpdate,
-            onHorizontalDragEnd: _onHorizontalDragEnd,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 100),
-              curve: Curves.easeOut,
-              transform: Matrix4.translationValues(_dragOffset, 0, 0),
-              child: cardWidget,
+            // Layer Atas: Kartu Konten
+            GestureDetector(
+              onHorizontalDragStart: _onHorizontalDragStart,
+              onHorizontalDragUpdate: _onHorizontalDragUpdate,
+              onHorizontalDragEnd: _onHorizontalDragEnd,
+              onHorizontalDragCancel: _onHorizontalDragCancel,
+              behavior: HitTestBehavior.translucent,
+              child: AnimatedContainer(
+                duration: _isDragging ? Duration.zero : const Duration(milliseconds: 200),
+                curve: Curves.easeOutCubic,
+                transform: Matrix4.translationValues(_dragOffset, 0, 0),
+                child: cardWidget,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
