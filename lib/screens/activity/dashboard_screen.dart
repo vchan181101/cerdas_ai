@@ -75,6 +75,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // State variabel
   File? _attachmentFile;
+  String? _attachmentImagePath;
+  bool _isAttachmentNetwork = false;
   String _attachmentName = '';
   IconData _attachmentIcon = Icons.insert_drive_file;
   bool _isImageAttachment = false;
@@ -110,6 +112,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (args is String && args.isNotEmpty) {
         _promptController.text = args;
         // Focus the text field when receiving a question from another screen
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _promptFocusNode.requestFocus();
+        });
+      } else if (args is Map) {
+        final title = (args['title'] ?? args['EXTRA_TITLE'] ?? '') as String;
+        final image = (args['image'] ?? args['EXTRA_IMAGE_URI']) as String?;
+        final isNetwork = args['isNetwork'] == true || args['isNetwork'] == 'true';
+
+        if (title.isNotEmpty) {
+          _promptController.text = title;
+        }
+
+        if (image != null && image.isNotEmpty) {
+          _attachmentImagePath = image;
+          _isAttachmentNetwork = isNetwork;
+          _attachmentName = title.isNotEmpty ? title : 'Gambar Materi';
+          _attachmentIcon = Icons.image;
+          _isImageAttachment = true;
+        }
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _promptFocusNode.requestFocus();
         });
@@ -238,6 +260,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }) {
     setState(() {
       _attachmentFile = file;
+      _attachmentImagePath = null;
+      _isAttachmentNetwork = false;
       _attachmentName = name;
       _attachmentIcon = icon;
       _isImageAttachment = isImage;
@@ -247,6 +271,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _clearAttachment() {
     setState(() {
       _attachmentFile = null;
+      _attachmentImagePath = null;
+      _isAttachmentNetwork = false;
       _attachmentName = '';
       _isImageAttachment = false;
     });
@@ -284,10 +310,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               }
             });
           },
-          localeId: appLocaleNotifier.value.languageCode == 'id' ? 'id_ID' : 'en_US',
           listenOptions: stt.SpeechListenOptions(
             cancelOnError: true,
             partialResults: true,
+            localeId: appLocaleNotifier.value.languageCode == 'id' ? 'id_ID' : 'en_US',
           ),
         );
       } else {
@@ -1102,7 +1128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _processUserQuery() async {
     final prompt = _promptController.text.trim();
 
-    if (prompt.isEmpty && _attachmentFile == null) {
+    if (prompt.isEmpty && _attachmentFile == null && _attachmentImagePath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppStrings.promptEmptyAlert),
@@ -1114,7 +1140,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       _showResponseCard = true;
       _isAiThinking = true;
-      _aiResponseText = _attachmentFile != null
+      _aiResponseText = (_attachmentFile != null || _attachmentImagePath != null)
           ? AppStrings.aiAnalyzingText
           : AppStrings.aiThinkingText;
     });
@@ -1139,7 +1165,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     final String? currentAttachmentName = _attachmentName.isNotEmpty ? _attachmentName : null;
-    final String? currentAttachmentPath = _attachmentFile?.path;
+    final String? currentAttachmentPath = _attachmentFile?.path ?? _attachmentImagePath;
     String? currentFileType;
     if (currentAttachmentName != null) {
       currentFileType = currentAttachmentName.contains('.')
@@ -1199,7 +1225,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     await _saveChatHistory(); // Simpan secara permanen
 
     // Simpan otomatis ke UPLOADED_DOCUMENTS jika terdapat upload file/dokumen/gambar
-    if (currentAttachmentName != null || _attachmentFile != null) {
+    if (currentAttachmentName != null || _attachmentFile != null || _attachmentImagePath != null) {
       await _saveUploadedDocument(
         fileName: currentAttachmentName ?? (_isImageAttachment ? "Foto_Unggahan.jpg" : "Dokumen_Unggahan.pdf"),
         filePath: currentAttachmentPath ?? '',
@@ -1401,9 +1427,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Column(
                     children: [
                       // Preview Lampiran Berkas
-                      if (_attachmentFile != null)
+                      if (_attachmentFile != null || (_attachmentImagePath != null && _attachmentImagePath!.isNotEmpty))
                         AttachmentPreviewCard(
-                          file: _attachmentFile!,
+                          file: _attachmentFile,
+                          imagePath: _attachmentImagePath,
+                          isNetwork: _isAttachmentNetwork,
                           fileName: _attachmentName,
                           icon: _attachmentIcon,
                           isImage: _isImageAttachment,

@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../helpers/color/screen_color_helper.dart';
-import '../../values/colors.dart';
 
 class KeteranganScreen extends StatefulWidget {
   final String? title;

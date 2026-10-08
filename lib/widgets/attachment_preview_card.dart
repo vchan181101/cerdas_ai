@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../values/colors.dart';
 
 class AttachmentPreviewCard extends StatelessWidget {
-  final File file;
+  final File? file;
+  final String? imagePath;
+  final bool isNetwork;
   final String fileName;
   final IconData icon;
   final bool isImage;
@@ -11,12 +13,41 @@ class AttachmentPreviewCard extends StatelessWidget {
 
   const AttachmentPreviewCard({
     super.key,
-    required this.file,
+    this.file,
+    this.imagePath,
+    this.isNetwork = false,
     required this.fileName,
     required this.icon,
     this.isImage = false,
     required this.onRemove,
   });
+
+  Widget _buildThumbnail() {
+    if (file != null) {
+      return Image.file(
+        file!,
+        fit: BoxFit.cover,
+      );
+    }
+    if (imagePath != null && imagePath!.isNotEmpty) {
+      final bool isNet = isNetwork ||
+          imagePath!.startsWith('http://') ||
+          imagePath!.startsWith('https://');
+      if (isNet) {
+        return Image.network(
+          imagePath!,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 20),
+        );
+      }
+      return Image.asset(
+        imagePath!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 20),
+      );
+    }
+    return Icon(icon, color: AppColors.indigoPrimary);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +71,7 @@ class AttachmentPreviewCard extends StatelessWidget {
             child: isImage
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      file,
-                      fit: BoxFit.cover,
-                    ),
+                    child: _buildThumbnail(),
                   )
                 : Icon(icon, color: AppColors.indigoPrimary),
           ),
