@@ -95,15 +95,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final headingColor = ScreenColorHelper.getHeadingText(context);
-    final bodyColor = ScreenColorHelper.getBodyText(context);
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final headingColor = textColor;
+    final bodyColor = isDark ? Colors.white70 : Colors.black87;
     final primaryColor = ScreenColorHelper.getPrimaryAction(context);
+    const iconBlue = AppColors.indigoPrimary;
 
     return Scaffold(
-      backgroundColor: AppColors.softBlueBg,
+      backgroundColor: isDark ? AppDarkColors.bgLight : AppColors.bgLight,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: GradientHelper.modernLightGradient,
+        decoration: BoxDecoration(
+          color: isDark ? AppDarkColors.bgLight : AppColors.bgLight,
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -121,10 +124,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 120,
                     height: 120,
                     errorBuilder: (context, error, stackTrace) {
-                      return Icon(
+                      return const Icon(
                         Icons.psychology_rounded,
                         size: 100,
-                        color: headingColor,
+                        color: iconBlue,
                       );
                     },
                   ),
@@ -173,21 +176,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       AppStrings.labelEmail,
-                      style: ScreenStyleHelper.getLabelStyle(context),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    style: TextStyle(fontSize: 14, color: headingColor),
+                    style: TextStyle(fontSize: 14, color: textColor),
                     decoration: ScreenStyleHelper.modernInputDecoration(
                       context: context,
                       hintText: AppStrings.hintEmail,
                       prefixIcon: Icons.email_outlined,
-                    ).copyWith(
-                      fillColor: ScreenColorHelper.getSurfaceColor(context).withValues(alpha: 0.8),
-                      filled: true,
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -207,14 +211,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       AppStrings.labelPassword,
-                      style: ScreenStyleHelper.getLabelStyle(context),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
-                    style: TextStyle(fontSize: 14, color: headingColor),
+                    style: TextStyle(fontSize: 14, color: textColor),
                     decoration: ScreenStyleHelper.modernInputDecoration(
                       context: context,
                       hintText: AppStrings.hintPassword,
@@ -224,14 +232,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           _obscurePassword
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
-                          color: bodyColor.withValues(alpha: 0.5),
+                          color: iconBlue,
                           size: 20,
                         ),
                         onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                       ),
-                    ).copyWith(
-                      fillColor: ScreenColorHelper.getSurfaceColor(context).withValues(alpha: 0.8),
-                      filled: true,
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -254,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: primaryColor,
+                          color: textColor,
                         ),
                       ),
                     ),
@@ -275,15 +280,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Divider Social Login
                   Row(
                     children: [
-                      const Expanded(child: Divider(color: AppColors.inputBorder, thickness: 1)),
+                      Expanded(
+                        child: Divider(
+                          color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
+                          thickness: 1,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: Text(
                           AppStrings.dividerOr,
-                          style: TextStyle(fontSize: 12, color: bodyColor.withValues(alpha: 0.6)),
+                          style: TextStyle(fontSize: 12, color: bodyColor),
                         ),
                       ),
-                      const Expanded(child: Divider(color: AppColors.inputBorder, thickness: 1)),
+                      Expanded(
+                        child: Divider(
+                          color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
+                          thickness: 1,
+                        ),
+                      ),
                     ],
                   ),
 
@@ -316,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Text(
                         AppStrings.promptBelumPunyaAkun,
-                        style: TextStyle(fontSize: 14, color: bodyColor),
+                        style: TextStyle(fontSize: 14, color: textColor),
                       ),
                       GestureDetector(
                         onTap: _isLoading ? null : () => context.pushNamed('/daftar'),
@@ -348,14 +363,21 @@ class _LoginScreenState extends State<LoginScreen> {
     required IconData iconFallback,
     required VoidCallback onTap,
   }) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final Color buttonBg = isDark ? AppDarkColors.white : Colors.white;
+    final BorderSide borderSide = BorderSide(
+      color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
+    );
+
     return Expanded(
       child: SizedBox(
         height: 50,
         child: OutlinedButton(
           onPressed: _isLoading ? null : onTap,
           style: OutlinedButton.styleFrom(
-            backgroundColor: ScreenColorHelper.getSurfaceColor(context),
-            side: BorderSide(color: AppColors.inputBorder.withValues(alpha: 0.3)),
+            backgroundColor: buttonBg,
+            side: borderSide,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
           child: Row(
@@ -366,12 +388,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: 20,
                 height: 20,
                 errorBuilder: (context, error, stackTrace) =>
-                    Icon(iconFallback, color: ScreenColorHelper.getHeadingText(context), size: 22),
+                    Icon(iconFallback, color: textColor, size: 22),
               ),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: ScreenColorHelper.getHeadingText(context)),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: textColor),
               ),
             ],
           ),

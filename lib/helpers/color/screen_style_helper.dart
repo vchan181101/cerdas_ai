@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../values/colors.dart';
+import '../../values/dark_colors.dart';
 import 'screen_color_helper.dart';
 
 class ScreenStyleHelper {
@@ -44,27 +45,35 @@ class ScreenStyleHelper {
   }
 
   /// Dekorasi Input Box Modern
+  /// - Tema Gelap: Kolom gelap (AppDarkColors.white), teks putih, icon biru
+  /// - Tema Terang: Kolom putih (Colors.white), teks hitam, icon biru
   static InputDecoration modernInputDecoration({
     required BuildContext context,
     required String hintText,
     required IconData prefixIcon,
     Widget? suffixIcon,
   }) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    const Color iconBlue = AppColors.indigoPrimary;
+    final Color columnColor = isDark ? AppDarkColors.white : Colors.white;
+    final Color borderColor = isDark ? AppDarkColors.inputBorder : AppColors.inputBorder;
+    final Color hintColor = isDark ? Colors.white54 : Colors.black45;
+
     return InputDecoration(
       hintText: hintText,
-      hintStyle: const TextStyle(color: AppColors.iconTint, fontSize: 14),
-      prefixIcon: Icon(prefixIcon, color: AppColors.iconTint, size: 20),
+      hintStyle: TextStyle(color: hintColor, fontSize: 14),
+      prefixIcon: Icon(prefixIcon, color: iconBlue, size: 20),
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: ScreenColorHelper.getSurfaceColor(context),
+      fillColor: columnColor,
       contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppColors.inputBorder, width: 1),
+        borderSide: BorderSide(color: borderColor, width: 1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: ScreenColorHelper.getPrimaryAction(context), width: 2),
+        borderSide: const BorderSide(color: AppColors.indigoPrimary, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -88,7 +97,7 @@ class ScreenStyleHelper {
   static TextStyle getLabelStyle(BuildContext context) => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.bold,
-    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.textDark,
+    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
   );
   
   // Legacy aliases for backward compatibility (where context is not easily available, though not recommended)

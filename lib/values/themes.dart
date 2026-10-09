@@ -46,8 +46,16 @@ class AppThemes {
           ),
         ),
       ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: AppColors.white,
+        titleTextStyle: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+        contentTextStyle: TextStyle(color: Colors.black, fontSize: 14),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.white,
+      ),
     );
-  } // <-- Poin Perbaikan: Penutup getter lightTheme diletakkan di sini
+  }
 
   /// Dark Theme (Konversi dari res/values-night)
   static ThemeData get darkTheme {
@@ -65,6 +73,14 @@ class AppThemes {
         backgroundColor: Colors.transparent,
         foregroundColor: AppDarkColors.textPrimary,
         systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
+      dialogTheme: const DialogThemeData(
+        backgroundColor: AppDarkColors.white,
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+        contentTextStyle: TextStyle(color: Colors.white, fontSize: 14),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppDarkColors.white,
       ),
       inputDecorationTheme: const InputDecorationTheme(
         focusedBorder: OutlineInputBorder(

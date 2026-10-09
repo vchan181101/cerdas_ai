@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../values/strings.dart';
-import '../../values/colors.dart';
-import '../../helpers/helpers.dart';
+import '../../values/values.dart';
 
 class PasswordChangedScreen extends StatefulWidget {
   const PasswordChangedScreen({super.key});
@@ -59,6 +57,11 @@ class _PasswordChangedScreenState extends State<PasswordChangedScreen>
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final bodyColor = isDark ? Colors.white70 : Colors.black87;
+    const iconBlue = AppColors.indigoPrimary;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -66,6 +69,7 @@ class _PasswordChangedScreenState extends State<PasswordChangedScreen>
         _navigateToLogin();
       },
       child: Scaffold(
+        backgroundColor: isDark ? AppDarkColors.bgLight : AppColors.bgLight,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -83,10 +87,10 @@ class _PasswordChangedScreenState extends State<PasswordChangedScreen>
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: AppColors.successLight,
+                        color: isDark ? AppDarkColors.white : const Color(0xFFEFF6FF),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppColors.emeraldSuccess.withValues(alpha: 0.3),
+                          color: iconBlue.withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -94,7 +98,7 @@ class _PasswordChangedScreenState extends State<PasswordChangedScreen>
                         child: Icon(
                           Icons.check_circle_rounded,
                           size: 72,
-                          color: AppColors.emeraldSuccess,
+                          color: iconBlue,
                         ),
                       ),
                     ),
@@ -111,7 +115,7 @@ class _PasswordChangedScreenState extends State<PasswordChangedScreen>
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: ScreenColorHelper.getHeadingText(context),
+                      color: textColor,
                     ),
                   ),
                 ),
@@ -125,7 +129,7 @@ class _PasswordChangedScreenState extends State<PasswordChangedScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
-                      color: ScreenColorHelper.getBodyText(context),
+                      color: bodyColor,
                       height: 1.4,
                     ),
                   ),
@@ -133,7 +137,7 @@ class _PasswordChangedScreenState extends State<PasswordChangedScreen>
 
                 const Spacer(),
 
-                // 4. Tombol Masuk Kembali Gradient dengan Animasi Fade In
+                // 4. Tombol Masuk Kembali dengan Animasi Fade In
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: SizedBox(
@@ -141,7 +145,7 @@ class _PasswordChangedScreenState extends State<PasswordChangedScreen>
                     child: ElevatedButton(
                       onPressed: _navigateToLogin,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: ScreenColorHelper.getPrimaryAction(context),
+                        backgroundColor: AppColors.indigoPrimary,
                         foregroundColor: AppColors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

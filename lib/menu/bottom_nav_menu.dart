@@ -71,7 +71,11 @@ class BottomNavMenu {
   ];
 
   /// Menghasilkan list BottomNavigationBarItem untuk BottomNavigationBar Widget
-  static List<BottomNavigationBarItem> getNavigationBarItems() {
+  static List<BottomNavigationBarItem> getNavigationBarItems({BuildContext? context}) {
+    final bool isDark = context != null && Theme.of(context).brightness == Brightness.dark;
+    final Color inactiveColor = isDark ? const Color(0xFF94A3B8) : BottomNavStyle.inactiveColor;
+    final Color activeColor = BottomNavStyle.activeColor;
+
     return menuItems.map((item) {
       String itemLabel = item.title;
       if (item.id == idActivity) {
@@ -88,30 +92,36 @@ class BottomNavMenu {
             item.assetIcon!,
             width: 24,
             height: 24,
-            color: BottomNavStyle.inactiveColor,
+            color: inactiveColor,
             fit: BoxFit.contain,
             errorBuilder: (context, error, stackTrace) => Icon(
               item.icon ?? Icons.quiz_outlined,
-              color: BottomNavStyle.inactiveColor,
+              color: inactiveColor,
             ),
           ),
           activeIcon: Image.asset(
             item.assetIcon!,
             width: 24,
             height: 24,
-            color: BottomNavStyle.activeColor,
+            color: activeColor,
             fit: BoxFit.contain,
             errorBuilder: (context, error, stackTrace) => Icon(
               item.activeIcon ?? Icons.quiz,
-              color: BottomNavStyle.activeColor,
+              color: activeColor,
             ),
           ),
           label: itemLabel,
         );
       }
       return BottomNavigationBarItem(
-        icon: Icon(item.icon!),
-        activeIcon: Icon(item.activeIcon!),
+        icon: Icon(
+          item.icon!,
+          color: inactiveColor,
+        ),
+        activeIcon: Icon(
+          item.activeIcon!,
+          color: activeColor,
+        ),
         label: itemLabel,
       );
     }).toList();
@@ -123,8 +133,10 @@ class BottomNavMenu {
     required int currentIndex,
     required ValueChanged<int> onTap,
   }) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      decoration: BottomNavStyle.containerDecoration,
+      decoration: BottomNavStyle.getContainerDecoration(context),
       child: ClipRRect(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -133,14 +145,23 @@ class BottomNavMenu {
         child: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: onTap,
-          backgroundColor: BottomNavStyle.backgroundColor,
-          selectedItemColor: BottomNavStyle.activeColor,
-          unselectedItemColor: BottomNavStyle.inactiveColor,
-          selectedLabelStyle: BottomNavStyle.activeLabelStyle,
-          unselectedLabelStyle: BottomNavStyle.inactiveLabelStyle,
+          backgroundColor: Colors.transparent,
+          selectedItemColor: isDark ? Colors.white : Colors.black,
+          unselectedItemColor: isDark ? Colors.white70 : Colors.black87,
+          selectedIconTheme: const IconThemeData(
+            color: BottomNavStyle.activeColor,
+            size: 24,
+          ),
+          unselectedIconTheme: IconThemeData(
+            color: isDark ? const Color(0xFF94A3B8) : BottomNavStyle.inactiveColor,
+            size: 24,
+          ),
+          selectedLabelStyle: BottomNavStyle.getSelectedLabelStyle(context),
+          unselectedLabelStyle: BottomNavStyle.getUnselectedLabelStyle(context),
           type: BottomNavigationBarType.fixed,
+          useLegacyColorScheme: false,
           elevation: 0,
-          items: getNavigationBarItems(),
+          items: getNavigationBarItems(context: context),
         ),
       ),
     );

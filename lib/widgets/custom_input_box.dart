@@ -34,6 +34,9 @@ class CustomInputBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color textColor = isDark ? Colors.white : Colors.black;
+
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -44,7 +47,7 @@ class CustomInputBox extends StatelessWidget {
       readOnly: readOnly,
       maxLines: maxLines,
       textAlignVertical: TextAlignVertical.center,
-      style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+      style: TextStyle(fontSize: 14, color: textColor),
       decoration: InputBoxHelper.buildInputDecoration(
         context: context,
         hintText: hintText,

@@ -8,6 +8,7 @@ import '../../core/core.dart';
 import '../../helpers/helpers.dart';
 import '../../menu/menu.dart';
 import '../../values/colors.dart';
+import '../../values/dark_colors.dart';
 import '../../values/strings.dart';
 import '../../widgets/bottom_navigation_view_widget.dart';
 
@@ -130,18 +131,37 @@ class _SettingScreenState extends State<SettingScreen> {
 
   // 4. Dialog Informasional
   void _showInfoDialog(String title, String message) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: isDark ? AppDarkColors.white : AppColors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: Text(message, style: const TextStyle(fontSize: 14, height: 1.4)),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(
+            fontSize: 14,
+            height: 1.4,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppStrings.btnClose,
-                style: const TextStyle(
-                    color: AppColors.indigoPrimary, fontWeight: FontWeight.bold)),
+            child: Text(
+              AppStrings.btnClose,
+              style: const TextStyle(
+                color: AppColors.indigoPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -150,17 +170,35 @@ class _SettingScreenState extends State<SettingScreen> {
 
   // 5. Dialog Log Out
   void _showLogoutDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        backgroundColor: isDark ? AppDarkColors.white : AppColors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(AppStrings.logoutConfirmTitle,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: Text(AppStrings.logoutConfirmMessage),
+        title: Text(
+          AppStrings.logoutConfirmTitle,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
+        content: Text(
+          AppStrings.logoutConfirmMessage,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: Text(AppStrings.btnCancel, style: const TextStyle(color: AppColors.textMuted)),
+            child: Text(
+              AppStrings.btnCancel,
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () async {
@@ -172,9 +210,13 @@ class _SettingScreenState extends State<SettingScreen> {
               context.showSnackBar('Berhasil keluar');
               Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
             },
-            child: Text(AppStrings.btnLogout,
-                style:
-                    const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+            child: Text(
+              AppStrings.btnLogout,
+              style: const TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -183,24 +225,27 @@ class _SettingScreenState extends State<SettingScreen> {
 
   // 6. Dialog Pemilihan Tema
   void _showThemeSelectionDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
+      backgroundColor: isDark ? AppDarkColors.white : AppColors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
+        final isDarkSheet = Theme.of(context).brightness == Brightness.dark;
         return Container(
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Pilih Tema Aplikasi',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: isDarkSheet ? Colors.white : Colors.black,
                 ),
               ),
               const SizedBox(height: 16),
@@ -233,15 +278,23 @@ class _SettingScreenState extends State<SettingScreen> {
     required ThemeMode mode,
   }) {
     final bool isSelected = appThemeNotifier.value == mode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ListTile(
-      leading: Icon(icon, color: isSelected ? AppColors.indigoPrimary : AppColors.iconTint),
+      leading: Icon(
+        icon,
+        color: isSelected
+            ? AppColors.indigoPrimary
+            : (isDark ? Colors.white : Colors.black),
+      ),
       title: Text(
         title,
         style: TextStyle(
           fontSize: 15,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? AppColors.indigoPrimary : AppColors.textPrimary,
+          color: isSelected
+              ? AppColors.indigoPrimary
+              : (isDark ? Colors.white : Colors.black),
         ),
       ),
       trailing: isSelected
@@ -417,11 +470,15 @@ class _SettingScreenState extends State<SettingScreen> {
                     // UPGRADE PLUS SECTION
                     Card(
                       elevation: 1,
-                      color: const Color(0xFFE0F2FE),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF1E293B)
+                          : const Color(0xFFE0F2FE),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       child: _buildSettingItem(
                         title: AppStrings.titleUpgradePlus,
-                        textColor: const Color(0xFF0369A1),
+                        textColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
                         trailingIcon: Icons.auto_awesome_rounded,
                         onTap: () {
                           context.pushNamed('/upgrade-plus');
@@ -568,6 +625,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   // Helper Section Header Label
   Widget _buildSectionHeader(String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
       child: Text(
@@ -575,7 +633,7 @@ class _SettingScreenState extends State<SettingScreen> {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.5),
+          color: isDark ? Colors.white : Colors.black,
         ),
       ),
     );
@@ -589,6 +647,9 @@ class _SettingScreenState extends State<SettingScreen> {
     required VoidCallback onTap,
     Color? textColor,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final itemTextColor = textColor ?? (isDark ? Colors.white : Colors.black);
+
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -601,7 +662,7 @@ class _SettingScreenState extends State<SettingScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: textColor != null ? FontWeight.bold : FontWeight.normal,
-                color: textColor ?? ScreenColorHelper.getHeadingText(context),
+                color: itemTextColor,
               ),
             ),
             Row(
@@ -609,14 +670,17 @@ class _SettingScreenState extends State<SettingScreen> {
                 if (trailingText != null) ...[
                   Text(
                     trailingText,
-                    style: TextStyle(fontSize: 14, color: ScreenColorHelper.getBodyText(context)),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                   ),
                   const SizedBox(width: 8),
                 ],
                 Icon(
                   trailingIcon,
                   size: 20,
-                  color: textColor?.withValues(alpha: 0.8) ?? ScreenColorHelper.getBodyText(context).withValues(alpha: 0.3),
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ],
             ),

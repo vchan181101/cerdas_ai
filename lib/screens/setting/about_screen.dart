@@ -127,7 +127,9 @@ class AboutScreen extends StatelessWidget {
                         '© 2026 AICERDAS All Rights Reserved',
                         style: TextStyle(
                           fontSize: 12,
-                          color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.5),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white70
+                              : Colors.black54,
                         ),
                       ),
 

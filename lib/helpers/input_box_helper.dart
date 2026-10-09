@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../values/colors.dart';
+import '../values/dark_colors.dart';
 import 'color/screen_color_helper.dart';
 
 /// Helper untuk standarisasi dekorasi input (TextFormField) di seluruh aplikasi.
@@ -13,20 +14,25 @@ class InputBoxHelper {
     Widget? suffixIcon,
     bool isError = false,
   }) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color columnColor = isDark ? AppDarkColors.white : Colors.white;
+    final Color borderColor = isDark ? AppDarkColors.inputBorder : AppColors.inputBorder;
+    final Color hintColor = isDark ? Colors.white54 : Colors.black45;
+
     return InputDecoration(
       hintText: hintText,
-      hintStyle: const TextStyle(color: AppColors.iconTint, fontSize: 14),
+      hintStyle: TextStyle(color: hintColor, fontSize: 14),
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: ScreenColorHelper.getSurfaceColor(context),
+      fillColor: columnColor,
       contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
 
       // Border Standar (Idle)
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: isError ? Colors.redAccent : AppColors.inputBorder,
+          color: isError ? Colors.redAccent : borderColor,
           width: 1.2,
         ),
       ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/color/screen_color_helper.dart';
 import '../../values/colors.dart';
+import '../../values/dark_colors.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -64,8 +66,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     return Scaffold(
-      backgroundColor: AppColors.bgLight,
+      backgroundColor: ScreenColorHelper.getBackgroundColor(context),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -79,18 +84,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back, size: 28),
-                      color: AppColors.textPrimary,
+                      color: textColor,
                       onPressed: () {
                         Navigator.pushReplacementNamed(context, '/setting');
                       },
                     ),
                     const SizedBox(width: 8),
-                    const Text(
+                    Text(
                       'Ubah Kata Sandi',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: textColor,
                       ),
                     ),
                   ],
@@ -99,22 +104,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 const SizedBox(height: 24),
 
                 // 1. Label & Input Kata Sandi Saat Ini
-                const Text(
+                Text(
                   'Kata Sandi Saat Ini',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _oldPasswordController,
                   obscureText: _obscureOldPassword,
-                  style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+                  style: TextStyle(fontSize: 14, color: textColor),
                   decoration: _buildInputDecoration(
                     hint: 'Masukkan kata sandi lama',
                     isObscured: _obscureOldPassword,
+                    isDark: isDark,
                     onToggleObscure: () {
                       setState(() {
                         _obscureOldPassword = !_obscureOldPassword;
@@ -132,22 +138,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 const SizedBox(height: 16),
 
                 // 2. Label & Input Kata Sandi Baru
-                const Text(
+                Text(
                   'Kata Sandi Baru',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _newPasswordController,
                   obscureText: _obscureNewPassword,
-                  style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+                  style: TextStyle(fontSize: 14, color: textColor),
                   decoration: _buildInputDecoration(
                     hint: 'Masukkan kata sandi baru',
                     isObscured: _obscureNewPassword,
+                    isDark: isDark,
                     onToggleObscure: () {
                       setState(() {
                         _obscureNewPassword = !_obscureNewPassword;
@@ -165,22 +172,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 const SizedBox(height: 16),
 
                 // 3. Label & Input Konfirmasi Kata Sandi Baru
-                const Text(
+                Text(
                   'Konfirmasi Kata Sandi Baru',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
-                  style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+                  style: TextStyle(fontSize: 14, color: textColor),
                   decoration: _buildInputDecoration(
                     hint: 'Ulangi kata sandi baru',
                     isObscured: _obscureConfirmPassword,
+                    isDark: isDark,
                     onToggleObscure: () {
                       setState(() {
                         _obscureConfirmPassword = !_obscureConfirmPassword;
@@ -232,24 +240,31 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   InputDecoration _buildInputDecoration({
     required String hint,
     required bool isObscured,
+    required bool isDark,
     required VoidCallback onToggleObscure,
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: AppColors.iconTint, fontSize: 14),
+      hintStyle: TextStyle(
+        color: isDark ? Colors.white54 : AppColors.iconTint,
+        fontSize: 14,
+      ),
       suffixIcon: IconButton(
         icon: Icon(
           isObscured ? Icons.visibility_off : Icons.visibility,
-          color: AppColors.iconTint,
+          color: isDark ? Colors.white70 : AppColors.iconTint,
         ),
         onPressed: onToggleObscure,
       ),
       filled: true,
-      fillColor: AppColors.white,
+      fillColor: isDark ? AppDarkColors.white : AppColors.white,
       contentPadding: const EdgeInsets.all(14),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppColors.inputBorder, width: 1),
+        borderSide: BorderSide(
+          color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
+          width: 1,
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

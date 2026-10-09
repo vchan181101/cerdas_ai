@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../values/strings.dart';
+import '../../values/values.dart';
 import '../../helpers/helpers.dart';
 import '../../widgets/widgets.dart';
 
@@ -49,6 +49,11 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color textColor = isDark ? Colors.white : Colors.black;
+    final Color bodyColor = isDark ? Colors.white70 : Colors.black87;
+    const Color iconBlue = AppColors.indigoPrimary;
+
     return Scaffold(
       backgroundColor: ScreenColorHelper.getBackgroundColor(context),
       body: SafeArea(
@@ -66,7 +71,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: IconButton(
-                        icon: Icon(Icons.arrow_back_ios_new_rounded, color: ScreenColorHelper.getHeadingText(context)),
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: iconBlue),
                         onPressed: _isLoading ? null : () => Navigator.pop(context),
                       ),
                     ),
@@ -76,7 +81,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: ScreenColorHelper.getHeadingText(context),
+                        color: textColor,
                       ),
                     ),
                   ],
@@ -88,20 +93,20 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(28),
                     decoration: BoxDecoration(
-                      color: ScreenColorHelper.getSurfaceColor(context),
+                      color: isDark ? AppDarkColors.white : Colors.white,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
                           blurRadius: 15,
                           offset: const Offset(0, 5),
                         ),
                       ],
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.lock_reset_rounded,
                       size: 70,
-                      color: ScreenColorHelper.getPrimaryAction(context),
+                      color: iconBlue,
                     ),
                   ),
                 ),
@@ -114,7 +119,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: ScreenColorHelper.getHeadingText(context),
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -122,7 +127,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   AppStrings.descSandiBaru,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: ScreenColorHelper.getBodyText(context),
+                    color: bodyColor,
                     fontSize: 14,
                   ),
                 ),
@@ -131,14 +136,18 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 // 4. Form Input Password Baru
                 Text(
                   AppStrings.labelPasswordBaru,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: textColor,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   enabled: !_isLoading,
-                  style: TextStyle(color: ScreenColorHelper.getHeadingText(context)),
+                  style: TextStyle(color: textColor),
                   decoration: ScreenStyleHelper.modernInputDecoration(
                     context: context,
                     hintText: AppStrings.hintPasswordBaru,
@@ -146,7 +155,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                        color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.5),
+                        color: iconBlue,
                       ),
                       onPressed: () {
                         setState(() {
@@ -154,9 +163,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                         });
                       },
                     ),
-                  ).copyWith(
-                    fillColor: ScreenColorHelper.getSurfaceColor(context).withValues(alpha: 0.8),
-                    filled: true,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -173,14 +179,18 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 // 5. Form Input Konfirmasi Password Baru
                 Text(
                   AppStrings.labelKonfirmasiPasswordBaru,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: textColor,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
                   enabled: !_isLoading,
-                  style: TextStyle(color: ScreenColorHelper.getHeadingText(context)),
+                  style: TextStyle(color: textColor),
                   decoration: ScreenStyleHelper.modernInputDecoration(
                     context: context,
                     hintText: AppStrings.hintKonfirmasiPasswordBaru,
@@ -190,7 +200,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                         _obscureConfirmPassword
                             ? Icons.visibility_off_rounded
                             : Icons.visibility_rounded,
-                        color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.5),
+                        color: iconBlue,
                       ),
                       onPressed: () {
                         setState(() {
@@ -198,9 +208,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                         });
                       },
                     ),
-                  ).copyWith(
-                    fillColor: ScreenColorHelper.getSurfaceColor(context).withValues(alpha: 0.8),
-                    filled: true,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {

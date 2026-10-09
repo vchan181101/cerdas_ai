@@ -45,8 +45,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  // Menampilkan DatePicker untuk Tanggal Lahir
+  // Menampilkan DatePicker untuk Tanggal Lahir (Adaptif Tema Gelap & Terang)
   Future<void> _showDatePicker() async {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final DateTime initialDate = DateTime(2000);
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -54,16 +55,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: ScreenColorHelper.getPrimaryAction(context),
-              onPrimary: Colors.white,
-              onSurface: ScreenColorHelper.getHeadingText(context),
+        if (isDark) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: const ColorScheme.dark(
+                primary: AppColors.indigoPrimary,
+                onPrimary: Colors.white,
+                surface: AppDarkColors.white,
+                onSurface: Colors.white,
+                surfaceContainerHighest: AppDarkColors.bgLight,
+                onSurfaceVariant: Colors.white70,
+              ),
+              dialogBackgroundColor: AppDarkColors.white,
+              datePickerTheme: DatePickerThemeData(
+                backgroundColor: AppDarkColors.white,
+                headerBackgroundColor: AppDarkColors.bgLight,
+                headerForegroundColor: Colors.white,
+                surfaceTintColor: Colors.transparent,
+                dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) return Colors.white;
+                  if (states.contains(WidgetState.disabled)) return Colors.white38;
+                  return Colors.white;
+                }),
+                yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) return Colors.white;
+                  if (states.contains(WidgetState.disabled)) return Colors.white38;
+                  return Colors.white;
+                }),
+                weekdayStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                headerHeadlineStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                headerHelpStyle: const TextStyle(color: Colors.white70),
+                dayStyle: const TextStyle(color: Colors.white),
+                cancelButtonStyle: TextButton.styleFrom(foregroundColor: Colors.white),
+                confirmButtonStyle: TextButton.styleFrom(foregroundColor: Colors.white),
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+              ),
+              iconTheme: const IconThemeData(color: Colors.white),
             ),
-          ),
-          child: child!,
-        );
+            child: child!,
+          );
+        } else {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: const ColorScheme.light(
+                primary: AppColors.indigoPrimary,
+                onPrimary: Colors.white,
+                surface: Colors.white,
+                onSurface: Colors.black,
+                surfaceContainerHighest: Color(0xFFF1F5F9),
+                onSurfaceVariant: Colors.black87,
+              ),
+              dialogBackgroundColor: Colors.white,
+              datePickerTheme: DatePickerThemeData(
+                backgroundColor: Colors.white,
+                headerBackgroundColor: Colors.white,
+                headerForegroundColor: Colors.black,
+                surfaceTintColor: Colors.transparent,
+                dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) return Colors.white;
+                  if (states.contains(WidgetState.disabled)) return Colors.black26;
+                  return Colors.black;
+                }),
+                yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) return Colors.white;
+                  if (states.contains(WidgetState.disabled)) return Colors.black26;
+                  return Colors.black;
+                }),
+                weekdayStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                headerHeadlineStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                headerHelpStyle: const TextStyle(color: Colors.black54),
+                dayStyle: const TextStyle(color: Colors.black),
+                cancelButtonStyle: TextButton.styleFrom(foregroundColor: Colors.black),
+                confirmButtonStyle: TextButton.styleFrom(foregroundColor: Colors.black),
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(foregroundColor: Colors.black),
+              ),
+              iconTheme: const IconThemeData(color: Colors.black),
+            ),
+            child: child!,
+          );
+        }
       },
     );
 
@@ -124,18 +198,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final headingColor = ScreenColorHelper.getHeadingText(context);
-    final bodyColor = ScreenColorHelper.getBodyText(context);
-    final primaryColor = ScreenColorHelper.getPrimaryAction(context);
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color bgColor = isDark ? AppDarkColors.bgLight : Colors.white;
+    final Color textColor = isDark ? Colors.white : Colors.black;
+    final Color bodyColor = isDark ? Colors.white70 : Colors.black87;
+    final Color iconColor = isDark ? Colors.white : Colors.black;
+    final Color columnColor = isDark ? AppDarkColors.white : Colors.white;
+    final Color primaryColor = AppColors.indigoPrimary;
 
     return Scaffold(
-      backgroundColor: AppColors.softBlueBg,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: GradientHelper.modernLightGradient,
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
+      backgroundColor: bgColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
             child: Form(
               key: _formKey,
@@ -152,16 +226,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Text(
                     AppStrings.subtitleDaftar,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: bodyColor.withValues(alpha: 0.6), fontSize: 13),
+                    style: TextStyle(color: bodyColor, fontSize: 13),
                   ),
                   const SizedBox(height: 32),
 
                   // 2. Input Nama Lengkap
-                  _buildLabel(AppStrings.labelNamaLengkap),
+                  _buildLabel(AppStrings.labelNamaLengkap, textColor),
                   CustomInputBox(
                     controller: _namaController,
                     hintText: AppStrings.hintNamaLengkap,
-                    prefixIcon: Icon(Icons.person_outline_rounded, size: 20, color: bodyColor),
+                    prefixIcon: Icon(Icons.person_outline_rounded, size: 20, color: iconColor),
                     validator: (value) => value == null || value.trim().isEmpty ? 'Nama lengkap wajib diisi' : null,
                   ),
                   const SizedBox(height: 20),
@@ -174,11 +248,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabel(AppStrings.labelTempatLahir),
+                            _buildLabel(AppStrings.labelTempatLahir, textColor),
                             CustomInputBox(
                               controller: _tempatLahirController,
                               hintText: 'Kota',
-                              prefixIcon: Icon(Icons.location_city_rounded, size: 18, color: bodyColor),
+                              prefixIcon: Icon(Icons.location_city_rounded, size: 18, color: iconColor),
                               validator: (value) => value == null || value.trim().isEmpty ? 'Wajib diisi' : null,
                             ),
                           ],
@@ -190,11 +264,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildLabel(AppStrings.labelTanggalLahir),
+                            _buildLabel(AppStrings.labelTanggalLahir, textColor),
                             CustomInputBox(
                               controller: _tanggalLahirController,
                               hintText: 'Pilih Tanggal',
-                              prefixIcon: Icon(Icons.calendar_today_rounded, size: 18, color: bodyColor),
+                              prefixIcon: Icon(Icons.calendar_today_rounded, size: 18, color: iconColor),
                               onTap: _showDatePicker,
                               readOnly: true,
                               validator: (value) => value == null || value.trim().isEmpty ? 'Wajib diisi' : null,
@@ -207,26 +281,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 20),
 
                   // 5. Input Jenis Kelamin (Dropdown)
-                  _buildLabel(AppStrings.labelJenisKelamin),
+                  _buildLabel(AppStrings.labelJenisKelamin, textColor),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedJenisKelamin,
-                    decoration: ScreenStyleHelper.modernInputDecoration(
+                    decoration: InputBoxHelper.buildInputDecoration(
                       context: context,
                       hintText: AppStrings.hintJenisKelamin,
-                      prefixIcon: Icons.wc_rounded,
-                    ).copyWith(
-                      fillColor: ScreenColorHelper.getSurfaceColor(context).withValues(alpha: 0.8),
-                      filled: true,
+                      prefixIcon: Icon(Icons.wc_rounded, size: 20, color: iconColor),
                     ),
-                    dropdownColor: ScreenColorHelper.getSurfaceColor(context),
-                    style: TextStyle(color: headingColor, fontSize: 14),
+                    dropdownColor: columnColor,
+                    icon: Icon(Icons.arrow_drop_down_rounded, color: iconColor),
+                    iconEnabledColor: iconColor,
+                    style: TextStyle(color: textColor, fontSize: 14),
                     items: _genderList
                         .map((gender) => DropdownMenuItem(
                           value: gender, 
                           child: Text(
                             gender == 'Laki-laki' ? AppStrings.genderMale : AppStrings.genderFemale, 
-                            style: const TextStyle(fontSize: 14)
-                          )
+                            style: TextStyle(color: textColor, fontSize: 14),
+                          ),
                         ))
                         .toList(),
                     onChanged: _isLoading ? null : (value) => setState(() => _selectedJenisKelamin = value),
@@ -235,22 +308,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 20),
 
                   // 6. Input Alamat
-                  _buildLabel(AppStrings.labelAlamat),
+                  _buildLabel(AppStrings.labelAlamat, textColor),
                   CustomInputBox(
                     controller: _alamatController,
                     hintText: AppStrings.hintAlamat,
-                    prefixIcon: Icon(Icons.map_outlined, size: 20, color: bodyColor),
+                    prefixIcon: Icon(Icons.map_outlined, size: 20, color: iconColor),
                     validator: (value) => value == null || value.trim().isEmpty ? 'Alamat wajib diisi' : null,
                   ),
                   const SizedBox(height: 20),
 
                   // 7. Input Email
-                  _buildLabel(AppStrings.labelEmailAddr),
+                  _buildLabel(AppStrings.labelEmailAddr, textColor),
                   CustomInputBox(
                     controller: _emailController,
                     hintText: AppStrings.hintEmailDaftar,
                     keyboardType: TextInputType.emailAddress,
-                    prefixIcon: Icon(Icons.alternate_email_rounded, size: 20, color: bodyColor),
+                    prefixIcon: Icon(Icons.alternate_email_rounded, size: 20, color: iconColor),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) return 'Email wajib diisi';
                       if (!value.trim().isValidEmail) return 'Format email tidak valid';
@@ -260,14 +333,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 20),
 
                   // 8. Password Fields
-                  _buildLabel(AppStrings.labelPassword),
+                  _buildLabel(AppStrings.labelPassword, textColor),
                   CustomInputBox(
                     controller: _passwordController,
                     hintText: AppStrings.hintPasswordDaftar,
                     obscureText: _obscurePassword,
-                    prefixIcon: Icon(Icons.lock_outline_rounded, size: 20, color: bodyColor),
+                    prefixIcon: Icon(Icons.lock_outline_rounded, size: 20, color: iconColor),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 18, color: bodyColor.withValues(alpha: 0.5)),
+                      icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 18, color: iconColor),
                       onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                     ),
                     validator: (value) => value == null || value.trim().length < 6 ? 'Sandi minimal 6 karakter' : null,
@@ -275,14 +348,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 20),
 
                   // 9. Input Konfirmasi Kata Sandi
-                  _buildLabel(AppStrings.labelKonfirmasiPassword),
+                  _buildLabel(AppStrings.labelKonfirmasiPassword, textColor),
                   CustomInputBox(
                     controller: _konfirmasiPasswordController,
                     hintText: AppStrings.hintConfirmPassword,
                     obscureText: _obscureConfirmPassword,
-                    prefixIcon: Icon(Icons.lock_reset_rounded, size: 20, color: bodyColor),
+                    prefixIcon: Icon(Icons.lock_reset_rounded, size: 20, color: iconColor),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 18, color: bodyColor.withValues(alpha: 0.5)),
+                      icon: Icon(_obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 18, color: iconColor),
                       onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                     ),
                     validator: (value) {
@@ -294,14 +367,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 20),
 
                   // 10. Checkbox Syarat & Ketentuan
-                  CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    value: _cbSyaratKetentuan,
-                    title: Text(AppStrings.termsAndConditions, style: TextStyle(fontSize: 12, color: bodyColor)),
-                    onChanged: _isLoading ? null : (value) => setState(() => _cbSyaratKetentuan = value ?? false),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    activeColor: primaryColor,
-                    checkColor: Colors.white,
+                  Material(
+                    color: Colors.transparent,
+                    child: CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: _cbSyaratKetentuan,
+                      title: Text(AppStrings.termsAndConditions, style: TextStyle(fontSize: 12, color: textColor)),
+                      onChanged: _isLoading ? null : (value) => setState(() => _cbSyaratKetentuan = value ?? false),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: primaryColor,
+                      checkColor: Colors.white,
+                      side: BorderSide(color: isDark ? Colors.white70 : Colors.black54, width: 1.5),
+                    ),
                   ),
                   
                   const SizedBox(height: 24),
@@ -320,7 +397,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(AppStrings.promptSudahPunyaAkun, style: TextStyle(color: bodyColor, fontSize: 14)),
+                      Text(AppStrings.promptSudahPunyaAkun, style: TextStyle(color: textColor, fontSize: 14)),
                       GestureDetector(
                         onTap: _isLoading ? null : () => Navigator.pushReplacementNamed(context, '/login'),
                         child: Text(
@@ -336,11 +413,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildLabel(String label) {
+  Widget _buildLabel(String label, Color textColor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
@@ -348,7 +424,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: ScreenColorHelper.getHeadingText(context),
+          color: textColor,
         ),
       ),
     );

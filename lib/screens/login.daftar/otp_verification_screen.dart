@@ -2,7 +2,6 @@ import "dart:async";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../values/values.dart';
-import '../../helpers/color/gradient_helper.dart';
 
 class OtpVerificationScreen extends StatefulWidget{
   const OtpVerificationScreen({super.key});
@@ -158,12 +157,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final bodyColor = isDark ? Colors.white70 : Colors.black87;
+    final iconColor = isDark ? Colors.white : Colors.black;
+    final columnColor = isDark ? AppDarkColors.white : Colors.white;
+    final bgColor = isDark ? AppDarkColors.bgLight : Colors.white;
+
     return Scaffold(
-      backgroundColor: AppColors.softBlueBg,
+      backgroundColor: bgColor,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: GradientHelper.modernLightGradient,
-        ),
+        color: bgColor,
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -177,55 +181,59 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.navyPrimary),
+                        icon: Icon(Icons.arrow_back_ios_new_rounded, color: iconColor),
                         onPressed: _isLoading ? null : () => Navigator.pop(context),
                       ),
                     ),
-                    const Text(
+                    Text(
                       'Verifikasi OTP',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.navyPrimary,
+                        color: textColor,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 32),
 
-                // 2. Icon Email / Pesan
+                // 2. Icon Email / Pesan (Lingkaran Kolom Gelap di Dark, Putih di Light)
                 Center(
                   child: Container(
                     padding: const EdgeInsets.all(28),
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      color: columnColor,
                       shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
+                        width: 1.5,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.navyPrimary.withValues(alpha: 0.1),
+                          color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
                           blurRadius: 20,
-                          spreadRadius: 5,
+                          spreadRadius: 2,
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.mark_email_unread_rounded,
                       size: 70,
-                      color: AppColors.orangeAccent,
+                      color: iconColor,
                     ),
                   ),
                 ),
                 const SizedBox(height: 32),
 
                 // 3. Title & Subtitle Info Email
-                const Text(
+                Text(
                   'Masukkan Kode OTP',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.navyPrimary,
+                    color: textColor,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -234,15 +242,15 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ? 'Kode verifikasi 4-digit telah dikirimkan ke $_userEmail'
                       : 'Kode verifikasi 4-digit telah dikirimkan ke email Anda',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: AppColors.textMuted,
+                  style: TextStyle(
+                    color: bodyColor,
                     fontSize: 14,
                     height: 1.5,
                   ),
                 ),
                 const SizedBox(height: 40),
 
-                // 4. Box Input Kode OTP 4-Digit
+                // 4. Box Input Kode OTP 4-Digit (Kolom Gelap di Dark Mode, Putih di Light Mode)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(4, (index) {
@@ -250,22 +258,15 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
+                        color: isDark ? AppDarkColors.white : Colors.white,
                         borderRadius: BorderRadius.circular(16),
-                        gradient: const LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color(0xFFFFE8D6), // Oranye lembut
-                            AppColors.white,   // Putih
-                          ],
-                        ),
                         border: Border.all(
-                          color: const Color(0xFFFFCCA0),
+                          color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.orangeAccent.withValues(alpha: 0.12),
+                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.06),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
                           ),
@@ -289,12 +290,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           enabled: !_isLoading,
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
-                          cursorColor: AppColors.black,
+                          cursorColor: textColor,
                           maxLength: 1,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.black,
+                            color: textColor,
                           ),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -309,7 +310,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: const BorderSide(
-                                color: AppColors.navyPrimary,
+                                color: AppColors.indigoPrimary,
                                 width: 2,
                               ),
                             ),
@@ -331,19 +332,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 if (_isLoading)
                   Column(
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 36,
                         height: 36,
                         child: CircularProgressIndicator(
                           strokeWidth: 3,
-                          color: AppColors.navyPrimary,
+                          color: iconColor,
                         ),
                       ),
                       const SizedBox(height: 12),
                       Text(
                         _loadingStatus,
-                        style: const TextStyle(
-                          color: AppColors.navyPrimary,
+                        style: TextStyle(
+                          color: textColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -358,7 +359,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _performVerifyOtp,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.navyPrimary,
+                      backgroundColor: AppColors.indigoPrimary,
                       foregroundColor: Colors.white,
                       elevation: 2,
                       shape: RoundedRectangleBorder(
@@ -381,9 +382,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'Tidak menerima kode? ',
-                      style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                      style: TextStyle(color: bodyColor, fontSize: 14),
                     ),
                     GestureDetector(
                       onTap:
@@ -391,7 +392,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       child: Text(
                         _canResend ? 'Kirim Ulang' : 'Tunggu ($_startSeconds s)',
                         style: TextStyle(
-                          color: _canResend ? AppColors.orangeAccent : AppColors.textMuted,
+                          color: textColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),

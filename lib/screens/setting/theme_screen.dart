@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/color/screen_color_helper.dart';
 import '../../values/colors.dart';
+import '../../values/dark_colors.dart';
 
 class ThemeScreen extends StatefulWidget {
   const ThemeScreen({super.key});
@@ -55,8 +57,11 @@ class _ThemeScreenState extends State<ThemeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     return Scaffold(
-      backgroundColor: AppColors.bgLight,
+      backgroundColor: ScreenColorHelper.getBackgroundColor(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -67,18 +72,18 @@ class _ThemeScreenState extends State<ThemeScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, size: 28),
-                    color: AppColors.textPrimary,
+                    color: textColor,
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/setting');
                     },
                   ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Pilih Tema',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: textColor,
                     ),
                   ),
                 ],
@@ -96,22 +101,31 @@ class _ThemeScreenState extends State<ThemeScreen> {
                   _buildThemeOptionRow(
                     title: 'Default System',
                     isSelected: _selectedTheme == 'system',
+                    textColor: textColor,
                     onTap: () => _changeTheme('system'),
                   ),
-                  const Divider(height: 1, color: AppColors.inputBorder),
+                  Divider(
+                    height: 1,
+                    color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
+                  ),
 
                   // 2. Terang
                   _buildThemeOptionRow(
                     title: 'Terang',
                     isSelected: _selectedTheme == 'light',
+                    textColor: textColor,
                     onTap: () => _changeTheme('light'),
                   ),
-                  const Divider(height: 1, color: AppColors.inputBorder),
+                  Divider(
+                    height: 1,
+                    color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
+                  ),
 
                   // 3. Gelap
                   _buildThemeOptionRow(
                     title: 'Gelap',
                     isSelected: _selectedTheme == 'dark',
+                    textColor: textColor,
                     onTap: () => _changeTheme('dark'),
                   ),
                 ],
@@ -127,6 +141,7 @@ class _ThemeScreenState extends State<ThemeScreen> {
   Widget _buildThemeOptionRow({
     required String title,
     required bool isSelected,
+    required Color textColor,
     required VoidCallback onTap,
   }) {
     return InkWell(
@@ -139,9 +154,9 @@ class _ThemeScreenState extends State<ThemeScreen> {
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
-                color: AppColors.textPrimary,
+                color: textColor,
               ),
             ),
             if (isSelected)

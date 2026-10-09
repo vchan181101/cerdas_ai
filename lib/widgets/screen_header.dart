@@ -19,6 +19,12 @@ class ScreenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color iconColor = isDark ? Colors.white : Colors.black;
+    final TextStyle titleStyle = ScreenStyleHelper.getScreenTitleStyle(context).copyWith(
+      color: isDark ? Colors.white : Colors.black,
+    );
+
     if (centerTitle) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
@@ -29,14 +35,14 @@ class ScreenHeader extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                  icon: Icon(Icons.arrow_back_ios_new, size: 20, color: iconColor),
                   onPressed: onBackTap ?? () => Navigator.pop(context),
                 ),
               ),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: ScreenStyleHelper.getScreenTitleStyle(context),
+              style: titleStyle,
             ),
             if (actions != null)
               Align(
@@ -57,14 +63,14 @@ class ScreenHeader extends StatelessWidget {
         children: [
           if (showBackButton)
             IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+              icon: Icon(Icons.arrow_back_ios_new, size: 20, color: iconColor),
               onPressed: onBackTap ?? () => Navigator.pop(context),
             ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               title,
-              style: ScreenStyleHelper.getScreenTitleStyle(context),
+              style: titleStyle,
             ),
           ),
           if (actions != null) ...actions!,
