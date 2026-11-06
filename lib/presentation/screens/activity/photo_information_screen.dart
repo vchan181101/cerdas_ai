@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import '../../core/core.dart';
-import '../../menu/menu.dart';
-import '../../values/values.dart';
-import '../../widgets/widgets.dart';
-import '../../helpers/helpers.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/menu/menu.dart';
+import 'package:cerdas_ai/core/values/values.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
 
 /// Model Data untuk Item Informasi Foto/Produk Katalog
 class PhotoInfoItem {

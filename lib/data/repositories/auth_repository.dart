@@ -1,5 +1,5 @@
-import '../core/core.dart';
-import '../network/network.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/network/network.dart';
 
 /// Interface untuk manajemen autentikasi pengguna.
 abstract class IAuthRepository {

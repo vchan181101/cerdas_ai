@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/core.dart';
-import '../../helpers/xml/network_manager_helper.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/helpers/xml/network_manager_helper.dart';
 
 class NetworkCheckExampleScreen extends StatelessWidget {
   const NetworkCheckExampleScreen({super.key});

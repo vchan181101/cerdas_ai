@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../helpers/xml/file_path_helper.dart';
+import 'package:cerdas_ai/core/helpers/xml/file_path_helper.dart';
 
 class FileShareExampleScreen extends StatefulWidget {
   const FileShareExampleScreen({super.key});

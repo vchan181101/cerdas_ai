@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../widgets/circular_image_view.dart';
-import '../../values/colors.dart';
+import 'package:cerdas_ai/presentation/widgets/circular_image_view.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class ProfileImageExampleScreen extends StatelessWidget {
   const ProfileImageExampleScreen({super.key});

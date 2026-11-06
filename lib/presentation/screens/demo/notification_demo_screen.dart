@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../adapters/notification_adapter.dart';
-import '../../helpers/helpers.dart';
-import '../../models/notification_item.dart';
-import '../../values/colors.dart';
+import 'package:cerdas_ai/data/adapters/notification_adapter.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/data/models/notification_item.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class NotificationDemoScreen extends StatefulWidget {
   const NotificationDemoScreen({super.key});

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // --- INITIALIZER ---
-import 'initialize_date_formatting.dart';
+import 'core/utils/initialize_date_formatting.dart';
 
-// --- INTEGRASI SEMUA LIBRARY CERDAS AI ---
-import 'core/core.dart';           // lib/core
-import 'repositories/repositories.dart'; // lib/repositories
-import 'security/security.dart';   // lib/security
-import 'values/values.dart';       // lib/values
-import 'widgets/widgets.dart';     // lib/widgets
-import 'screens/screens.dart';     // lib/screens (Orkestrasi semua screen)
-import 'package:cerdas_ai/helpers/helpers.dart'; // lib/helpers
+// --- INTEGRASI SEMUA LIBRARY CERDAS AI SESUAI FOLDER MASING-MASING ---
+import 'core/core.dart';
+import 'data/repositories/repositories.dart';
+import 'core/security/security.dart';
+import 'core/values/values.dart';
+import 'presentation/widgets/widgets.dart';
+import 'presentation/screens/screens.dart';
+import 'core/helpers/helpers.dart';
 
 // Ambil API key dari environment
 const apiKey = String.fromEnvironment('API_KEY');

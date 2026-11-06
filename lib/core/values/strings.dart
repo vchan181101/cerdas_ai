@@ -1,4 +1,4 @@
-import '../widgets/language_option_widget.dart';
+import 'package:cerdas_ai/presentation/widgets/language_option_widget.dart';
 
 class AppStrings {
   /// Helper untuk mengambil string berdasarkan Locale aktif saat ini

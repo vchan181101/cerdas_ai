@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/xml/network_security_helper.dart';
+import 'package:cerdas_ai/core/helpers/xml/network_security_helper.dart';
 
 class NetworkDemoScreen extends StatefulWidget {
   const NetworkDemoScreen({super.key});

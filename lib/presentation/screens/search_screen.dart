@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../helpers/helpers.dart';
-import '../values/strings.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
 
 /// Data Model untuk Hasil Pencarian
 class SearchResultItem {

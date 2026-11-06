@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/helpers.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
 
 class CustomInputBox extends StatelessWidget {
   final TextEditingController controller;

@@ -9,17 +9,20 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-import '../../core/app_constants.dart';
-import '../../helpers/helpers.dart';
-import '../../menu/menu.dart';
-import '../../service/gemini_service.dart';
-import '../../values/colors.dart';
-import '../../values/strings.dart';
-import '../../widgets/ai_response_card.dart';
-import '../../widgets/attachment_preview_card.dart';
-import '../../widgets/circular_image_view.dart';
-import '../../widgets/bottom_navigation_view_widget.dart';
-import '../../widgets/language_option_widget.dart';
+import 'package:cerdas_ai/core/app_constants.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/menu/menu.dart';
+import 'package:cerdas_ai/data/service/gemini_service.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
+import 'package:cerdas_ai/presentation/widgets/ai_response_card.dart';
+import 'package:cerdas_ai/presentation/widgets/attachment_preview_card.dart';
+import 'package:cerdas_ai/presentation/widgets/circular_image_view.dart';
+import 'package:cerdas_ai/presentation/widgets/bottom_navigation_view_widget.dart';
+import 'package:cerdas_ai/presentation/widgets/language_option_widget.dart';
+import 'package:cerdas_ai/presentation/widgets/background_wrapper.dart';
+import 'package:cerdas_ai/presentation/widgets/cerdas_ai_logo_badge.dart';
+import 'package:cerdas_ai/presentation/widgets/avatar_character_picker.dart';
 import 'custom_camera_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -715,10 +718,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       fit: BoxFit.cover,
                                     ),
                                   )
-                                : const CircularImageView(
-                                    imagePath: 'asset/ic_user.png',
-                                    size: 48,
-                                  ),
+                                : photoPath != null && photoPath.startsWith('avatar:')
+                                    ? ClipOval(
+                                        child: AvatarCharacterWidget(
+                                          character: AvatarCharacterList.getById(
+                                            photoPath.replaceFirst('avatar:', ''),
+                                          ),
+                                          size: 48,
+                                        ),
+                                      )
+                                    : ClipOval(
+                                        child: Image.asset(
+                                          'asset/img.png',
+                                          width: 48,
+                                          height: 48,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) => const CircularImageView(
+                                            imagePath: 'asset/ic_user.png',
+                                            size: 48,
+                                          ),
+                                        ),
+                                      ),
                           );
                         },
                       ),
@@ -1296,8 +1316,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ScreenColorHelper.getBackgroundColor(context),
-      body: SafeArea(
-        child: SingleChildScrollView(
+      body: BackgroundWrapper(
+        child: SafeArea(
+          child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1385,10 +1406,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               fit: BoxFit.cover,
                             ),
                           )
-                              : const CircularImageView(
-                            imagePath: 'asset/ic_user.png',
-                            size: 44,
-                          ),
+                              : photoPath != null && photoPath.startsWith('avatar:')
+                                  ? ClipOval(
+                                      child: AvatarCharacterWidget(
+                                        character: AvatarCharacterList.getById(
+                                          photoPath.replaceFirst('avatar:', ''),
+                                        ),
+                                        size: 44,
+                                      ),
+                                    )
+                                  : ClipOval(
+                                      child: Image.asset(
+                                        'asset/img.png',
+                                        width: 44,
+                                        height: 44,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) => const CircularImageView(
+                                          imagePath: 'asset/ic_user.png',
+                                          size: 44,
+                                        ),
+                                      ),
+                                    ),
                         ),
                       );
                     },
@@ -1398,20 +1436,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               const SizedBox(height: 60),
 
-              // 2. Logo Cerdas AI di Tengah
-              Center(
-                child: Image.asset(
-                  AppConstants.logoPath,
-                  width: 180,
-                  height: 180,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Icon(
-                      Icons.psychology_rounded,
-                      size: 140,
-                      color: AppColors.tealAccent,
-                    );
-                  },
-                ),
+              // 2. Logo Cerdas AI di Tengah (Sesuai Referensi Gambar)
+              const Center(
+                child: CerdasAiLogoBadge(size: 170),
               ),
 
               const SizedBox(height: 60),
@@ -1546,6 +1573,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
       ),
+    ),
 
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationViewWidget(

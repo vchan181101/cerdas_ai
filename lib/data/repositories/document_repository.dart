@@ -1,5 +1,5 @@
-import '../core/core.dart';
-import '../models/history_item.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/data/models/history_item.dart';
 
 /// Interface untuk manajemen riwayat dokumen dan aktivitas AI pengguna.
 abstract class IDocumentRepository {
@@ -37,41 +37,83 @@ class DocumentRepository implements IDocumentRepository {
   }
 
   static DocumentRepository get instance => _instance;
+  static DocumentRepository getInstance() => _instance;
 
   final List<HistoryItem> _allItems = [];
+
+  List<HistoryItem> getAllItems() => List<HistoryItem>.from(_allItems);
+
+  void setFavorite(String id, bool isFavorite) {
+    final index = _allItems.indexWhere((item) => item.id == id);
+    if (index != -1) {
+      _allItems[index] = _allItems[index].copyWith(isFavorite: isFavorite);
+    }
+  }
 
   void _initInitialData() {
     if (_allItems.isNotEmpty) return;
     
+    final now = DateTime.now();
     _allItems.addAll([
       HistoryItem(
         id: '1',
-        category: 'PDF',
-        title: 'Laporan_Keuangan_Q3.pdf',
-        snippet: 'Ringkas tabel pengeluaran operasional...',
-        timestamp: 'Hari ini, 14:20',
-        isFavorite: true,
+        category: 'Foto',
+        title: 'Foto_Catatan_Matematika.jpg',
+        snippet: 'Rumus trigonometri dan kalkulus turunan...',
+        timestamp: 'Hari ini, 10:15',
+        isFavorite: false,
+        imageUri: 'asset/ic_logo_aicerdas.png',
+        filePath: 'asset/ic_logo_aicerdas.png',
+        timestampLong: now.millisecondsSinceEpoch,
+        fileSize: '0,90 MB',
+        fileFormat: 'JPG',
       ),
       HistoryItem(
         id: '2',
         category: 'Foto',
         title: 'Foto_Resep_Makanan.jpg',
         snippet: 'Tuliskan langkah resep dari foto bahan ini..',
-        timestamp: 'Kemarin, 09:15',
+        timestamp: 'Hari ini, 09:15',
+        isFavorite: false,
+        imageUri: 'asset/ic_logo_circle_clean.png',
+        filePath: 'asset/ic_logo_circle_clean.png',
+        timestampLong: now.millisecondsSinceEpoch,
+        fileSize: '1,45 MB',
+        fileFormat: 'PNG',
       ),
       HistoryItem(
         id: '3',
-        category: 'Teks',
-        title: 'Kueri Teks AI',
-        snippet: 'Apa bedanya machine learning dan AI?',
-        timestamp: '24 Okt 2026',
+        category: 'Foto',
+        title: 'Diagram_Fisika_Optik.png',
+        snippet: 'Diagram pembiasan lensa cekung dan cembung...',
+        timestamp: 'Hari ini, 08:30',
+        isFavorite: true,
+        imageUri: 'asset/ic_logo_aicerdas.jpg',
+        filePath: 'asset/ic_logo_aicerdas.jpg',
+        timestampLong: now.millisecondsSinceEpoch,
+        fileSize: '2,10 MB',
+        fileFormat: 'PNG',
       ),
       HistoryItem(
         id: '4',
+        category: 'PDF',
+        title: 'Laporan_Keuangan_Q3.pdf',
+        snippet: 'Ringkas tabel pengeluaran operasional...',
+        timestamp: 'Hari ini, 14:20',
+        isFavorite: true,
+        timestampLong: now.millisecondsSinceEpoch,
+        fileSize: '3,20 MB',
+        fileFormat: 'PDF',
+      ),
+      HistoryItem(
+        id: '5',
         category: 'PPT',
         title: 'Presentasi_Proyek.pptx',
         snippet: 'Koreksi struktur poin di slide kedua...',
         timestamp: '22 Okt 2026',
+        timestampLong: now.subtract(const Duration(days: 15)).millisecondsSinceEpoch,
+        fileSize: '5,60 MB',
+        fileFormat: 'PPTX',
       ),
     ]);
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../values/strings.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
 
 class CustomSearchDelegate extends SearchDelegate<String?> {
   final List<String> searchDataList;

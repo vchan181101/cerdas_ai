@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../helpers/animasi/animation_helper.dart';
+import 'package:cerdas_ai/core/helpers/animasi/animation_helper.dart';
 
 class FadeOutExampleScreen extends StatelessWidget {
   const FadeOutExampleScreen({super.key});

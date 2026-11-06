@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:open_file/open_file.dart' as of;
-import '../../core/core.dart';
+import 'package:cerdas_ai/core/core.dart';
 
 // Ekspor agar file lain bisa menggunakan tipe data aslinya
 export 'package:open_file/open_file.dart';

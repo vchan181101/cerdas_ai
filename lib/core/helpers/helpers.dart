@@ -15,7 +15,7 @@ export 'xml/xml_helper.dart';
 export 'locale_helper.dart';
 export 'theme_helper.dart';
 export 'user_profile_helper.dart';
-export '../core/extensions/context_extension.dart';
+export '../extensions/context_extension.dart';
 
 /// Catatan: Tambahkan file baru di folder lib/helpers/ lalu daftarkan 
 /// ekspornya di sini agar dapat diakses melalui import tunggal.

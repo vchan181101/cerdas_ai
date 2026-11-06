@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../adapters/manage_doc_adapter.dart';
-import '../../core/core.dart';
-import '../../helpers/helpers.dart';
-import '../../models/history_item.dart';
-import '../../repositories/repositories.dart';
-import '../../values/values.dart';
+import 'package:cerdas_ai/data/adapters/manage_doc_adapter.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/data/models/history_item.dart';
+import 'package:cerdas_ai/data/repositories/repositories.dart';
+import 'package:cerdas_ai/core/values/values.dart';
 
 class ExampleDocumentListScreen extends StatefulWidget {
   const ExampleDocumentListScreen({super.key});

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../helpers/color/screen_color_helper.dart';
-import '../models/history_item.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/core/helpers/color/screen_color_helper.dart';
+import 'package:cerdas_ai/data/models/history_item.dart';
 
 class HistoryAdapter extends StatelessWidget {
   final List<HistoryItem> historyList;
@@ -221,44 +220,56 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
     final surfaceColor = ScreenColorHelper.getSurfaceColor(context);
     final headingColor = ScreenColorHelper.getHeadingText(context);
     final bodyColor = ScreenColorHelper.getBodyText(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final cardWidget = Card(
-      margin: EdgeInsets.zero,
-      elevation: 1,
-      color: surfaceColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: AppColors.inputBorder.withValues(alpha: 0.15),
+    final cardWidget = Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04),
+          width: 1,
         ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.035),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
       ),
-      child: InkWell(
-        onTap: () {
-          if (widget.enableSlidable && _dragOffset != 0) {
-            setState(() => _dragOffset = 0);
-          } else {
-            widget.onTap();
-          }
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: categoryColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: () {
+            if (widget.enableSlidable && _dragOffset != 0) {
+              setState(() => _dragOffset = 0);
+            } else {
+              widget.onTap();
+            }
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: categoryColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    categoryIcon,
+                    color: categoryColor,
+                    size: 22,
+                  ),
                 ),
-                child: Icon(
-                  categoryIcon,
-                  color: categoryColor,
-                  size: 22,
-                ),
-              ),
 
               const SizedBox(width: 14),
 
@@ -319,19 +330,20 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
           ),
         ),
       ),
+    ),
     );
 
     if (!widget.enableSlidable || !_hasActions) {
       return Container(
-        margin: const EdgeInsets.only(bottom: 12.0),
+        margin: const EdgeInsets.only(bottom: 14.0),
         child: cardWidget,
       );
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12.0),
+      margin: const EdgeInsets.only(bottom: 14.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: Stack(
           clipBehavior: Clip.hardEdge,
           children: [

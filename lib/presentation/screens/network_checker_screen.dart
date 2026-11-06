@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import '../helpers/xml/network_manager_helper.dart';
+import 'package:cerdas_ai/core/helpers/xml/network_manager_helper.dart';
 
 class NetworkCheckerScreen extends StatefulWidget {
   const NetworkCheckerScreen({super.key});

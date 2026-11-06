@@ -1,7 +1,7 @@
 import "dart:async";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../values/values.dart';
+import 'package:cerdas_ai/core/values/values.dart';
 
 class OtpVerificationScreen extends StatefulWidget{
   const OtpVerificationScreen({super.key});

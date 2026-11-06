@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class ProfileBadgeHelper {
   /// Menampilkan dialog/bottom sheet opsi penggantian foto profil

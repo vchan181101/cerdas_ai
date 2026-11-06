@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../core/core.dart';
-import '../../helpers/helpers.dart';
-import '../../values/values.dart';
-import '../../widgets/widgets.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/core/values/values.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 
 class HomeScreenDemo extends StatelessWidget {
   const HomeScreenDemo({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../values/values.dart';
+import 'package:cerdas_ai/core/values/values.dart';
 
 class PasswordChangedScreen extends StatefulWidget {
   const PasswordChangedScreen({super.key});

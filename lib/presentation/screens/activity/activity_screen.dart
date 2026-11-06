@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../adapters/history_adapter.dart';
-import '../../core/app_constants.dart';
-import '../../helpers/helpers.dart';
-import '../../menu/menu.dart';
-import '../../models/history_item.dart';
-import '../../values/colors.dart';
-import '../../values/strings.dart';
-import '../../widgets/bottom_navigation_view_widget.dart';
+import 'package:cerdas_ai/data/adapters/history_adapter.dart';
+import 'package:cerdas_ai/core/app_constants.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/menu/menu.dart';
+import 'package:cerdas_ai/data/models/history_item.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
+import 'package:cerdas_ai/presentation/widgets/background_wrapper.dart';
+import 'package:cerdas_ai/presentation/widgets/bottom_navigation_view_widget.dart';
 
 class ActivityScreen extends StatefulWidget {
   const ActivityScreen({super.key});
@@ -37,7 +37,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
   }
 
   Future<void> _loadInitialData() async {
-    // 1. Tambahkan Data Simulasi Default
+    // 1. Tambahkan Data Simulasi Default Sesuai Desain Gambar 2
     _allHistoryList.addAll([
       HistoryItem(
         id: 'sim_1',
@@ -53,9 +53,30 @@ class _ActivityScreenState extends State<ActivityScreen> {
         category: 'belajar',
         snippet: 'Materi kartu pembelajaran mengenai komponen sel dan organel.',
       ),
+      HistoryItem(
+        id: 'sim_3',
+        title: 'Pertanyaan_lama_#3.pdf',
+        timestamp: 'Baru saja',
+        category: 'dokumen',
+        snippet: 'Jawaban lama #3 dari server...',
+      ),
+      HistoryItem(
+        id: 'sim_4',
+        title: 'Pertanyaan lama #3',
+        timestamp: 'Baru saja',
+        category: 'tanya',
+        snippet: 'Jawaban lama #3 dari server...',
+      ),
+      HistoryItem(
+        id: 'sim_5',
+        title: 'Pertanyaan_lama_#2.pptx',
+        timestamp: 'Baru saja',
+        category: 'dokumen',
+        snippet: 'Jawaban lama #2 dari server...',
+      ),
     ]);
 
-    // 2. Muat Riwayat dari AI Dashboard
+    // 2. Muat Riwayat dari AI Dashboard jika ada
     await _loadAiHistory();
     
     _applyFilters();
@@ -76,7 +97,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
           final String answer = chat['a'] ?? "";
           final String ext = extensions[count % extensions.length];
           
-          // Tambahkan sebagai kategori Dokumen sesuai permintaan
+          // Tambahkan sebagai kategori Dokumen
           _allHistoryList.add(HistoryItem(
             id: 'ai_${count}_${DateTime.now().millisecondsSinceEpoch}',
             title: '${question.toString().replaceAll(' ', '_').split('?')[0]}.$ext',
@@ -163,91 +184,118 @@ class _ActivityScreenState extends State<ActivityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final headingColor = ScreenColorHelper.getHeadingText(context);
     final bodyColor = ScreenColorHelper.getBodyText(context);
 
     return Scaffold(
-      backgroundColor: ScreenColorHelper.getBackgroundColor(context),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          AppStrings.titleAktivitas,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: headingColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _searchController,
-                      style: TextStyle(fontSize: 14, color: headingColor),
-                      decoration: InputDecoration(
-                        hintText: AppStrings.hintSearchRiwayat,
-                        hintStyle: TextStyle(color: bodyColor.withValues(alpha: 0.5), fontSize: 14),
-                        prefixIcon: Icon(Icons.search, color: bodyColor),
-                        filled: true,
-                        fillColor: ScreenColorHelper.getSurfaceColor(context),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColors.inputBorder.withValues(alpha: 0.3), width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: ScreenColorHelper.getPrimaryAction(context), width: 2),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
+      body: BackgroundWrapper(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                  child: Column(
+                    children: [
+                      // Judul Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildFilterChip(label: AppStrings.filterSemua, filterKey: 'semua'),
-                          const SizedBox(width: 8),
-                          _buildFilterChip(label: AppStrings.filterDokumen, filterKey: 'dokumen'),
-                          const SizedBox(width: 8),
-                          _buildFilterChip(label: AppStrings.filterBelajar, filterKey: 'belajar'),
-                          const SizedBox(width: 8),
-                          _buildFilterChip(label: AppStrings.filterTanya, filterKey: 'tanya'),
+                          Text(
+                            AppStrings.titleAktivitas,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: headingColor,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Expanded(
-                      child: _filteredList.isEmpty
-                          ? Center(
-                              child: Text(
-                                'Tidak ada riwayat aktivitas ditemukan',
-                                style: TextStyle(color: bodyColor, fontSize: 14),
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              child: HistoryAdapter(
-                                historyList: _filteredList,
-                                onItemClick: _handleItemClick,
-                                onDelete: _handleDeleteItem,
-                                onDownload: _handleDownloadItem,
-                              ),
+                      const SizedBox(height: 16),
+
+                      // Search Bar Modern
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.06),
+                            width: 1,
+                          ),
+                          boxShadow: isDark
+                              ? null
+                              : [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.03),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                        ),
+                        child: TextFormField(
+                          controller: _searchController,
+                          style: TextStyle(fontSize: 14, color: headingColor),
+                          decoration: InputDecoration(
+                            hintText: AppStrings.hintSearchRiwayat,
+                            hintStyle: TextStyle(
+                              color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                              fontSize: 14,
                             ),
-                    ),
-                  ],
+                            prefixIcon: Icon(
+                              Icons.search_rounded,
+                              color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                              size: 22,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Baris Filter Chips (Semua, Dokumen, Belajar, Tanya)
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildFilterChip(label: AppStrings.filterSemua, filterKey: 'semua'),
+                            const SizedBox(width: 10),
+                            _buildFilterChip(label: AppStrings.filterDokumen, filterKey: 'dokumen'),
+                            const SizedBox(width: 10),
+                            _buildFilterChip(label: AppStrings.filterBelajar, filterKey: 'belajar'),
+                            const SizedBox(width: 10),
+                            _buildFilterChip(label: AppStrings.filterTanya, filterKey: 'tanya'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Daftar List Aktivitas
+                      Expanded(
+                        child: _filteredList.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'Tidak ada riwayat aktivitas ditemukan',
+                                  style: TextStyle(color: bodyColor, fontSize: 14),
+                                ),
+                              )
+                            : SingleChildScrollView(
+                                child: HistoryAdapter(
+                                  historyList: _filteredList,
+                                  onItemClick: _handleItemClick,
+                                  onDelete: _handleDeleteItem,
+                                  onDownload: _handleDownloadItem,
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationViewWidget(
@@ -261,7 +309,9 @@ class _ActivityScreenState extends State<ActivityScreen> {
 
   Widget _buildFilterChip({required String label, required String filterKey}) {
     final bool isActive = _activeFilter == filterKey;
-    final primaryColor = ScreenColorHelper.getPrimaryAction(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const activeColor = Color(0xFF7C3AED); // Ungu bergradasi/glow sesuai Gambar 2
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -271,20 +321,45 @@ class _ActivityScreenState extends State<ActivityScreen> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 9),
         decoration: BoxDecoration(
-          color: isActive ? primaryColor : ScreenColorHelper.getSurfaceColor(context),
-          borderRadius: BorderRadius.circular(20),
+          color: isActive
+              ? activeColor
+              : (isDark ? const Color(0xFF1E293B) : Colors.white),
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: isActive ? primaryColor : AppColors.inputBorder.withValues(alpha: 0.3),
+            color: isActive
+                ? activeColor
+                : (isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.08)),
+            width: 1,
           ),
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: activeColor.withValues(alpha: 0.45),
+                    blurRadius: 14,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 5),
+                  ),
+                ]
+              : (isDark
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 6,
+                        offset: const Offset(0, 1),
+                      ),
+                    ]),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: isActive ? Colors.white : ScreenColorHelper.getHeadingText(context),
+            color: isActive
+                ? Colors.white
+                : (isDark ? Colors.white : const Color(0xFF1E293B)),
           ),
         ),
       ),

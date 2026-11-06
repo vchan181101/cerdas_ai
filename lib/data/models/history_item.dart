@@ -8,6 +8,10 @@ class HistoryItem {
   bool isInTrash;
   final String? filePath;
   final String? ext;
+  final String? imageUri;
+  final int? timestampLong;
+  final String? fileSize;
+  final String? fileFormat;
 
   HistoryItem({
     required this.id,
@@ -19,7 +23,20 @@ class HistoryItem {
     this.isInTrash = false,
     this.filePath,
     this.ext,
+    this.imageUri,
+    this.timestampLong,
+    this.fileSize,
+    this.fileFormat,
   });
+
+  // Getter & Helper kompatibel dengan Java
+  String getId() => id;
+  String getTitle() => title;
+  String getSnippet() => snippet;
+  String? getImageUri() => imageUri ?? filePath;
+  int getTimestampLong() => timestampLong ?? DateTime.now().millisecondsSinceEpoch;
+  String getFileSize() => fileSize ?? '0,90 MB';
+  String getFileFormat() => fileFormat ?? (ext != null ? ext!.replaceAll('.', '').toUpperCase() : 'JPG');
 
   // Method copyWith untuk immutability / update state dengan aman di Flutter
   HistoryItem copyWith({
@@ -32,6 +49,10 @@ class HistoryItem {
     bool? isInTrash,
     String? filePath,
     String? ext,
+    String? imageUri,
+    int? timestampLong,
+    String? fileSize,
+    String? fileFormat,
   }) {
     return HistoryItem(
       id: id ?? this.id,
@@ -43,6 +64,10 @@ class HistoryItem {
       isInTrash: isInTrash ?? this.isInTrash,
       filePath: filePath ?? this.filePath,
       ext: ext ?? this.ext,
+      imageUri: imageUri ?? this.imageUri,
+      timestampLong: timestampLong ?? this.timestampLong,
+      fileSize: fileSize ?? this.fileSize,
+      fileFormat: fileFormat ?? this.fileFormat,
     );
   }
 
@@ -58,6 +83,10 @@ class HistoryItem {
       isInTrash: json['isInTrash'] as bool? ?? false,
       filePath: json['filePath'] as String?,
       ext: json['ext'] as String?,
+      imageUri: json['imageUri'] as String?,
+      timestampLong: json['timestampLong'] as int?,
+      fileSize: json['fileSize'] as String?,
+      fileFormat: json['fileFormat'] as String?,
     );
   }
 
@@ -73,6 +102,10 @@ class HistoryItem {
       'isInTrash': isInTrash,
       if (filePath != null) 'filePath': filePath,
       if (ext != null) 'ext': ext,
+      if (imageUri != null) 'imageUri': imageUri,
+      if (timestampLong != null) 'timestampLong': timestampLong,
+      if (fileSize != null) 'fileSize': fileSize,
+      if (fileFormat != null) 'fileFormat': fileFormat,
     };
   }
 }

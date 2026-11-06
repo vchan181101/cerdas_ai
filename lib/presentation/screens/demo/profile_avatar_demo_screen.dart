@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/core.dart';
-import '../../helpers/profile_badge_helper.dart';
-import '../../values/colors.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/helpers/profile_badge_helper.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class ProfileAvatarDemoScreen extends StatelessWidget {
   const ProfileAvatarDemoScreen({super.key});

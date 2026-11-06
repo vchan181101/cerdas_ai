@@ -1,14 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/core.dart';
-import '../../values/colors.dart';
-import '../../values/strings.dart';
-import '../../widgets/widgets.dart';
-import '../../helpers/helpers.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -27,9 +25,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String _gender = 'Laki-laki';
   File? _selectedImageFile;
+  String? _selectedAvatarId;
   String? _savedPhotoPath;
-
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -61,20 +58,71 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
 
       _savedPhotoPath = prefs.getString('USER_PHOTO_URI');
-      if (_savedPhotoPath != null && File(_savedPhotoPath!).existsSync()) {
-        _selectedImageFile = File(_savedPhotoPath!);
+      if (_savedPhotoPath != null) {
+        if (_savedPhotoPath!.startsWith('avatar:')) {
+          _selectedAvatarId = _savedPhotoPath!.replaceFirst('avatar:', '');
+          _selectedImageFile = null;
+        } else if (File(_savedPhotoPath!).existsSync()) {
+          _selectedImageFile = File(_savedPhotoPath!);
+          _selectedAvatarId = null;
+        }
       }
     });
   }
 
-  // 2. Pemilih Foto dari Galeri (Menggunakan ImagePicker)
-  Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _selectedImageFile = File(image.path);
-      });
+  // 2. Membuka Modal Bottom Sheet Pemilih Avatar Karakter (Sesuai Gambar 2)
+  void _openAvatarPicker() {
+    AvatarCharacterPickerSheet.show(
+      context: context,
+      currentAvatarId: _selectedAvatarId,
+      currentCustomFile: _selectedImageFile,
+      onSelected: (selectedAvatar, customFile) async {
+        setState(() {
+          _selectedImageFile = customFile;
+          if (customFile != null) {
+            _selectedAvatarId = null;
+          } else if (selectedAvatar != null) {
+            _selectedAvatarId = selectedAvatar.id;
+          }
+        });
+        if (customFile != null) {
+          await UserProfileHelper.updatePhoto(customFile.path);
+        } else if (selectedAvatar != null) {
+          await UserProfileHelper.updatePhoto('avatar:${selectedAvatar.id}');
+        }
+      },
+    );
+  }
+
+  // Helper widget untuk merender foto atau avatar terpilih
+  Widget _buildProfileAvatar() {
+    if (_selectedImageFile != null && _selectedImageFile!.existsSync()) {
+      return Image.file(
+        _selectedImageFile!,
+        width: 100,
+        height: 100,
+        fit: BoxFit.cover,
+      );
     }
+    if (_selectedAvatarId != null) {
+      final character = AvatarCharacterList.getById(_selectedAvatarId!);
+      return AvatarCharacterWidget(
+        character: character,
+        size: 100,
+      );
+    }
+    return Image.asset(
+      'asset/img.png',
+      width: 100,
+      height: 100,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => Image.asset(
+        'asset/ic_user.png',
+        width: 100,
+        height: 100,
+        fit: BoxFit.cover,
+      ),
+    );
   }
 
   // 3. Pemilih Tanggal Lahir (DatePicker)
@@ -117,6 +165,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (_selectedImageFile != null) {
       await UserProfileHelper.updatePhoto(_selectedImageFile!.path);
+    } else if (_selectedAvatarId != null) {
+      await UserProfileHelper.updatePhoto('avatar:$_selectedAvatarId');
     }
 
     if (!mounted) return;
@@ -169,24 +219,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Center(
                         child: Stack(
                           children: [
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: ScreenColorHelper.getPrimaryAction(context), width: 2),
-                              ),
-                              child: ClipOval(
-                                child: _selectedImageFile != null
-                                    ? Image.file(
-                                  _selectedImageFile!,
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                )
-                                    : CircularImageView(
-                                  imagePath: AppConstants.placeholderProfile,
-                                  size: 100,
+                            GestureDetector(
+                              onTap: _openAvatarPicker,
+                              child: Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: ScreenColorHelper.getPrimaryAction(context),
+                                    width: 2,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: _buildProfileAvatar(),
                                 ),
                               ),
                             ),
@@ -194,7 +240,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               bottom: 0,
                               right: 0,
                               child: InkWell(
-                                onTap: _pickImage,
+                                onTap: _openAvatarPicker,
                                 borderRadius: BorderRadius.circular(16),
                                 child: Container(
                                   width: 32,
@@ -226,7 +272,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                       Center(
                         child: TextButton(
-                          onPressed: _pickImage,
+                          onPressed: _openAvatarPicker,
                           child: Text(
                             AppStrings.actionChangePhoto,
                             style: TextStyle(
@@ -326,36 +372,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: ScreenColorHelper.getHeadingText(context)),
                       ),
                       const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Row(
-                            children: [
-                              Radio<String>(
-                                value: 'Laki-laki',
-                                groupValue: _gender,
-                                activeColor: ScreenColorHelper.getPrimaryAction(context),
-                                onChanged: (value) {
-                                  if (value != null) setState(() => _gender = value);
-                                },
-                              ),
-                              Text(AppStrings.genderMale),
-                            ],
-                          ),
-                          const SizedBox(width: 24),
-                          Row(
-                            children: [
-                              Radio<String>(
-                                value: 'Perempuan',
-                                groupValue: _gender,
-                                activeColor: ScreenColorHelper.getPrimaryAction(context),
-                                onChanged: (value) {
-                                  if (value != null) setState(() => _gender = value);
-                                },
-                              ),
-                              Text(AppStrings.genderFemale),
-                            ],
-                          ),
-                        ],
+                      RadioGroup<String>(
+                        groupValue: _gender,
+                        onChanged: (value) {
+                          if (value != null) setState(() => _gender = value);
+                        },
+                        child: Row(
+                          children: [
+                            Row(
+                              children: [
+                                Radio<String>(
+                                  value: 'Laki-laki',
+                                  activeColor: ScreenColorHelper.getPrimaryAction(context),
+                                ),
+                                Text(AppStrings.genderMale),
+                              ],
+                            ),
+                            const SizedBox(width: 24),
+                            Row(
+                              children: [
+                                Radio<String>(
+                                  value: 'Perempuan',
+                                  activeColor: ScreenColorHelper.getPrimaryAction(context),
+                                ),
+                                Text(AppStrings.genderFemale),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
 
                       const SizedBox(height: 32),

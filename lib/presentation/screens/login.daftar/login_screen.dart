@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/core.dart';
-import '../../helpers/helpers.dart';
-import '../../widgets/widgets.dart';
-import '../../values/values.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
+import 'package:cerdas_ai/core/values/values.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

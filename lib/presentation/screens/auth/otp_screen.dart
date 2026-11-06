@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import '../../values/colors.dart';
-import '../../widgets/otp_input_field.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/presentation/widgets/otp_input_field.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});

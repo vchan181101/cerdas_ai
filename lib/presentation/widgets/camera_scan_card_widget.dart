@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../helpers/camera_card_helper.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/core/helpers/camera_card_helper.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class CameraScanCardWidget extends StatefulWidget {
   const CameraScanCardWidget({super.key});

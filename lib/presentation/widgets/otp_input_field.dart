@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class OtpInputField extends StatefulWidget {
   final int length;

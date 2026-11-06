@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../helpers/color/screen_color_helper.dart';
-import '../../values/colors.dart';
-import '../../values/dark_colors.dart';
+import 'package:cerdas_ai/core/helpers/color/screen_color_helper.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/core/values/dark_colors.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});

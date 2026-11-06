@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../core/app_constants.dart';
-import '../../helpers/color/screen_color_helper.dart';
-import '../../values/colors.dart';
-import '../../values/strings.dart';
+import 'package:cerdas_ai/core/app_constants.dart';
+import 'package:cerdas_ai/core/helpers/color/screen_color_helper.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});

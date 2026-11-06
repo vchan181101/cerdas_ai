@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../menu/bottom_nav_menu.dart';
+import 'package:cerdas_ai/menu/bottom_nav_menu.dart';
 
 /// Reusable Widget yang membungkus BottomNavMenu dengan gaya modern Cerdas AI.
 /// Memberikan cara pemanggilan yang lebih deklaratif di dalam Scaffold.

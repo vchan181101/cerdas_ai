@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../values/colors.dart';
-import '../values/dark_colors.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/core/values/dark_colors.dart';
 import 'color/screen_color_helper.dart';
 
 /// Helper untuk standarisasi dekorasi input (TextFormField) di seluruh aplikasi.

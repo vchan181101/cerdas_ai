@@ -1,5 +1,5 @@
-import '../core/core.dart';
-import '../network/network.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/network/network.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 /// Interface untuk berinteraksi dengan layanan Kecerdasan Buatan (AI).

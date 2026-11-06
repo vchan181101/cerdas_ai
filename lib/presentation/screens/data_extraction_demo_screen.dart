@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/xml/data_extraction_helper.dart';
+import 'package:cerdas_ai/core/helpers/xml/data_extraction_helper.dart';
 
 class DataExtractionDemoScreen extends StatefulWidget {
   const DataExtractionDemoScreen({super.key});

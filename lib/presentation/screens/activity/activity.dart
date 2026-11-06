@@ -1,6 +1,7 @@
 export 'activity_screen.dart';
 export 'dashboard_screen.dart';
 export 'belajar_screen.dart';
+export 'informasi_screen.dart';
 export 'keterangan_screen.dart';
 export 'document_view_screen.dart';
 export 'repository_screen.dart';

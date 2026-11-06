@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../helpers/animasi/animation_helper.dart';
-import '../../values/colors.dart';
+import 'package:cerdas_ai/core/helpers/animasi/animation_helper.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class SuccessPopExampleScreen extends StatelessWidget {
   const SuccessPopExampleScreen({super.key});

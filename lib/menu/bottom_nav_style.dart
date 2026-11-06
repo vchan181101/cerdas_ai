@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../values/colors.dart';
-import '../values/dark_colors.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/core/values/dark_colors.dart';
 
 class BottomNavStyle {
   /// Warna aktif untuk item menu (Modern Indigo Blue)

@@ -1,4 +1,4 @@
-import '../core/core.dart';
+import 'package:cerdas_ai/core/core.dart';
 import 'security_manager.dart';
 
 class SecurityRepository {

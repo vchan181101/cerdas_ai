@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/core.dart';
-import '../../helpers/helpers.dart';
-import '../../values/values.dart';
-import '../../widgets/widgets.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/core/values/values.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -66,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 surfaceContainerHighest: AppDarkColors.bgLight,
                 onSurfaceVariant: Colors.white70,
               ),
-              dialogBackgroundColor: AppDarkColors.white,
+              dialogTheme: const DialogThemeData(backgroundColor: AppDarkColors.white),
               datePickerTheme: DatePickerThemeData(
                 backgroundColor: AppDarkColors.white,
                 headerBackgroundColor: AppDarkColors.bgLight,
@@ -107,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 surfaceContainerHighest: Color(0xFFF1F5F9),
                 onSurfaceVariant: Colors.black87,
               ),
-              dialogBackgroundColor: Colors.white,
+              dialogTheme: const DialogThemeData(backgroundColor: Colors.white),
               datePickerTheme: DatePickerThemeData(
                 backgroundColor: Colors.white,
                 headerBackgroundColor: Colors.white,

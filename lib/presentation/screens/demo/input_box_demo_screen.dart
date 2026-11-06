@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../core/core.dart';
-import '../../helpers/helpers.dart';
-import '../../values/colors.dart';
-import '../../values/strings.dart';
-import '../../widgets/widgets.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 
 class InputBoxDemoScreen extends StatefulWidget {
   const InputBoxDemoScreen({super.key});

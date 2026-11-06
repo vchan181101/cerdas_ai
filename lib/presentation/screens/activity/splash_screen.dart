@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/app_constants.dart';
-import '../../helpers/color/color_helper.dart';
-import '../../helpers/xml/network_manager_helper.dart';
-import '../../values/strings.dart';
-import '../../values/colors.dart';
+import 'package:cerdas_ai/core/app_constants.dart';
+import 'package:cerdas_ai/core/helpers/color/color_helper.dart';
+import 'package:cerdas_ai/core/helpers/xml/network_manager_helper.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

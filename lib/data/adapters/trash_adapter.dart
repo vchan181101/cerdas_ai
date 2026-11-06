@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/trash_document_item.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/data/models/trash_document_item.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class TrashAdapter extends StatelessWidget {
   final List<TrashDocumentItem> trashList;

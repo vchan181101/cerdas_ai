@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'bottom_nav_style.dart';
-import '../values/strings.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
 
 /// Representation dari `<item>` pada res/menu/bottom_nav_menu.xml
 class BottomNavItemModel {

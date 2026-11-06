@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../adapters/manage_doc_adapter.dart';
-import '../../models/history_item.dart';
-import '../../values/colors.dart';
+import 'package:cerdas_ai/data/adapters/manage_doc_adapter.dart';
+import 'package:cerdas_ai/data/models/history_item.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class KelolaDokumenScreen extends StatefulWidget {
   const KelolaDokumenScreen({super.key});

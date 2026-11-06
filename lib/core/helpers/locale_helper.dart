@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../widgets/language_option_widget.dart';
+import 'package:cerdas_ai/presentation/widgets/language_option_widget.dart';
 
 class LocaleHelper {
   static const String _keySelectedLanguage = 'APP_LANG_CODE';

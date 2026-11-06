@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../models/history_item.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/data/models/history_item.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class ManageDocAdapter extends StatelessWidget {
   final List<HistoryItem> docList;

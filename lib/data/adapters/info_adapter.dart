@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/info_document_item.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/data/models/info_document_item.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class InfoAdapter extends StatelessWidget {
   final List<InfoDocumentItem> infoList;

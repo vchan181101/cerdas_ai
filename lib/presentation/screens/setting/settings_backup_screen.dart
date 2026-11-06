@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../helpers/xml/backup_helper.dart';
-import '../../values/colors.dart';
+import 'package:cerdas_ai/core/helpers/xml/backup_helper.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class SettingsBackupScreen extends StatefulWidget {
   const SettingsBackupScreen({super.key});

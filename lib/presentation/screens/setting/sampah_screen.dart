@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../adapters/trash_adapter.dart';
-import '../../models/trash_document_item.dart';
-import '../../values/colors.dart';
+import 'package:cerdas_ai/data/adapters/trash_adapter.dart';
+import 'package:cerdas_ai/data/models/trash_document_item.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class SampahScreen extends StatefulWidget {
   const SampahScreen({super.key});

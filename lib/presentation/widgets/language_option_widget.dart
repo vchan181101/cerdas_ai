@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/locale_helper.dart';
+import 'package:cerdas_ai/core/helpers/locale_helper.dart';
 
 // Global notifier untuk bahasa aplikasi (Biasanya diletakkan di main.dart atau state management)
 final ValueNotifier<Locale> appLocaleNotifier = ValueNotifier(const Locale('id', 'ID'));

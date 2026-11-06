@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../values/strings.dart';
-import '../../helpers/helpers.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
 
 class LoginWithGoogleScreen extends StatefulWidget {
   const LoginWithGoogleScreen({super.key});

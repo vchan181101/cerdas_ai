@@ -1,7 +1,7 @@
-import '../core/core.dart';
-import '../data/app_database.dart';
-import '../data/user_dao.dart';
-import '../data/user_entity.dart';
+import 'package:cerdas_ai/core/core.dart';
+import 'package:cerdas_ai/data/app_database.dart';
+import 'package:cerdas_ai/data/user_dao.dart';
+import 'package:cerdas_ai/data/user_entity.dart';
 
 /// Interface untuk manajemen data profil pengguna di penyimpanan lokal (SQLite).
 abstract class IUserRepository {

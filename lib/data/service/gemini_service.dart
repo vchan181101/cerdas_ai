@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:cerdas_ai/core/app_constants.dart';
-import '../models/gemini_tier.dart';
+import 'package:cerdas_ai/data/models/gemini_tier.dart';
 
 class GeminiService {
   // Mengambil API Key dari AppConstants (secara dinamis)

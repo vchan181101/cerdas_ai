@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/core.dart';
+import 'package:cerdas_ai/core/core.dart';
 
 /// Interceptor untuk menyuntikkan Token Bearer secara otomatis ke setiap request.
 /// Membaca token dari penyimpanan lokal (SharedPreferences).

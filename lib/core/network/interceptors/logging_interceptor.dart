@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../../core/core.dart';
+import 'package:cerdas_ai/core/core.dart';
 
 /// Interceptor untuk mencetak log request dan response API secara rapi
 class LoggingInterceptor extends Interceptor {

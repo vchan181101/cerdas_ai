@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../values/styles.dart';
+import 'package:cerdas_ai/core/values/styles.dart';
 
 class CircularImageView extends StatelessWidget {
   final String imagePath;

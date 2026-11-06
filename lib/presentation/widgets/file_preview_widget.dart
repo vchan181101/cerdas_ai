@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../helpers/helpers.dart';
-import '../values/values.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/core/values/values.dart';
 
 /// Widget untuk menampilkan pratinjau berkas dengan opsi Buka & Bagikan.
 /// Diperbarui untuk mendukung standar modern Cerdas AI.

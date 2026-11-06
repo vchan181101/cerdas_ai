@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../values/values.dart';
-import '../../helpers/helpers.dart';
-import '../../widgets/widgets.dart';
+import 'package:cerdas_ai/core/values/values.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 
 class NewPasswordScreen extends StatefulWidget {
   const NewPasswordScreen({super.key});

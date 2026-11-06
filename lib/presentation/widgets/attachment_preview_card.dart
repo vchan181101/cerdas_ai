@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../values/colors.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
 
 class AttachmentPreviewCard extends StatelessWidget {
   final File? file;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../values/strings.dart';
-import '../../helpers/helpers.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
+import 'package:cerdas_ai/core/helpers/helpers.dart';
 
 class LoginWithIosScreen extends StatefulWidget {
   const LoginWithIosScreen({super.key});

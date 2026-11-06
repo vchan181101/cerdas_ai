@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../helpers/color/color_helper.dart';
+import 'package:cerdas_ai/core/helpers/color/color_helper.dart';
 
 class ScreenHeader extends StatelessWidget {
   final String title;

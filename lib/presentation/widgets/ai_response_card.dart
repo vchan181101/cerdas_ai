@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../helpers/color/color_helper.dart';
-import '../values/colors.dart';
-import '../values/strings.dart';
+import 'package:cerdas_ai/core/helpers/color/color_helper.dart';
+import 'package:cerdas_ai/core/values/colors.dart';
+import 'package:cerdas_ai/core/values/strings.dart';
 
 class AiResponseCard extends StatelessWidget {
   final String response;

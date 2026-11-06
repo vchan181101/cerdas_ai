@@ -19,6 +19,7 @@ class AppRoutes {
   static const String dashboard = '/dashboard';
   static const String aktivitas = '/aktivitas';
   static const String belajar = '/belajar';
+  static const String informasi = '/informasi';
   static const String keterangan = '/keterangan';
   static const String documentView = '/document-view';
   static const String repository = '/repository';
@@ -74,6 +75,7 @@ class AppRoutes {
       dashboard: (context) => const DashboardScreen(),
       aktivitas: (context) => const ActivityScreen(),
       belajar: (context) => const BelajarScreen(),
+      informasi: (context) => const InformasiScreen(),
       keterangan: (context) => const KeteranganScreen(),
       documentView: (context) => DocumentViewScreen(),
       repository: (context) => const RepositoryScreen(),
