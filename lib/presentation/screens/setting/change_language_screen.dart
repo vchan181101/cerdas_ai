@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cerdas_ai/core/values/colors.dart';
 import 'package:cerdas_ai/core/values/strings.dart';
 import 'package:cerdas_ai/core/helpers/helpers.dart';
-import 'package:cerdas_ai/presentation/widgets/language_option_widget.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 
 class ChangeLanguageScreen extends StatefulWidget {
   const ChangeLanguageScreen({super.key});
@@ -67,95 +67,152 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = ScreenColorHelper.getPrimaryAction(context);
-    final cardColor = ScreenColorHelper.getSurfaceColor(context);
-    final headingColor = ScreenColorHelper.getHeadingText(context);
+    final headingColor = isDark ? Colors.white : ScreenColorHelper.getHeadingText(context);
 
-    return Scaffold(
-      backgroundColor: ScreenColorHelper.getBackgroundColor(context),
-      appBar: AppBar(
-        backgroundColor: ScreenColorHelper.getBackgroundColor(context),
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 22,
-            color: headingColor,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          AppStrings.titleUbahBahasa,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: headingColor,
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+    return BackgroundWrapper(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Kolom 1: Bahasa Indonesia
-              _buildLanguageColumn(
-                name: 'Bahasa Indonesia',
-                flagWidget: _buildIndonesiaFlag(),
-                isSelected: _selectedCode == 'id',
-                cardColor: cardColor,
-                primaryColor: primaryColor,
-                headingColor: headingColor,
-                onTap: () {
-                  setState(() {
-                    _selectedCode = 'id';
-                  });
-                },
+              // Header / Top Bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF1E293B) : Colors.black.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 18,
+                          color: headingColor,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      AppStrings.titleUbahBahasa,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: headingColor,
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
-              const SizedBox(height: 12),
+              // Form Konten Scrollable
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Kolom 1: Bahasa Indonesia
+                      _buildLanguageColumn(
+                        name: 'Bahasa Indonesia',
+                        flagWidget: _buildIndonesiaFlag(),
+                        isSelected: _selectedCode == 'id',
+                        isDark: isDark,
+                        primaryColor: primaryColor,
+                        onTap: () {
+                          setState(() {
+                            _selectedCode = 'id';
+                          });
+                        },
+                      ),
 
-              // Kolom 2: Bahasa Inggris
-              _buildLanguageColumn(
-                name: 'Bahasa English',
-                flagWidget: _buildUKFlag(),
-                isSelected: _selectedCode == 'en',
-                cardColor: cardColor,
-                primaryColor: primaryColor,
-                headingColor: headingColor,
-                onTap: () {
-                  setState(() {
-                    _selectedCode = 'en';
-                  });
-                },
-              ),
+                      const SizedBox(height: 14),
 
-              const SizedBox(height: 32),
+                      // Kolom 2: Bahasa Inggris
+                      _buildLanguageColumn(
+                        name: 'Bahasa English',
+                        flagWidget: _buildUKFlag(),
+                        isSelected: _selectedCode == 'en',
+                        isDark: isDark,
+                        primaryColor: primaryColor,
+                        onTap: () {
+                          setState(() {
+                            _selectedCode = 'en';
+                          });
+                        },
+                      ),
 
-              // Button Simpan
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _saveLanguage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: Text(
-                    AppStrings.btnSimpan,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                      color: Colors.white,
-                    ),
+                      const Spacer(),
+
+                      // Button Simpan
+                      Container(
+                        width: double.infinity,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: isDark
+                              ? const LinearGradient(
+                                  colors: [
+                                    Color(0xFF2563EB),
+                                    Color(0xFF6366F1),
+                                    Color(0xFF8B5CF6),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                )
+                              : const LinearGradient(
+                                  colors: [
+                                    Color(0xFF2563EB),
+                                    Color(0xFF38BDF8),
+                                  ],
+                                ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF2563EB).withValues(alpha: isDark ? 0.45 : 0.25),
+                              blurRadius: 18,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _saveLanguage,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                AppStrings.btnSimpan,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.verified_rounded,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+                    ],
                   ),
                 ),
               ),
@@ -171,32 +228,33 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
     required String name,
     required Widget flagWidget,
     required bool isSelected,
-    required Color cardColor,
+    required bool isDark,
     required Color primaryColor,
-    required Color headingColor,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(14),
+          color: isDark ? const Color(0xFF0F172A) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? primaryColor
-                : AppColors.inputBorder.withValues(alpha: 0.3),
-            width: isSelected ? 1.8 : 1.0,
+                ? (isDark ? const Color(0xFF38BDF8) : primaryColor)
+                : (isDark ? const Color(0xFF334155) : AppColors.inputBorder.withValues(alpha: 0.5)),
+            width: isSelected ? 1.5 : 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isSelected ? 0.04 : 0.02),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: isSelected && isDark
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF38BDF8).withValues(alpha: 0.25),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  ),
+                ]
+              : null,
         ),
         child: Row(
           children: [
@@ -209,15 +267,15 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
               child: Text(
                 name,
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: headingColor,
+                  fontSize: 15,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
             ),
 
-            // Kanan: Icon Lingkaran sebagai Pilihan
-            _buildSelectionCircle(isSelected, primaryColor),
+            // Kanan: Icon Lingkaran sebagai Pilihan (Checkmark / Radio Indicator)
+            _buildSelectionCircle(isSelected, isDark),
           ],
         ),
       ),
@@ -225,25 +283,41 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
   }
 
   /// Icon Lingkaran sebagai Pilihan (Checkmark / Radio Indicator)
-  Widget _buildSelectionCircle(bool isSelected, Color primaryColor) {
+  Widget _buildSelectionCircle(bool isSelected, bool isDark) {
+    if (isSelected) {
+      return Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: const Color(0xFF38BDF8),
+          boxShadow: isDark
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF38BDF8).withValues(alpha: 0.5),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ]
+              : null,
+        ),
+        child: const Icon(
+          Icons.check,
+          size: 16,
+          color: Colors.white,
+        ),
+      );
+    }
     return Container(
-      width: 22,
-      height: 22,
+      width: 24,
+      height: 24,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isSelected ? primaryColor : Colors.transparent,
         border: Border.all(
-          color: isSelected ? primaryColor : Colors.grey.shade400,
+          color: isDark ? const Color(0xFF64748B) : Colors.grey.shade400,
           width: 2.0,
         ),
       ),
-      child: isSelected
-          ? const Icon(
-              Icons.check,
-              size: 14,
-              color: Colors.white,
-            )
-          : null,
     );
   }
 

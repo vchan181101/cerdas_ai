@@ -450,8 +450,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  static final List<ChatHistoryItem> _defaultMockHistory = [
+    ChatHistoryItem(
+      question: 'Sejarah Indonesia',
+      answer: 'Diskusi mengenai sejarah dan budaya Indonesia',
+    ),
+    ChatHistoryItem(
+      question: 'Analisis AI: hallo selamat pagi',
+      answer: 'Percakapan awal dengan asisten AI pagi hari',
+    ),
+    ChatHistoryItem(
+      question: 'hallo selamat pagi',
+      answer: 'Sapaan hangat dan respon asisten cerdas',
+    ),
+    ChatHistoryItem(
+      question: 'hello everybody',
+      answer: 'Pesan pengantar dalam forum obrolan',
+    ),
+    ChatHistoryItem(
+      question: 'Analisis AI: Biologi: Struktur Sel Manusia',
+      answer: 'Pembahasan mendalam tentang organel sel',
+    ),
+    ChatHistoryItem(
+      question: 'Biologi: Struktur Sel Manusia',
+      answer: 'Materi pembelajaran mengenai biologi',
+    ),
+  ];
+
   void _showHistorySheet() {
     String searchQuery = "";
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
@@ -464,182 +492,225 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
         return StatefulBuilder(
           builder: (context, setModalState) {
-            final filteredHistory = _chatHistory
+            final sourceHistory = _chatHistory.isNotEmpty ? _chatHistory : _defaultMockHistory;
+            final filteredHistory = sourceHistory
                 .where((item) =>
                     item.question.toLowerCase().contains(searchQuery.toLowerCase()) ||
                     item.answer.toLowerCase().contains(searchQuery.toLowerCase()))
                 .toList();
 
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.85,
-              decoration: BoxDecoration(
-                color: surfaceColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-              ),
-              child: Column(
-                children: [
-                  // Drag Handle
-                  Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: bodyColor.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 480),
+                height: MediaQuery.of(context).size.height * 0.82,
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF12192F) : surfaceColor,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF253358) : bodyColor.withValues(alpha: 0.1),
+                    width: 1.2,
                   ),
-                  
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          AppStrings.btnHistoryChat,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: headingColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.15),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // Drag Handle
+                    Container(
+                      width: 44,
+                      height: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF475569) : bodyColor.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppStrings.btnHistoryChat,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : headingColor,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close_rounded, color: isDark ? Colors.white70 : headingColor),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Search Bar inside History
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF0F1528) : bodyColor.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF1E2848) : Colors.transparent,
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.close_rounded, color: headingColor),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Search Bar inside History
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                    child: TextField(
-                      style: TextStyle(color: headingColor, fontSize: 14),
-                      decoration: InputDecoration(
-                        hintText: AppStrings.historySearchHint,
-                        hintStyle: TextStyle(color: bodyColor.withValues(alpha: 0.5)),
-                        prefixIcon: Icon(Icons.search_rounded, size: 20, color: bodyColor),
-                        filled: true,
-                        fillColor: bodyColor.withValues(alpha: 0.05),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      onChanged: (val) {
-                        setModalState(() {
-                          searchQuery = val;
-                        });
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Expanded(
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        if (!_isLoadingHistory && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                          // Simulasi Loading Saat Scroll ke Bawah
-                          setModalState(() => _isLoadingHistory = true);
-                          Future.delayed(const Duration(seconds: 2), () {
-                            if (mounted) {
-                              setModalState(() {
-                                _chatHistory.addAll([
-                                  ChatHistoryItem(question: "Pertanyaan lama #1", answer: "Jawaban lama #1 dari server..."),
-                                  ChatHistoryItem(question: "Pertanyaan lama #2", answer: "Jawaban lama #2 dari server..."),
-                                  ChatHistoryItem(question: "Pertanyaan lama #3", answer: "Jawaban lama #3 dari server..."),
-                                ]);
-                                _isLoadingHistory = false;
-                                _saveChatHistory();
-                              });
-                              setState(() {}); // Update state utama juga agar data sinkron
-                            }
-                          });
-                        }
-                        return true;
-                      },
-                      child: filteredHistory.isEmpty 
-                        ? Center(
-                            child: Text(
-                              AppStrings.historyEmptyResult, 
-                              style: TextStyle(color: bodyColor),
+                        child: TextField(
+                          style: TextStyle(color: isDark ? Colors.white : headingColor, fontSize: 13.5),
+                          decoration: InputDecoration(
+                            hintText: AppStrings.historySearchHint,
+                            hintStyle: TextStyle(
+                              color: isDark ? const Color(0xFF64748B) : bodyColor.withValues(alpha: 0.5),
+                              fontSize: 13.5,
                             ),
-                          )
-                        : ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: filteredHistory.length + (_isLoadingHistory ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index == filteredHistory.length) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 20),
-                                child: Center(child: CircularProgressIndicator()),
-                              );
-                            }
-                            final item = filteredHistory[index];
-                            return InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _promptController.text = item.question;
-                                  _cachedAnswer = item.answer;
-                                  _showResponseCard = false; // Reset respon dulu, tunggu tombol "Kirim"
-                                });
-                                Navigator.pop(context);
-                              },
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: bodyColor.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: bodyColor.withValues(alpha: 0.1)),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Baris Pertanyaan
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.person_outline, size: 16, color: Colors.blueGrey),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            item.question,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: headingColor),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    // Baris Jawaban AI
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Icon(Icons.psychology, size: 16, color: ScreenColorHelper.getPrimaryAction(context)),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            item.answer,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 13, color: headingColor),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
+                            prefixIcon: Icon(
+                              Icons.search_rounded,
+                              size: 20,
+                              color: isDark ? const Color(0xFF64748B) : bodyColor,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: InputBorder.none,
+                          ),
+                          onChanged: (val) {
+                            setModalState(() {
+                              searchQuery = val;
+                            });
                           },
                         ),
+                      ),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 6),
+
+                    Expanded(
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification scrollInfo) {
+                          if (!_isLoadingHistory && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                            setModalState(() => _isLoadingHistory = true);
+                            Future.delayed(const Duration(seconds: 2), () {
+                              if (mounted) {
+                                setModalState(() {
+                                  _chatHistory.addAll([
+                                    ChatHistoryItem(question: "Pertanyaan lama #1", answer: "Jawaban lama #1 dari server..."),
+                                    ChatHistoryItem(question: "Pertanyaan lama #2", answer: "Jawaban lama #2 dari server..."),
+                                    ChatHistoryItem(question: "Pertanyaan lama #3", answer: "Jawaban lama #3 dari server..."),
+                                  ]);
+                                  _isLoadingHistory = false;
+                                  _saveChatHistory();
+                                });
+                                setState(() {});
+                              }
+                            });
+                          }
+                          return true;
+                        },
+                        child: filteredHistory.isEmpty 
+                          ? Center(
+                              child: Text(
+                                AppStrings.historyEmptyResult, 
+                                style: TextStyle(color: isDark ? const Color(0xFF8E9BB0) : bodyColor),
+                              ),
+                            )
+                          : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                            itemCount: filteredHistory.length + (_isLoadingHistory ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index == filteredHistory.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  child: Center(child: CircularProgressIndicator()),
+                                );
+                              }
+                              final item = filteredHistory[index];
+                              final isFirstItem = index == 0;
+                              return InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _promptController.text = item.question;
+                                    _cachedAnswer = item.answer;
+                                    _showResponseCard = false;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                borderRadius: BorderRadius.circular(14),
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? (isFirstItem ? const Color(0xFF131D38) : const Color(0xFF141C34))
+                                        : bodyColor.withValues(alpha: 0.05),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color: isDark
+                                          ? (isFirstItem ? const Color(0xFF2563EB) : const Color(0xFF1E2848))
+                                          : bodyColor.withValues(alpha: 0.1),
+                                      width: isFirstItem && isDark ? 1.5 : 1.0,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: isDark ? const Color(0xFF1C2542) : bodyColor.withValues(alpha: 0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.person_outline_rounded,
+                                          size: 20,
+                                          color: isDark ? const Color(0xFF94A3B8) : bodyColor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.question,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 13.5,
+                                                fontWeight: FontWeight.bold,
+                                                color: isDark ? Colors.white : headingColor,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 3),
+                                            Text(
+                                              item.answer,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 11.5,
+                                                color: isDark ? const Color(0xFF8E9BB0) : bodyColor.withValues(alpha: 0.7),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -660,258 +731,278 @@ class _DashboardScreenState extends State<DashboardScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
-        return Container(
-          padding: EdgeInsets.only(
-            top: 8,
-            left: 16,
-            right: 16,
-            bottom: MediaQuery.of(sheetContext).padding.bottom + 20,
-          ),
-          decoration: BoxDecoration(
-            color: surfaceColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 16,
-                offset: const Offset(0, -4),
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 480),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: EdgeInsets.only(
+              top: 8,
+              left: 18,
+              right: 18,
+              bottom: MediaQuery.of(sheetContext).padding.bottom + 18,
+            ),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF12192F) : surfaceColor,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark ? const Color(0xFF253358) : bodyColor.withValues(alpha: 0.1),
+                width: 1.2,
               ),
-            ],
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Drag Handle
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: bodyColor.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.15),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Drag Handle
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 4,
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF475569) : bodyColor.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
-                ),
 
-                // Profil Header Mini Card
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    children: [
-                      ValueListenableBuilder<String?>(
-                        valueListenable: userPhotoNotifier,
-                        builder: (context, photoPath, _) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.navyPrimary, width: 2),
-                            ),
-                            child: photoPath != null && File(photoPath).existsSync()
-                                ? ClipOval(
-                                    child: Image.file(
-                                      File(photoPath),
-                                      width: 48,
-                                      height: 48,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : photoPath != null && photoPath.startsWith('avatar:')
-                                    ? ClipOval(
-                                        child: AvatarCharacterWidget(
-                                          character: AvatarCharacterList.getById(
-                                            photoPath.replaceFirst('avatar:', ''),
-                                          ),
-                                          size: 48,
+                  // Profil Header Mini Card
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      children: [
+                        ValueListenableBuilder<String?>(
+                          valueListenable: userPhotoNotifier,
+                          builder: (context, photoPath, _) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isDark ? const Color(0xFF818CF8) : AppColors.navyPrimary,
+                                  width: 2,
+                                ),
+                                boxShadow: isDark
+                                    ? [
+                                        BoxShadow(
+                                          color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                                          blurRadius: 10,
                                         ),
-                                      )
-                                    : ClipOval(
-                                        child: Image.asset(
-                                          'asset/img.png',
-                                          width: 48,
-                                          height: 48,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) => const CircularImageView(
-                                            imagePath: 'asset/ic_user.png',
+                                      ]
+                                    : null,
+                              ),
+                              child: photoPath != null && File(photoPath).existsSync()
+                                  ? ClipOval(
+                                      child: Image.file(
+                                        File(photoPath),
+                                        width: 48,
+                                        height: 48,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : photoPath != null && photoPath.startsWith('avatar:')
+                                      ? ClipOval(
+                                          child: AvatarCharacterWidget(
+                                            character: AvatarCharacterList.getById(
+                                              photoPath.replaceFirst('avatar:', ''),
+                                            ),
                                             size: 48,
                                           ),
+                                        )
+                                      : ClipOval(
+                                          child: Image.asset(
+                                            'asset/img.png',
+                                            width: 48,
+                                            height: 48,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (_, __, ___) => const CircularImageView(
+                                              imagePath: 'asset/ic_user.png',
+                                              size: 48,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Akun Pengguna',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? Colors.white : headingColor,
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Akun Pengguna',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? Colors.white : headingColor,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 3),
-                            ValueListenableBuilder<String>(
-                              valueListenable: userTierNotifier,
-                              builder: (context, tier, _) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.navyPrimary.withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    'Status: $tier',
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.navyPrimary,
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF7C3AED),
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF7C3AED).withValues(alpha: 0.4),
+                                      blurRadius: 6,
                                     ),
+                                  ],
+                                ),
+                                child: const Text(
+                                  'Pro',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
-                                );
-                              },
-                            ),
-                          ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: isDark ? Colors.white70 : bodyColor.withValues(alpha: 0.6),
+                          ),
+                          onPressed: () => Navigator.pop(sheetContext),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+                  Divider(
+                    color: isDark ? const Color(0xFF1E2948) : Colors.black.withValues(alpha: 0.08),
+                    height: 1,
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Label Pilihan Kolom
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12, left: 4),
+                    child: Text(
+                      'PILIHAN MENU PROFIL (3 KOLOM)',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8,
+                        color: isDark ? const Color(0xFF8E9BB0) : bodyColor.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ),
+
+                  // 3 Kolom Pilihan (Side by Side Card Columns)
+                  Row(
+                    children: [
+                      // Kolom 1: Notifikasi
+                      Expanded(
+                        child: _buildProfileMenuColumnCard(
+                          key: const ValueKey('profile_menu_col_notifikasi'),
+                          context: sheetContext,
+                          title: 'Notifikasi',
+                          icon: Icons.notifications_none_rounded,
+                          iconColor: const Color(0xFF3B82F6),
+                          bgColor: isDark ? const Color(0xFF111D38) : const Color(0xFF3B82F6).withValues(alpha: 0.08),
+                          borderColor: isDark ? const Color(0xFF2563EB).withValues(alpha: 0.5) : const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                          onTap: () {
+                            Navigator.pop(sheetContext);
+                            Navigator.pushNamed(context, '/notifikasi');
+                          },
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.close_rounded,
-                          color: isDark ? Colors.white60 : bodyColor.withValues(alpha: 0.6),
+                      const SizedBox(width: 8),
+                      // Kolom 2: Setting
+                      Expanded(
+                        child: _buildProfileMenuColumnCard(
+                          key: const ValueKey('profile_menu_col_setting'),
+                          context: sheetContext,
+                          title: 'Setting',
+                          icon: Icons.settings_outlined,
+                          iconColor: const Color(0xFF10B981),
+                          bgColor: isDark ? const Color(0xFF0F2624) : const Color(0xFF10B981).withValues(alpha: 0.08),
+                          borderColor: isDark ? const Color(0xFF10B981).withValues(alpha: 0.5) : const Color(0xFF10B981).withValues(alpha: 0.3),
+                          onTap: () {
+                            Navigator.pop(sheetContext);
+                            Navigator.pushNamed(context, '/setting');
+                          },
                         ),
-                        onPressed: () => Navigator.pop(sheetContext),
+                      ),
+                      const SizedBox(width: 8),
+                      // Kolom 3: Keluar
+                      Expanded(
+                        child: _buildProfileMenuColumnCard(
+                          key: const ValueKey('profile_menu_col_keluar'),
+                          context: sheetContext,
+                          title: 'Keluar',
+                          icon: Icons.logout_rounded,
+                          iconColor: const Color(0xFFEF4444),
+                          bgColor: isDark ? const Color(0xFF2A1520) : const Color(0xFFEF4444).withValues(alpha: 0.08),
+                          borderColor: isDark ? const Color(0xFFEF4444).withValues(alpha: 0.5) : const Color(0xFFEF4444).withValues(alpha: 0.3),
+                          onTap: () {
+                            Navigator.pop(sheetContext);
+                            _handleLogout(context);
+                          },
+                        ),
                       ),
                     ],
                   ),
-                ),
 
-                const SizedBox(height: 4),
-                Divider(
-                  color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.08),
-                  height: 1,
-                ),
-                const SizedBox(height: 14),
+                  const SizedBox(height: 16),
 
-                // Label Pilihan Kolom
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12, left: 4),
-                  child: Text(
-                    'PILIHAN MENU PROFIL (3 KOLOM)',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
-                      color: bodyColor.withValues(alpha: 0.7),
-                    ),
+                  // Daftar Item Menu Vertikal Detail
+                  _buildProfileMenuItemTile(
+                    key: const ValueKey('profile_menu_tile_notifikasi'),
+                    context: sheetContext,
+                    title: 'Notifikasi',
+                    subtitle: 'Buka tampilan notifikasi & pesan aktivitas',
+                    icon: Icons.notifications_none_rounded,
+                    color: const Color(0xFF3B82F6),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      Navigator.pushNamed(context, '/notifikasi');
+                    },
                   ),
-                ),
-
-                // 3 Kolom Pilihan (Side by Side Card Columns)
-                Row(
-                  children: [
-                    // Kolom 1: Notifikasi
-                    Expanded(
-                      child: _buildProfileMenuColumnCard(
-                        key: const ValueKey('profile_menu_col_notifikasi'),
-                        context: sheetContext,
-                        title: 'Notifikasi',
-                        icon: Icons.notifications_active_outlined,
-                        iconColor: const Color(0xFF3B82F6),
-                        bgColor: const Color(0xFF3B82F6).withValues(alpha: 0.08),
-                        borderColor: const Color(0xFF3B82F6).withValues(alpha: 0.3),
-                        onTap: () {
-                          Navigator.pop(sheetContext);
-                          Navigator.pushNamed(context, '/notifikasi');
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Kolom 2: Setting
-                    Expanded(
-                      child: _buildProfileMenuColumnCard(
-                        key: const ValueKey('profile_menu_col_setting'),
-                        context: sheetContext,
-                        title: 'Setting',
-                        icon: Icons.settings_outlined,
-                        iconColor: const Color(0xFF10B981),
-                        bgColor: const Color(0xFF10B981).withValues(alpha: 0.08),
-                        borderColor: const Color(0xFF10B981).withValues(alpha: 0.3),
-                        onTap: () {
-                          Navigator.pop(sheetContext);
-                          Navigator.pushNamed(context, '/setting');
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Kolom 3: Keluar
-                    Expanded(
-                      child: _buildProfileMenuColumnCard(
-                        key: const ValueKey('profile_menu_col_keluar'),
-                        context: sheetContext,
-                        title: 'Keluar',
-                        icon: Icons.logout_rounded,
-                        iconColor: const Color(0xFFEF4444),
-                        bgColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
-                        borderColor: const Color(0xFFEF4444).withValues(alpha: 0.3),
-                        onTap: () {
-                          Navigator.pop(sheetContext);
-                          _handleLogout(context);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                // Daftar Item Menu Vertikal Detail
-                _buildProfileMenuItemTile(
-                  key: const ValueKey('profile_menu_tile_notifikasi'),
-                  context: sheetContext,
-                  title: 'Notifikasi',
-                  subtitle: 'Buka tampilan notifikasi & pesan aktivitas',
-                  icon: Icons.notifications_outlined,
-                  color: const Color(0xFF3B82F6),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.pushNamed(context, '/notifikasi');
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildProfileMenuItemTile(
-                  key: const ValueKey('profile_menu_tile_setting'),
-                  context: sheetContext,
-                  title: 'Setting',
-                  subtitle: 'Buka tampilan setting, tema & akun',
-                  icon: Icons.settings_outlined,
-                  color: const Color(0xFF10B981),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.pushNamed(context, '/setting');
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildProfileMenuItemTile(
-                  key: const ValueKey('profile_menu_tile_keluar'),
-                  context: sheetContext,
-                  title: 'Keluar',
-                  subtitle: 'Keluar akun dengan proses loading otomatis',
-                  icon: Icons.logout_rounded,
-                  color: const Color(0xFFEF4444),
-                  isDestructive: true,
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _handleLogout(context);
-                  },
-                ),
-                const SizedBox(height: 8),
-              ],
+                  const SizedBox(height: 8),
+                  _buildProfileMenuItemTile(
+                    key: const ValueKey('profile_menu_tile_setting'),
+                    context: sheetContext,
+                    title: 'Setting',
+                    subtitle: 'Buka tampilan setting, tema & akun',
+                    icon: Icons.settings_outlined,
+                    color: const Color(0xFF10B981),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      Navigator.pushNamed(context, '/setting');
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  _buildProfileMenuItemTile(
+                    key: const ValueKey('profile_menu_tile_keluar'),
+                    context: sheetContext,
+                    title: 'Keluar',
+                    subtitle: 'Keluar akun dengan proses loading otomatis',
+                    icon: Icons.logout_rounded,
+                    color: const Color(0xFFEF4444),
+                    isDestructive: true,
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _handleLogout(context);
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
           ),
         );
@@ -949,7 +1040,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.15),
+                color: iconColor.withValues(alpha: isDark ? 0.2 : 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: iconColor, size: 22),
@@ -958,9 +1049,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              maxLines: 2,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 12.5,
                 fontWeight: FontWeight.bold,
                 color: isDark ? Colors.white : headingColor,
               ),
@@ -996,17 +1086,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
           decoration: BoxDecoration(
             color: isDestructive
                 ? (isDark
-                    ? const Color(0xFF7F1D1D).withValues(alpha: 0.2)
+                    ? const Color(0xFF201524)
                     : const Color(0xFFFEF2F2))
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.05)
+                    ? const Color(0xFF141C34)
                     : Colors.black.withValues(alpha: 0.02)),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isDestructive
-                  ? const Color(0xFFEF4444).withValues(alpha: 0.3)
+                  ? const Color(0xFFEF4444).withValues(alpha: 0.35)
                   : (isDark
-                      ? Colors.white.withValues(alpha: 0.1)
+                      ? const Color(0xFF222C4A)
                       : Colors.black.withValues(alpha: 0.06)),
               width: 1,
             ),
@@ -1016,7 +1106,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
+                  color: color.withValues(alpha: isDark ? 0.2 : 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -1043,7 +1133,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         fontSize: 12,
                         color: isDestructive
                             ? const Color(0xFFEF4444).withValues(alpha: 0.8)
-                            : (isDark ? Colors.white70 : bodyColor),
+                            : (isDark ? const Color(0xFF8E9BB0) : bodyColor),
                       ),
                     ),
                   ],
@@ -1314,12 +1404,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: ScreenColorHelper.getBackgroundColor(context),
-      body: BackgroundWrapper(
-        child: SafeArea(
-          child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFEFF5FE),
+      body: SizedBox.expand(
+        child: BackgroundWrapper(
+          child: SafeArea(
+            child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1335,44 +1428,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Text(
                           AppStrings.greetingUser,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: ScreenColorHelper.getHeadingText(context),
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           AppStrings.subtitleDashboard,
                           style: TextStyle(
-                            fontSize: 13,
-                            color: ScreenColorHelper.getBodyText(context),
+                            fontSize: 13.5,
+                            color: isDark ? const Color(0xFF8E9BB0) : ScreenColorHelper.getBodyText(context),
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // Icon Pen untuk membuat baris baru
+                  // Icon Pen / Magic Wand untuk membuat baris baru
                   GestureDetector(
                     onTap: () {
                       setState(() {
                         _promptController.text += '\n';
                       });
-                      // Opsional: berikan fokus ke TextField jika belum
                       _promptFocusNode.requestFocus();
                     },
                     child: Container(
                       width: 44,
                       height: 44,
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(9),
                       decoration: BoxDecoration(
-                        color: ScreenColorHelper.getSurfaceColor(context),
+                        color: isDark ? const Color(0xFF161E38) : ScreenColorHelper.getSurfaceColor(context),
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.navyPrimary.withValues(alpha: 0.2), width: 1),
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF2E3D6E) : AppColors.navyPrimary.withValues(alpha: 0.2),
+                          width: 1.2,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 4,
+                            color: isDark ? const Color(0xFF6366F1).withValues(alpha: 0.25) : Colors.black.withValues(alpha: 0.05),
+                            blurRadius: isDark ? 10 : 4,
                             offset: const Offset(0, 2),
                           ),
                         ],
@@ -1380,6 +1475,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Image.asset(
                         'asset/ic_pen.png',
                         fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.auto_fix_high_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ),
@@ -1393,9 +1493,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           _showProfileMenu(context);
                         },
                         child: Container(
+                          width: 44,
+                          height: 44,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.navyPrimary, width: 2),
+                            border: Border.all(
+                              color: isDark ? const Color(0xFF818CF8) : AppColors.navyPrimary,
+                              width: 2,
+                            ),
+                            boxShadow: isDark
+                                ? [
+                                    BoxShadow(
+                                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.45),
+                                      blurRadius: 12,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : null,
                           ),
                           child: photoPath != null && File(photoPath).existsSync()
                               ? ClipOval(
@@ -1434,128 +1548,198 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
 
-              const SizedBox(height: 60),
+              const SizedBox(height: 50),
 
-              // 2. Logo Cerdas AI di Tengah (Sesuai Referensi Gambar)
+              // 2. Logo Cerdas AI di Tengah (Sesuai Referensi Gambar 1)
               const Center(
-                child: CerdasAiLogoBadge(size: 170),
+                child: CerdasAiLogoBadge(size: 165),
               ),
 
-              const SizedBox(height: 60),
+              const SizedBox(height: 50),
 
               // 3. Card Box Input Pertanyaan
-              Card(
-                elevation: 2,
-                color: ScreenColorHelper.getSurfaceColor(context),
-                shadowColor: ScreenColorHelper.getPrimaryAction(context).withValues(alpha: 0.1),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      // Preview Lampiran Berkas
-                      if (_attachmentFile != null || (_attachmentImagePath != null && _attachmentImagePath!.isNotEmpty))
-                        AttachmentPreviewCard(
-                          file: _attachmentFile,
-                          imagePath: _attachmentImagePath,
-                          isNetwork: _isAttachmentNetwork,
-                          fileName: _attachmentName,
-                          icon: _attachmentIcon,
-                          isImage: _isImageAttachment,
-                          onRemove: _clearAttachment,
-                        ),
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF131A32) : ScreenColorHelper.getSurfaceColor(context),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF222E54) : Colors.black.withValues(alpha: 0.06),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.05),
+                      blurRadius: isDark ? 24 : 10,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    // Preview Lampiran Berkas
+                    if (_attachmentFile != null || (_attachmentImagePath != null && _attachmentImagePath!.isNotEmpty))
+                      AttachmentPreviewCard(
+                        file: _attachmentFile,
+                        imagePath: _attachmentImagePath,
+                        isNetwork: _isAttachmentNetwork,
+                        fileName: _attachmentName,
+                        icon: _attachmentIcon,
+                        isImage: _isImageAttachment,
+                        onRemove: _clearAttachment,
+                      ),
 
-                      // Input Text
-                      TextField(
+                    // Input Text (Mengikuti kolom tanpa garis/border inset terpisah)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                      child: TextField(
                         controller: _promptController,
                         focusNode: _promptFocusNode,
                         maxLines: null,
                         minLines: 2,
-                        style: TextStyle(fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                        ),
                         decoration: InputDecoration(
                           hintText: AppStrings.hintTypeQuestion,
-                          hintStyle: TextStyle(color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.5), fontSize: 14),
+                          hintStyle: TextStyle(
+                            color: isDark ? const Color(0xFF64748B) : ScreenColorHelper.getBodyText(context).withValues(alpha: 0.5),
+                            fontSize: 14,
+                          ),
                           border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
                         ),
                       ),
+                    ),
 
-                      const SizedBox(height: 12),
+                    const SizedBox(height: 14),
 
-                      // Tombol Lampirkan, Mic, & Kirim
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.add_circle_outline, color: ScreenColorHelper.getPrimaryAction(context), size: 28),
-                                onPressed: _showAttachmentSheet,
-                                tooltip: AppStrings.descAttachment,
-                              ),
-                              // Tombol History Chat
-                              InkWell(
-                                onTap: _showHistorySheet,
-                                borderRadius: BorderRadius.circular(20),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        AppStrings.btnHistoryChat,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: ScreenColorHelper.getHeadingText(context),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Icon(
-                                        Icons.history_rounded,
-                                        size: 18,
-                                        color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.6),
-                                      ),
-                                    ],
+                    // Baris Tombol Lampirkan (+), Riwayat Percakapan, Mic, & Kirim Gradient Pill
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            // Tombol (+) Tambah Lampiran
+                            InkWell(
+                              onTap: _showAttachmentSheet,
+                              borderRadius: BorderRadius.circular(18),
+                              child: Container(
+                                width: 34,
+                                height: 34,
+                                decoration: BoxDecoration(
+                                  color: isDark ? const Color(0xFF1E284A) : ScreenColorHelper.getPrimaryAction(context).withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isDark ? const Color(0xFF2E3E6E) : Colors.transparent,
                                   ),
                                 ),
+                                child: Icon(
+                                  Icons.add,
+                                  color: isDark ? const Color(0xFF818CF8) : ScreenColorHelper.getPrimaryAction(context),
+                                  size: 18,
+                                ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              // Icon Rekam Suara (Mic)
-                              IconButton(
-                                icon: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: _isListening ? Colors.redAccent.withValues(alpha: 0.1) : Colors.transparent,
-                                    shape: BoxShape.circle,
+                            ),
+                            const SizedBox(width: 8),
+                            // Tombol Riwayat Percakapan
+                            InkWell(
+                              onTap: _showHistorySheet,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      AppStrings.btnHistoryChat,
+                                      style: TextStyle(
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.bold,
+                                        color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Icon(
+                                      Icons.history_rounded,
+                                      size: 18,
+                                      color: isDark ? const Color(0xFF8E9BB0) : ScreenColorHelper.getBodyText(context).withValues(alpha: 0.6),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            // Icon Rekam Suara (Mic)
+                            InkWell(
+                              onTap: _startVoiceInput,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  color: _isListening
+                                      ? Colors.redAccent.withValues(alpha: 0.2)
+                                      : (isDark ? const Color(0xFF1A2342) : Colors.transparent),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: _isListening
+                                        ? Colors.redAccent
+                                        : (isDark ? const Color(0xFF2E3D6E) : Colors.transparent),
                                   ),
+                                ),
+                                child: Center(
                                   child: Image.asset(
                                     'asset/ic_microphone.png',
-                                    width: 24,
-                                    height: 24,
-                                    color: _isListening ? Colors.redAccent : null,
-                                    errorBuilder: (context, error, stackTrace) => 
-                                        Icon(Icons.mic_rounded, color: _isListening ? Colors.redAccent : AppColors.iconTint),
+                                    width: 20,
+                                    height: 20,
+                                    color: _isListening ? Colors.redAccent : (isDark ? const Color(0xFF818CF8) : null),
+                                    errorBuilder: (context, error, stackTrace) => Icon(
+                                      Icons.mic_rounded,
+                                      size: 20,
+                                      color: _isListening ? Colors.redAccent : (isDark ? const Color(0xFF818CF8) : AppColors.iconTint),
+                                    ),
                                   ),
                                 ),
-                                onPressed: _startVoiceInput,
-                                tooltip: _isListening ? 'Berhenti Rekam' : 'Rekam Suara',
                               ),
-                              const SizedBox(width: 8),
-                              FloatingActionButton.small(
-                                onPressed: _processUserQuery,
-                                backgroundColor: ScreenColorHelper.getPrimaryAction(context),
-                                elevation: 2,
-                                child: const Icon(Icons.send_rounded, color: AppColors.white, size: 20),
+                            ),
+                            const SizedBox(width: 10),
+                            // Tombol Kirim Gradient Pill
+                            InkWell(
+                              onTap: _processUserQuery,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                height: 38,
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFA855F7), Color(0xFF3B82F6)],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.45),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Center(
+                                  child: Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                                ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
 
@@ -1574,6 +1758,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
     ),
+      ),
 
       // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationViewWidget(

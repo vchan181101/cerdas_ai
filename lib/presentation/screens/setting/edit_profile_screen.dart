@@ -127,6 +127,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // 3. Pemilih Tanggal Lahir (DatePicker)
   Future<void> _selectDateOfBirth() async {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
@@ -134,13 +136,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.indigoPrimary,
-              onPrimary: Colors.white,
-              onSurface: AppColors.textPrimary,
-            ),
-          ),
+          data: isDark
+              ? ThemeData.dark().copyWith(
+                  colorScheme: const ColorScheme.dark(
+                    primary: Color(0xFF38BDF8),
+                    onPrimary: Colors.black,
+                    surface: Color(0xFF0F172A),
+                    onSurface: Colors.white,
+                  ),
+                  dialogTheme: const DialogThemeData(
+                    backgroundColor: Color(0xFF0F172A),
+                  ),
+                )
+              : Theme.of(context).copyWith(
+                  colorScheme: const ColorScheme.light(
+                    primary: AppColors.indigoPrimary,
+                    onPrimary: Colors.white,
+                    onSurface: AppColors.textPrimary,
+                  ),
+                ),
           child: child!,
         );
       },
@@ -179,260 +193,487 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ScreenColorHelper.getBackgroundColor(context),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header / Top Bar
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back_ios_new_rounded, size: 24, color: ScreenColorHelper.getHeadingText(context)),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    AppStrings.titleEditProfil,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: ScreenColorHelper.getHeadingText(context),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-            // Form Konten Scrollable
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Section 1: Ubah Foto Profil
-                      Center(
-                        child: Stack(
-                          children: [
-                            GestureDetector(
-                              onTap: _openAvatarPicker,
-                              child: Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: ScreenColorHelper.getPrimaryAction(context),
-                                    width: 2,
-                                  ),
-                                ),
-                                child: ClipOval(
-                                  child: _buildProfileAvatar(),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: _openAvatarPicker,
-                                borderRadius: BorderRadius.circular(16),
-                                child: Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.15),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    Icons.camera_alt_rounded,
-                                    size: 18,
-                                    color: ScreenColorHelper.getPrimaryAction(context),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+    return BackgroundWrapper(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header / Top Bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 22,
+                        color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
                       ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      AppStrings.titleEditProfil,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-                      const SizedBox(height: 8),
+              // Form Konten Scrollable
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
 
-                      Center(
-                        child: TextButton(
-                          onPressed: _openAvatarPicker,
-                          child: Text(
-                            AppStrings.actionChangePhoto,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: ScreenColorHelper.getPrimaryAction(context),
+                        // Section 1: Ubah Foto Profil
+                        Center(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: _openAvatarPicker,
+                                child: Container(
+                                  width: 104,
+                                  height: 104,
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: isDark
+                                        ? const LinearGradient(
+                                            colors: [
+                                              Color(0xFF38BDF8),
+                                              Color(0xFFA855F7),
+                                              Color(0xFFEC4899),
+                                            ],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          )
+                                        : const LinearGradient(
+                                            colors: [
+                                              Color(0xFF2563EB),
+                                              Color(0xFF38BDF8),
+                                            ],
+                                          ),
+                                    boxShadow: isDark
+                                        ? [
+                                            BoxShadow(
+                                              color: const Color(0xFF38BDF8).withValues(alpha: 0.35),
+                                              blurRadius: 18,
+                                              spreadRadius: 2,
+                                            ),
+                                          ]
+                                        : [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(alpha: 0.08),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ],
+                                  ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                                    ),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: _buildProfileAvatar(),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 2,
+                                right: 2,
+                                child: InkWell(
+                                  onTap: _openAvatarPicker,
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF38BDF8),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: isDark ? const Color(0xFF0D1527) : Colors.white,
+                                        width: 2.5,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xFF38BDF8).withValues(alpha: 0.4),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt_rounded,
+                                      size: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        Center(
+                          child: TextButton(
+                            onPressed: _openAvatarPicker,
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              AppStrings.actionChangePhoto,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? const Color(0xFF38BDF8) : ScreenColorHelper.getPrimaryAction(context),
+                              ),
                             ),
                           ),
                         ),
-                      ),
 
-                      const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                      // Section 2: Informasi Pribadi
-                      Text(
-                        AppStrings.labelPersonalInfo,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: ScreenColorHelper.getHeadingText(context),
+                        // Section 2: Informasi Pribadi
+                        Text(
+                          AppStrings.labelPersonalInfo,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                      // Input Nama Lengkap
-                      Text(
-                        AppStrings.labelFullName,
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: ScreenColorHelper.getHeadingText(context)),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _fullNameController,
-                        style: TextStyle(fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
-                        decoration: _buildInputDecoration(hint: AppStrings.hintNamaLengkap),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Nama tidak boleh kosong';
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Input Tanggal Lahir
-                      Text(
-                        AppStrings.labelDob,
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: ScreenColorHelper.getHeadingText(context)),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _dobController,
-                        readOnly: true,
-                        onTap: _selectDateOfBirth,
-                        style: TextStyle(fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
-                        decoration: _buildInputDecoration(
-                          hint: AppStrings.hintDob,
-                          suffixIcon: Icon(Icons.calendar_month_rounded, color: ScreenColorHelper.getBodyText(context).withValues(alpha: 0.5)),
+                        // Input Nama Lengkap
+                        Text(
+                          AppStrings.labelFullName,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _fullNameController,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
+                          decoration: _buildInputDecoration(
+                            hint: AppStrings.hintNamaLengkap,
+                            isDark: isDark,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Nama tidak boleh kosong';
+                            }
+                            return null;
+                          },
+                        ),
 
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                      // Input Nomor Telepon
-                      Text(
-                        AppStrings.labelPhone,
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: ScreenColorHelper.getHeadingText(context)),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        style: TextStyle(fontSize: 14, color: ScreenColorHelper.getHeadingText(context)),
-                        decoration: _buildInputDecoration(hint: AppStrings.hintPhone),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Input Alamat Email
-                      Text(
-                        AppStrings.labelEmailAddr,
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: ScreenColorHelper.getHeadingText(context)),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _emailController,
-                        enabled: false,
-                        style: TextStyle(fontSize: 14, color: ScreenColorHelper.getBodyText(context)),
-                        decoration: _buildInputDecoration(hint: AppStrings.hintEmail),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Radio Button Jenis Kelamin
-                      Text(
-                        AppStrings.labelGender,
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: ScreenColorHelper.getHeadingText(context)),
-                      ),
-                      const SizedBox(height: 8),
-                      RadioGroup<String>(
-                        groupValue: _gender,
-                        onChanged: (value) {
-                          if (value != null) setState(() => _gender = value);
-                        },
-                        child: Row(
-                          children: [
-                            Row(
-                              children: [
-                                Radio<String>(
-                                  value: 'Laki-laki',
-                                  activeColor: ScreenColorHelper.getPrimaryAction(context),
-                                ),
-                                Text(AppStrings.genderMale),
-                              ],
+                        // Input Tanggal Lahir
+                        Text(
+                          AppStrings.labelDob,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _dobController,
+                          readOnly: true,
+                          onTap: _selectDateOfBirth,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
+                          decoration: _buildInputDecoration(
+                            hint: AppStrings.hintDob,
+                            isDark: isDark,
+                            suffixIcon: Icon(
+                              Icons.calendar_month_rounded,
+                              color: isDark ? const Color(0xFF94A3B8) : Colors.black45,
+                              size: 20,
                             ),
-                            const SizedBox(width: 24),
-                            Row(
-                              children: [
-                                Radio<String>(
-                                  value: 'Perempuan',
-                                  activeColor: ScreenColorHelper.getPrimaryAction(context),
-                                ),
-                                Text(AppStrings.genderFemale),
-                              ],
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
 
-                      const SizedBox(height: 32),
-                    ],
+                        const SizedBox(height: 16),
+
+                        // Input Nomor Telepon
+                        Text(
+                          AppStrings.labelPhone,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
+                          decoration: _buildInputDecoration(
+                            hint: AppStrings.hintPhone,
+                            isDark: isDark,
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Input Alamat Email
+                        Text(
+                          AppStrings.labelEmailAddr,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _emailController,
+                          enabled: false,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white : ScreenColorHelper.getBodyText(context),
+                          ),
+                          decoration: _buildInputDecoration(
+                            hint: AppStrings.hintEmail,
+                            isDark: isDark,
+                          ),
+                        ),
+
+                        const SizedBox(height: 18),
+
+                        // Radio Button Jenis Kelamin
+                        Text(
+                          AppStrings.labelGender,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        RadioGroup<String>(
+                          groupValue: _gender,
+                          onChanged: (value) {
+                            if (value != null) setState(() => _gender = value);
+                          },
+                          child: Row(
+                            children: [
+                              InkWell(
+                                onTap: () => setState(() => _gender = 'Laki-laki'),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Row(
+                                  children: [
+                                    Radio<String>(
+                                      value: 'Laki-laki',
+                                      activeColor: isDark ? const Color(0xFF818CF8) : ScreenColorHelper.getPrimaryAction(context),
+                                      fillColor: isDark
+                                          ? WidgetStateProperty.resolveWith((states) {
+                                              if (states.contains(WidgetState.selected)) {
+                                                return const Color(0xFF818CF8);
+                                              }
+                                              return const Color(0xFF64748B);
+                                            })
+                                          : null,
+                                    ),
+                                    Text(
+                                      AppStrings.genderMale,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 24),
+                              InkWell(
+                                onTap: () => setState(() => _gender = 'Perempuan'),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Row(
+                                  children: [
+                                    Radio<String>(
+                                      value: 'Perempuan',
+                                      activeColor: isDark ? const Color(0xFF818CF8) : ScreenColorHelper.getPrimaryAction(context),
+                                      fillColor: isDark
+                                          ? WidgetStateProperty.resolveWith((states) {
+                                              if (states.contains(WidgetState.selected)) {
+                                                return const Color(0xFF818CF8);
+                                              }
+                                              return const Color(0xFF64748B);
+                                            })
+                                          : null,
+                                    ),
+                                    Text(
+                                      AppStrings.genderFemale,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: isDark ? Colors.white : ScreenColorHelper.getHeadingText(context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // Bottom Action Button (Simpan Perubahan)
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: AppButton(
-                text: AppStrings.actionSaveChanges,
-                onPressed: _saveProfile,
-                backgroundColor: ScreenColorHelper.getPrimaryAction(context),
+              // Bottom Action Button (Simpan Perubahan)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                child: Container(
+                  width: double.infinity,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: isDark
+                        ? const LinearGradient(
+                            colors: [
+                              Color(0xFF2563EB),
+                              Color(0xFF6366F1),
+                              Color(0xFF8B5CF6),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          )
+                        : const LinearGradient(
+                            colors: [
+                              Color(0xFF2563EB),
+                              Color(0xFF38BDF8),
+                            ],
+                          ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF2563EB).withValues(alpha: isDark ? 0.45 : 0.25),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _saveProfile,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      AppStrings.actionSaveChanges,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   // Helper Custom Input Decoration
-  InputDecoration _buildInputDecoration({required String hint, Widget? suffixIcon}) {
-    return ScreenStyleHelper.modernInputDecoration(
-      context: context,
+  InputDecoration _buildInputDecoration({
+    required String hint,
+    Widget? suffixIcon,
+    required bool isDark,
+  }) {
+    return InputDecoration(
       hintText: hint,
-      prefixIcon: Icons.edit_rounded,
+      hintStyle: TextStyle(
+        color: isDark ? Colors.white38 : Colors.black38,
+        fontSize: 14,
+      ),
+      prefixIcon: Icon(
+        Icons.edit_rounded,
+        color: isDark ? const Color(0xFF818CF8) : AppColors.indigoPrimary,
+        size: 18,
+      ),
       suffixIcon: suffixIcon,
-    ).copyWith(
-      fillColor: ScreenColorHelper.getSurfaceColor(context).withValues(alpha: 0.8),
+      filled: true,
+      fillColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+          color: isDark ? const Color(0xFF38BDF8).withValues(alpha: 0.5) : AppColors.inputBorder,
+          width: 1.2,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+          color: isDark ? const Color(0xFF38BDF8) : AppColors.indigoPrimary,
+          width: 1.5,
+        ),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+          color: isDark ? const Color(0xFF38BDF8).withValues(alpha: 0.5) : AppColors.inputBorder,
+          width: 1.2,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(
+          color: Colors.redAccent,
+          width: 1.2,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(
+          color: Colors.redAccent,
+          width: 1.5,
+        ),
+      ),
     );
   }
 }

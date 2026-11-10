@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cerdas_ai/core/app_constants.dart';
-import 'package:cerdas_ai/core/helpers/color/color_helper.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 import 'package:cerdas_ai/core/helpers/xml/network_manager_helper.dart';
 import 'package:cerdas_ai/core/values/strings.dart';
 import 'package:cerdas_ai/core/values/colors.dart';
@@ -124,12 +123,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: GradientHelper.darkBackgroundGradient,
-        ),
+      body: BackgroundWrapper(
         child: SafeArea(
           child: Stack(
             children: [
@@ -140,21 +134,10 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Logo Cerdas AI dengan Animasi Bounce
+                      // Logo Cerdas AI Lingkaran dengan Animasi Bounce Sesuai Gambar 1
                       ScaleTransition(
                         scale: _bounceAnimation,
-                        child: Image.asset(
-                          AppConstants.logoPath,
-                          width: 180,
-                          height: 180,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                              Icons.psychology_rounded,
-                              size: 140,
-                              color: AppColors.tealAccent,
-                            );
-                          },
-                        ),
+                        child: const CerdasAiLogoBadge(size: 175),
                       ),
                       const SizedBox(height: 20),
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cerdas_ai/core/values/values.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -56,31 +57,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
-    final bodyColor = isDark ? Colors.white70 : Colors.black87;
+    final bodyColor = isDark ? Colors.white70 : const Color(0xFF64748B);
     const iconBlue = AppColors.indigoPrimary;
+    final inputFill = isDark ? AppDarkColors.white : Colors.white;
+    final inputBorderColor = isDark ? AppDarkColors.inputBorder : const Color(0xFFCBD5E1);
 
     return Scaffold(
       backgroundColor: isDark ? AppDarkColors.bgLight : AppColors.bgLight,
-      body: Container(
-        decoration: BoxDecoration(
-          color: isDark ? AppDarkColors.bgLight : AppColors.bgLight,
-        ),
+      body: BackgroundWrapper(
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // 1. Header Top Bar (Tombol Kembali & Judul)
+                  // 1. Header Top Bar (Tombol Kembali & Judul Terpusat)
                   Stack(
                     alignment: Alignment.center,
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: iconBlue),
+                          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: iconBlue),
                           onPressed: _isLoading ? null : () => Navigator.pop(context),
                         ),
                       ),
@@ -88,67 +88,92 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         'Lupa Password',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: textColor,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 28),
 
-                  // 2. Icon Ilustrasi Kunci
+                  // 2. Icon Ilustrasi Kunci Reset dengan Halo Glow Ring sesuai Gambar 1
                   Center(
                     child: Container(
-                      padding: const EdgeInsets.all(28),
+                      width: 140,
+                      height: 140,
                       decoration: BoxDecoration(
-                        color: isDark ? AppDarkColors.white : AppColors.white,
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                          ),
-                        ],
+                        gradient: RadialGradient(
+                          colors: [
+                            (isDark ? const Color(0xFF6366F1) : const Color(0xFFC7D2FE)).withValues(alpha: 0.5),
+                            (isDark ? const Color(0xFF8B5CF6) : const Color(0xFFE9D5FF)).withValues(alpha: 0.28),
+                            Colors.transparent,
+                          ],
+                          stops: const [0.55, 0.85, 1.0],
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.lock_reset_rounded,
-                        size: 70,
-                        color: iconBlue,
+                      child: Center(
+                        child: Container(
+                          width: 96,
+                          height: 96,
+                          decoration: BoxDecoration(
+                            color: isDark ? AppDarkColors.white : AppColors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isDark ? AppDarkColors.inputBorder : const Color(0xFFE2E8F0),
+                              width: 1.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF6366F1).withValues(alpha: isDark ? 0.35 : 0.14),
+                                blurRadius: 18,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.lock_reset_rounded,
+                              size: 52,
+                              color: iconBlue,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 28),
 
                   // 3. Judul & Deskripsi Instruksi
                   Text(
                     'Atur Ulang Kata Sandi',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: textColor,
+                      letterSpacing: -0.3,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   Text(
                     'Masukkan Email anda untuk reset password.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: bodyColor,
-                      fontSize: 14,
-                      height: 1.5,
+                      fontSize: 13.5,
+                      height: 1.4,
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 32),
 
                   // 4. Form Input Email
                   Text(
                     'Email Terdaftar',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 13.5,
                       color: textColor,
                     ),
                   ),
@@ -160,30 +185,41 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     style: TextStyle(fontSize: 14, color: textColor),
                     decoration: InputDecoration(
                       hintText: 'Masukkan email terdaftar Anda',
-                      hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 14),
-                      prefixIcon: const Icon(Icons.email_outlined, color: iconBlue),
-                      filled: true,
-                      fillColor: isDark ? AppDarkColors.white : Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(
-                          color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
-                        ),
+                      hintStyle: TextStyle(
+                        color: isDark ? Colors.white54 : const Color(0xFF94A3B8),
+                        fontSize: 14,
                       ),
+                      prefixIcon: const Icon(Icons.email_outlined, color: iconBlue, size: 20),
+                      filled: true,
+                      fillColor: inputFill,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide(
-                          color: isDark ? AppDarkColors.inputBorder : AppColors.inputBorder,
-                          width: 1,
+                          color: inputBorderColor,
+                          width: 1.2,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: iconBlue, width: 1.5),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF3B82F6),
+                          width: 1.8,
+                        ),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 18,
-                        horizontal: 16,
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                          color: Colors.redAccent,
+                          width: 1.2,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                          color: Colors.redAccent,
+                          width: 1.8,
+                        ),
                       ),
                     ),
                     validator: (value) {
@@ -210,7 +246,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             color: iconBlue,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
                         Text(
                           'Mengirim kode verifikasi...',
                           style: TextStyle(
@@ -219,33 +255,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             fontSize: 12,
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                       ],
                     ),
 
-                  // 6. Tombol Kirim Kode Verifikasi
-                  SizedBox(
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _performSendOtp,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.indigoPrimary,
-                        foregroundColor: Colors.white,
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: const Text(
-                        'Kirim Kode Verifikasi',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  // 6. Tombol Kirim Kode Verifikasi (Gradien Biru ke Ungu sesuai Gambar 1)
+                  AppButton(
+                    text: 'Kirim Kode Verifikasi',
+                    isLoading: _isLoading,
+                    onPressed: _performSendOtp,
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF1D4ED8),
+                        Color(0xFF6D28D9),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
                     ),
+                    borderRadius: 16,
+                    height: 50,
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 32),
 
                   // 7. Footer Kembali Ke Login
                   Center(
@@ -256,19 +286,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           : () {
                               Navigator.pushReplacementNamed(context, '/login');
                             },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                         child: Text(
                           'Kembali Ke Halaman Login.',
                           style: TextStyle(
-                            color: textColor,
+                            color: Color(0xFF4F46E5),
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontSize: 13.5,
                           ),
                         ),
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

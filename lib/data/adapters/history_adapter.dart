@@ -132,8 +132,8 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
       };
     } else if (catUpper == 'TANYA' || catUpper == 'TEKS') {
       return {
-        'color': const Color(0xFF3B82F6),
-        'icon': Icons.question_answer_outlined,
+        'color': const Color(0xFF38BDF8),
+        'icon': Icons.chat_bubble_outline_rounded,
         'label': 'TANYA',
       };
     } else if (catUpper == 'QUIZ' || catUpper == 'KUIS' ||
@@ -222,27 +222,46 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
     final bodyColor = ScreenColorHelper.getBodyText(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final Color badgeBg;
+    final Border? badgeBorder;
+    if (isDark) {
+      if (categoryLabel == 'DOKUMEN' || categoryColor == const Color(0xFFEF4444)) {
+        badgeBg = const Color(0xFF2E1520);
+        badgeBorder = Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.28), width: 1);
+      } else if (categoryLabel == 'BELAJAR' || categoryColor == const Color(0xFF10B981)) {
+        badgeBg = const Color(0xFF0F2C24);
+        badgeBorder = Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.28), width: 1);
+      } else if (categoryLabel == 'TANYA' || categoryColor == const Color(0xFF38BDF8) || categoryColor == const Color(0xFF3B82F6)) {
+        badgeBg = const Color(0xFF0F243E);
+        badgeBorder = Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.28), width: 1);
+      } else {
+        badgeBg = categoryColor.withValues(alpha: 0.16);
+        badgeBorder = Border.all(color: categoryColor.withValues(alpha: 0.25), width: 1);
+      }
+    } else {
+      badgeBg = categoryColor.withValues(alpha: 0.12);
+      badgeBorder = null;
+    }
+
     final cardWidget = Container(
       decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: BorderRadius.circular(16),
+        color: isDark ? const Color(0xFF121A30) : surfaceColor,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04),
-          width: 1,
+          color: isDark ? const Color(0xFF223055) : Colors.black.withValues(alpha: 0.05),
+          width: 1.2,
         ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.035),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         child: InkWell(
           onTap: () {
             if (widget.enableSlidable && _dragOffset != 0) {
@@ -251,86 +270,97 @@ class _HistoryItemTileState extends State<HistoryItemTile> {
               widget.onTap();
             }
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: categoryColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
+                    color: badgeBg,
+                    borderRadius: BorderRadius.circular(14),
+                    border: badgeBorder,
                   ),
-                  child: Icon(
-                    categoryIcon,
-                    color: categoryColor,
-                    size: 22,
+                  child: Center(
+                    child: Icon(
+                      categoryIcon,
+                      color: isDark && categoryColor == const Color(0xFFEF4444)
+                          ? const Color(0xFFF87171)
+                          : categoryColor,
+                      size: 24,
+                    ),
                   ),
                 ),
 
-              const SizedBox(width: 14),
+                const SizedBox(width: 14),
 
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          categoryLabel,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: categoryColor,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            categoryLabel,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                              color: isDark && categoryColor == const Color(0xFFEF4444)
+                                  ? const Color(0xFFF87171)
+                                  : (isDark && categoryColor == const Color(0xFF10B981)
+                                      ? const Color(0xFF34D399)
+                                      : categoryColor),
+                            ),
                           ),
-                        ),
-                        Text(
-                          widget.item.timestamp,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: bodyColor.withValues(alpha: 0.6),
+                          Text(
+                            widget.item.timestamp,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: isDark ? const Color(0xFF94A3B8) : bodyColor.withValues(alpha: 0.6),
+                            ),
                           ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      Text(
+                        widget.item.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : headingColor,
                         ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 6),
-
-                    Text(
-                      widget.item.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: headingColor,
                       ),
-                    ),
 
-                    const SizedBox(height: 4),
+                      const SizedBox(height: 4),
 
-                    Text(
-                      widget.item.snippet,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: bodyColor.withValues(alpha: 0.7),
-                        height: 1.3,
+                      Text(
+                        widget.item.snippet,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? const Color(0xFF94A3B8) : bodyColor.withValues(alpha: 0.7),
+                          height: 1.35,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
     );
 
     if (!widget.enableSlidable || !_hasActions) {

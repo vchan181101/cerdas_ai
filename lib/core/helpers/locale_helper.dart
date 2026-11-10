@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:cerdas_ai/presentation/widgets/language_option_widget.dart';
+export 'package:cerdas_ai/presentation/widgets/language_option_widget.dart' show appLocaleNotifier;
 
 class LocaleHelper {
   static const String _keySelectedLanguage = 'APP_LANG_CODE';
@@ -48,8 +49,8 @@ class LocaleHelper {
 
   /// Mengubah bahasa aplikasi secara permanen
   static Future<Locale> setLocale(String languageCode) async {
+    Locale locale = parseLocale(languageCode);
     await persistLanguage(languageCode);
-    final locale = parseLocale(languageCode);
     appLocaleNotifier.value = locale;
     return locale;
   }

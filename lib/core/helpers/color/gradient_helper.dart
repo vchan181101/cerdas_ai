@@ -42,13 +42,16 @@ class GradientHelper {
     ],
   );
 
-  /// Gradient Dark Mode (Premium Dark Navy)
+  /// Gradient Dark Mode (Modern Dark Light Aesthetic)
   static const LinearGradient darkBackgroundGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
     colors: [
-      Color(0xFF0F172A),
-      Color(0xFF1A365D), // Navy Primary
+      Color(0xFF0F172A), // Modern Dark Light Slate Navy
+      Color(0xFF162038), // Soft Ambient Indigo-Navy
+      Color(0xFF1E2846), // Luminous Highlight Glow
+      Color(0xFF11192E), // Rich Dark Light Navy
     ],
+    stops: [0.0, 0.35, 0.7, 1.0],
   );
 }

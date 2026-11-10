@@ -3,6 +3,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cerdas_ai/core/values/strings.dart';
 import 'package:cerdas_ai/core/helpers/helpers.dart';
+import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 
 class LoginWithIosScreen extends StatefulWidget {
   const LoginWithIosScreen({super.key});
@@ -114,37 +115,50 @@ class _LoginWithIosScreenState extends State<LoginWithIosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ScreenColorHelper.getBackgroundColor(context),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // 1. Top Bar / Tombol Kembali
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back_ios_new_rounded, color: ScreenColorHelper.getHeadingText(context)),
-                      onPressed: () => Navigator.pop(context),
+    return BackgroundWrapper(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              // 1. Top Bar: Tombol Kembali di Kiri & Judul di Posisi Tengah (Sesuai Gambar 1)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  child: SizedBox(
+                    height: 48,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: ScreenColorHelper.getHeadingText(context),
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            AppStrings.titleLoginApple,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: ScreenColorHelper.getHeadingText(context),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      AppStrings.titleLoginApple,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: ScreenColorHelper.getHeadingText(context),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
 
             // 2. Konten Utama di Tengah (Center Content Box)
             Center(
@@ -245,6 +259,7 @@ class _LoginWithIosScreenState extends State<LoginWithIosScreen> {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 }

@@ -195,7 +195,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
             children: [
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 12.0),
                   child: Column(
                     children: [
                       // Judul Header
@@ -205,24 +205,24 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           Text(
                             AppStrings.titleAktivitas,
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: headingColor,
-                              letterSpacing: 0.2,
+                              color: isDark ? Colors.white : headingColor,
+                              letterSpacing: 0.3,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 18),
 
-                      // Search Bar Modern
+                      // Search Bar Modern (Sesuai Referensi Gambar)
                       Container(
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                          color: isDark ? const Color(0xFF0F1527) : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.06),
-                            width: 1,
+                            color: isDark ? const Color(0xFF223055) : Colors.black.withValues(alpha: 0.08),
+                            width: 1.2,
                           ),
                           boxShadow: isDark
                               ? null
@@ -236,16 +236,16 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         ),
                         child: TextFormField(
                           controller: _searchController,
-                          style: TextStyle(fontSize: 14, color: headingColor),
+                          style: TextStyle(fontSize: 14, color: isDark ? Colors.white : headingColor),
                           decoration: InputDecoration(
                             hintText: AppStrings.hintSearchRiwayat,
                             hintStyle: TextStyle(
-                              color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                              color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
                               fontSize: 14,
                             ),
                             prefixIcon: Icon(
                               Icons.search_rounded,
-                              color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                              color: isDark ? const Color(0xFF64748B) : const Color(0xFF64748B),
                               size: 22,
                             ),
                             border: InputBorder.none,
@@ -258,14 +258,16 @@ class _ActivityScreenState extends State<ActivityScreen> {
                       // Baris Filter Chips (Semua, Dokumen, Belajar, Tanya)
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             _buildFilterChip(label: AppStrings.filterSemua, filterKey: 'semua'),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 12),
                             _buildFilterChip(label: AppStrings.filterDokumen, filterKey: 'dokumen'),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 12),
                             _buildFilterChip(label: AppStrings.filterBelajar, filterKey: 'belajar'),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 12),
                             _buildFilterChip(label: AppStrings.filterTanya, filterKey: 'tanya'),
                           ],
                         ),
@@ -282,6 +284,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                 ),
                               )
                             : SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
                                 child: HistoryAdapter(
                                   historyList: _filteredList,
                                   onItemClick: _handleItemClick,
@@ -310,7 +313,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
   Widget _buildFilterChip({required String label, required String filterKey}) {
     final bool isActive = _activeFilter == filterKey;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const activeColor = Color(0xFF7C3AED); // Ungu bergradasi/glow sesuai Gambar 2
 
     return GestureDetector(
       onTap: () {
@@ -321,25 +323,33 @@ class _ActivityScreenState extends State<ActivityScreen> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         decoration: BoxDecoration(
+          gradient: isActive
+              ? const LinearGradient(
+                  colors: [
+                    Color(0xFF3B82F6), // Vibrant Blue
+                    Color(0xFF6366F1), // Indigo Neon
+                  ],
+                )
+              : null,
           color: isActive
-              ? activeColor
-              : (isDark ? const Color(0xFF1E293B) : Colors.white),
+              ? null
+              : (isDark ? const Color(0xFF111828) : Colors.white),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
             color: isActive
-                ? activeColor
-                : (isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.08)),
-            width: 1,
+                ? const Color(0xFF818CF8).withValues(alpha: 0.6)
+                : (isDark ? const Color(0xFF223055) : Colors.black.withValues(alpha: 0.08)),
+            width: 1.2,
           ),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: activeColor.withValues(alpha: 0.45),
+                    color: const Color(0xFF6366F1).withValues(alpha: 0.5),
                     blurRadius: 14,
                     spreadRadius: 1,
-                    offset: const Offset(0, 5),
+                    offset: const Offset(0, 4),
                   ),
                 ]
               : (isDark
@@ -355,11 +365,11 @@ class _ActivityScreenState extends State<ActivityScreen> {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
             color: isActive
                 ? Colors.white
-                : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                : (isDark ? const Color(0xFF94A3B8) : const Color(0xFF1E293B)),
           ),
         ),
       ),

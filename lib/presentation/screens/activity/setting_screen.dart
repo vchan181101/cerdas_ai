@@ -8,7 +8,6 @@ import 'package:cerdas_ai/core/core.dart';
 import 'package:cerdas_ai/core/helpers/helpers.dart';
 import 'package:cerdas_ai/menu/menu.dart';
 import 'package:cerdas_ai/core/values/colors.dart';
-import 'package:cerdas_ai/core/values/dark_colors.dart';
 import 'package:cerdas_ai/core/values/strings.dart';
 import 'package:cerdas_ai/presentation/widgets/widgets.dart';
 
@@ -139,8 +138,13 @@ class _SettingScreenState extends State<SettingScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDark ? AppDarkColors.white : AppColors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: isDark
+              ? const BorderSide(color: Color(0xFF1E293B), width: 1.2)
+              : BorderSide.none,
+        ),
         title: Text(
           title,
           style: TextStyle(
@@ -161,8 +165,8 @@ class _SettingScreenState extends State<SettingScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text(
               AppStrings.btnClose,
-              style: const TextStyle(
-                color: AppColors.indigoPrimary,
+              style: TextStyle(
+                color: isDark ? const Color(0xFF38BDF8) : AppColors.indigoPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -178,8 +182,13 @@ class _SettingScreenState extends State<SettingScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: isDark ? AppDarkColors.white : AppColors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: isDark
+              ? const BorderSide(color: Color(0xFF1E293B), width: 1.2)
+              : BorderSide.none,
+        ),
         title: Text(
           AppStrings.logoutConfirmTitle,
           style: TextStyle(
@@ -230,84 +239,300 @@ class _SettingScreenState extends State<SettingScreen> {
   // 6. Dialog Pemilihan Tema
   void _showThemeSelectionDialog() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    ThemeMode tempSelectedMode = appThemeNotifier.value;
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? AppDarkColors.white : AppColors.white,
+      backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.white,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
-        final isDarkSheet = Theme.of(context).brightness == Brightness.dark;
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Pilih Tema Aplikasi',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDarkSheet ? Colors.white : Colors.black,
+      builder: (modalContext) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final isDarkSheet = Theme.of(context).brightness == Brightness.dark;
+            final headingColor = isDarkSheet ? Colors.white : Colors.black87;
+
+            return SafeArea(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+                decoration: BoxDecoration(
+                  color: isDarkSheet ? const Color(0xFF0F172A) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Handle Bar
+                    Center(
+                      child: Container(
+                        width: 44,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDarkSheet ? const Color(0xFF475569) : Colors.black26,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Header Row: Title & Close Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Pilih Tema Aplikasi',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: headingColor,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.close_rounded,
+                            size: 24,
+                            color: isDarkSheet ? Colors.white70 : Colors.black54,
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          onPressed: () => Navigator.pop(modalContext),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+
+                    // Subtitle
+                    Text(
+                      'Sesuaikan tampilan aplikasi Cerdas AI agar sesuai dengan kenyamanan mata Anda.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDarkSheet ? const Color(0xFF94A3B8) : Colors.black54,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // 1. Default System
+                    _buildThemeCardOption(
+                      title: 'Default System',
+                      icon: Icons.settings_suggest_rounded,
+                      iconColor: isDarkSheet ? const Color(0xFFCBD5E1) : Colors.black54,
+                      mode: ThemeMode.system,
+                      isSelected: tempSelectedMode == ThemeMode.system,
+                      isDark: isDarkSheet,
+                      onTap: () {
+                        setModalState(() {
+                          tempSelectedMode = ThemeMode.system;
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // 2. Terang
+                    _buildThemeCardOption(
+                      title: 'Terang',
+                      icon: Icons.light_mode_rounded,
+                      iconColor: const Color(0xFFFDBA74),
+                      mode: ThemeMode.light,
+                      isSelected: tempSelectedMode == ThemeMode.light,
+                      isDark: isDarkSheet,
+                      onTap: () {
+                        setModalState(() {
+                          tempSelectedMode = ThemeMode.light;
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // 3. Gelap
+                    _buildThemeCardOption(
+                      title: 'Gelap',
+                      icon: Icons.dark_mode_rounded,
+                      iconColor: const Color(0xFF38BDF8),
+                      mode: ThemeMode.dark,
+                      isSelected: tempSelectedMode == ThemeMode.dark,
+                      isDark: isDarkSheet,
+                      onTap: () {
+                        setModalState(() {
+                          tempSelectedMode = ThemeMode.dark;
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Tombol Simpan Perubahan
+                    Container(
+                      width: double.infinity,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: isDarkSheet
+                            ? const LinearGradient(
+                                colors: [
+                                  Color(0xFF2563EB),
+                                  Color(0xFF6366F1),
+                                  Color(0xFF8B5CF6),
+                                ],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              )
+                            : const LinearGradient(
+                                colors: [
+                                  Color(0xFF2563EB),
+                                  Color(0xFF38BDF8),
+                                ],
+                              ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF2563EB).withValues(alpha: isDarkSheet ? 0.45 : 0.25),
+                            blurRadius: 18,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          ThemeHelper.setTheme(tempSelectedMode);
+                          Navigator.pop(modalContext);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Simpan Perubahan',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(
+                              Icons.check_circle_outline_rounded,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-              _buildThemeOption(
-                title: 'Default System',
-                icon: Icons.brightness_auto_rounded,
-                mode: ThemeMode.system,
-              ),
-              _buildThemeOption(
-                title: 'Terang',
-                icon: Icons.light_mode_rounded,
-                mode: ThemeMode.light,
-              ),
-              _buildThemeOption(
-                title: 'Gelap',
-                icon: Icons.dark_mode_rounded,
-                mode: ThemeMode.dark,
-              ),
-              const SizedBox(height: 12),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildThemeOption({
+  Widget _buildThemeCardOption({
     required String title,
     required IconData icon,
+    required Color iconColor,
     required ThemeMode mode,
+    required bool isSelected,
+    required bool isDark,
+    required VoidCallback onTap,
   }) {
-    final bool isSelected = appThemeNotifier.value == mode;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: isSelected
-            ? AppColors.indigoPrimary
-            : (isDark ? Colors.white : Colors.black),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected
-              ? AppColors.indigoPrimary
-              : (isDark ? Colors.white : Colors.black),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0F172A) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? (isDark ? const Color(0xFF38BDF8) : AppColors.indigoPrimary)
+                : (isDark ? const Color(0xFF334155) : AppColors.inputBorder.withValues(alpha: 0.5)),
+            width: isSelected ? 1.5 : 1.0,
+          ),
+          boxShadow: isSelected && isDark
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF38BDF8).withValues(alpha: 0.25),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 24,
+              color: iconColor,
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected && isDark
+                      ? const Color(0xFF38BDF8)
+                      : (isDark ? Colors.white : Colors.black87),
+                ),
+              ),
+            ),
+            if (isSelected)
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF38BDF8),
+                  boxShadow: isDark
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFF38BDF8).withValues(alpha: 0.5),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
+                        ]
+                      : null,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              )
+            else
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF64748B) : Colors.grey.shade400,
+                    width: 2.0,
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
-      trailing: isSelected
-          ? const Icon(Icons.check_circle, color: AppColors.indigoPrimary)
-          : null,
-      onTap: () {
-        ThemeHelper.setTheme(mode);
-        Navigator.pop(context);
-      },
     );
   }
 
@@ -316,7 +541,7 @@ class _SettingScreenState extends State<SettingScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final headingColor = ScreenColorHelper.getHeadingText(context);
     final bodyColor = ScreenColorHelper.getBodyText(context);
-    final surfaceColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final surfaceColor = isDark ? const Color(0xFF0F172A) : Colors.white;
 
     return BackgroundWrapper(
       child: Scaffold(
@@ -333,7 +558,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: headingColor,
+                      color: isDark ? Colors.white : headingColor,
                     ),
                   ),
                 ),
@@ -354,13 +579,13 @@ class _SettingScreenState extends State<SettingScreen> {
                           color: surfaceColor,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: isDark ? Colors.white10 : Colors.white.withValues(alpha: 0.9),
+                            color: isDark ? const Color(0xFF1E293B) : Colors.white.withValues(alpha: 0.9),
                             width: 1.2,
                           ),
                           boxShadow: [
                             BoxShadow(
                               color: isDark
-                                  ? Colors.black.withValues(alpha: 0.3)
+                                  ? Colors.black.withValues(alpha: 0.35)
                                   : Colors.black.withValues(alpha: 0.04),
                               blurRadius: 12,
                               offset: const Offset(0, 2),
@@ -378,59 +603,81 @@ class _SettingScreenState extends State<SettingScreen> {
                               padding: const EdgeInsets.all(16.0),
                               child: Row(
                                 children: [
-                                  // Avatar Lingkaran dengan Gambar Landscape (Sesuai Gambar)
-                                  ValueListenableBuilder<String?>(
-                                    valueListenable: userPhotoNotifier,
-                                    builder: (context, photoPath, child) {
-                                      if (photoPath != null && File(photoPath).existsSync()) {
+                                  // Avatar Lingkaran dengan Neon Gradient Ring (Sesuai Gambar)
+                                  Container(
+                                    padding: const EdgeInsets.all(2.5),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFF38BDF8),
+                                          Color(0xFFA855F7),
+                                          Color(0xFFEC4899),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xFF38BDF8).withValues(alpha: isDark ? 0.4 : 0.2),
+                                          blurRadius: 10,
+                                          spreadRadius: 1,
+                                        ),
+                                      ],
+                                    ),
+                                    child: ValueListenableBuilder<String?>(
+                                      valueListenable: userPhotoNotifier,
+                                      builder: (context, photoPath, child) {
+                                        if (photoPath != null && File(photoPath).existsSync()) {
+                                          return Container(
+                                            width: 50,
+                                            height: 50,
+                                            decoration: const BoxDecoration(shape: BoxShape.circle),
+                                            child: ClipOval(
+                                              child: Image.file(
+                                                File(photoPath),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        if (photoPath != null && photoPath.startsWith('avatar:')) {
+                                          final avatarId = photoPath.replaceFirst('avatar:', '');
+                                          final character = AvatarCharacterList.getById(avatarId);
+                                          return AvatarCharacterWidget(
+                                            character: character,
+                                            size: 50,
+                                          );
+                                        }
                                         return Container(
-                                          width: 52,
-                                          height: 52,
+                                          width: 50,
+                                          height: 50,
                                           decoration: const BoxDecoration(shape: BoxShape.circle),
                                           child: ClipOval(
-                                            child: Image.file(
-                                              File(photoPath),
+                                            child: Image.asset(
+                                              'asset/img.png',
                                               fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                      if (photoPath != null && photoPath.startsWith('avatar:')) {
-                                        final avatarId = photoPath.replaceFirst('avatar:', '');
-                                        final character = AvatarCharacterList.getById(avatarId);
-                                        return AvatarCharacterWidget(
-                                          character: character,
-                                          size: 52,
-                                        );
-                                      }
-                                      return Container(
-                                        width: 52,
-                                        height: 52,
-                                        decoration: const BoxDecoration(shape: BoxShape.circle),
-                                        child: ClipOval(
-                                          child: Image.asset(
-                                            'asset/img.png',
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) => Image.asset(
-                                              'asset/ic_user.png',
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) => Container(
-                                                color: const Color(0xFF2563EB),
-                                                child: Center(
-                                                  child: Text(
-                                                    _userInitials,
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
+                                              errorBuilder: (_, __, ___) => Image.asset(
+                                                'asset/ic_user.png',
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (_, __, ___) => Container(
+                                                  color: const Color(0xFF2563EB),
+                                                  child: Center(
+                                                    child: Text(
+                                                      _userInitials,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
+                                        );
+                                      },
+                                    ),
                                   ),
                                   const SizedBox(width: 14),
                                   Expanded(
@@ -447,7 +694,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                                 style: TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
-                                                  color: headingColor,
+                                                  color: isDark ? Colors.white : headingColor,
                                                 ),
                                               ),
                                             ),
@@ -478,18 +725,20 @@ class _SettingScreenState extends State<SettingScreen> {
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color: bodyColor.withValues(alpha: 0.7),
+                                            color: isDark
+                                                ? const Color(0xFF94A3B8)
+                                                : bodyColor.withValues(alpha: 0.7),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  const Text(
+                                  Text(
                                     'Edit',
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFF2563EB),
+                                      color: isDark ? const Color(0xFF38BDF8) : const Color(0xFF2563EB),
                                     ),
                                   ),
                                 ],
@@ -513,7 +762,8 @@ class _SettingScreenState extends State<SettingScreen> {
                             gradient: const LinearGradient(
                               colors: [
                                 Color(0xFF1E1B4B), // Deep indigo
-                                Color(0xFF2563EB), // Royal blue
+                                Color(0xFF1D4ED8), // Royal electric blue
+                                Color(0xFF2563EB),
                               ],
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,
@@ -521,8 +771,8 @@ class _SettingScreenState extends State<SettingScreen> {
                             borderRadius: BorderRadius.circular(18),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF2563EB).withValues(alpha: 0.28),
-                                blurRadius: 12,
+                                color: const Color(0xFF2563EB).withValues(alpha: 0.35),
+                                blurRadius: 14,
                                 offset: const Offset(0, 4),
                               ),
                             ],
@@ -551,16 +801,18 @@ class _SettingScreenState extends State<SettingScreen> {
                       const SizedBox(height: 22),
 
                       // SECTION 1: PENGATURAN UMUM
-                      _buildSectionHeader('PENGATURAN UMUM'),
+                      _buildSectionHeader(AppStrings.headerGeneral),
                       _buildGroupCard(
                         children: [
                           _buildSettingItem(
                             title: 'Ubah Kata Sandi',
+                            leadingIcon: Icons.lock_outline_rounded,
                             onTap: () => context.pushNamed('/ubah-kata-sandi'),
                           ),
                           _buildDivider(isDark),
                           _buildSettingItem(
                             title: 'Ubah Bahasa',
+                            leadingIcon: Icons.language_rounded,
                             trailingText: _selectedLang,
                             onTap: () async {
                               await Navigator.pushNamed(context, '/ubah-bahasa');
@@ -573,6 +825,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             builder: (context, currentMode, child) {
                               return _buildSettingItem(
                                 title: 'Tema',
+                                leadingIcon: Icons.dark_mode_outlined,
                                 trailingText: ThemeHelper.getThemeLabel(currentMode),
                                 onTap: _showThemeSelectionDialog,
                               );
@@ -589,6 +842,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         children: [
                           _buildSettingItem(
                             title: 'Bersihkan Cache',
+                            leadingIcon: Icons.cleaning_services_rounded,
                             trailingText: _cacheSizeText,
                             onTap: _clearAppCache,
                           ),
@@ -603,6 +857,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         children: [
                           _buildSettingItem(
                             title: 'Kebijakan Privasi',
+                            leadingIcon: Icons.shield_outlined,
                             onTap: () => _showInfoDialog(
                               AppStrings.menuPrivacyPolicy,
                               'Cerdas AI berkomitmen melindungi data dan privasi pengguna. Semua informasi, dokumen, dan riwayat pertanyaan Anda tersimpan secara aman dan terenkripsi.',
@@ -611,6 +866,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           _buildDivider(isDark),
                           _buildSettingItem(
                             title: 'Syarat & Ketentuan',
+                            leadingIcon: Icons.article_outlined,
                             onTap: () => _showInfoDialog(
                               AppStrings.menuTerms,
                               'Dengan menggunakan Cerdas AI, Anda menyetujui penggunaan layanan untuk tujuan yang sah dan tidak melanggar hukum. Hak cipta dokumen milik pengguna masing-masing.',
@@ -619,6 +875,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           _buildDivider(isDark),
                           _buildSettingItem(
                             title: 'Tentang Aplikasi',
+                            leadingIcon: Icons.info_outline_rounded,
                             onTap: () => context.pushNamed('/tentang-aplikasi'),
                           ),
                         ],
@@ -626,36 +883,54 @@ class _SettingScreenState extends State<SettingScreen> {
 
                       const SizedBox(height: 22),
 
-                      // Tombol Logout: Keluar dari Akun (Pill Merah Lembut Sesuai Gambar)
+                      // Tombol Logout: Keluar dari Akun (Pill Merah Gelap Sesuai Gambar)
                       Container(
                         width: double.infinity,
-                        height: 50,
+                        height: 52,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFEE2E2).withValues(
-                            alpha: isDark ? 0.25 : 0.65,
-                          ),
-                          borderRadius: BorderRadius.circular(24),
+                          color: isDark
+                              ? const Color(0xFF2E1218).withValues(alpha: 0.8)
+                              : const Color(0xFFFEE2E2).withValues(alpha: 0.65),
+                          borderRadius: BorderRadius.circular(26),
                           border: Border.all(
-                            color: const Color(0xFFFECACA).withValues(
-                              alpha: isDark ? 0.35 : 0.7,
-                            ),
-                            width: 1,
+                            color: isDark
+                                ? const Color(0xFF7F1D1D).withValues(alpha: 0.6)
+                                : const Color(0xFFFECACA).withValues(alpha: 0.7),
+                            width: 1.2,
                           ),
+                          boxShadow: isDark
+                              ? [
+                                  BoxShadow(
+                                    color: const Color(0xFFDC2626).withValues(alpha: 0.15),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ]
+                              : null,
                         ),
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: _showLogoutDialog,
-                            borderRadius: BorderRadius.circular(24),
-                            child: const Center(
-                              child: Text(
-                                'Keluar dari Akun',
-                                style: TextStyle(
-                                  fontSize: 14.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFFDC2626),
+                            borderRadius: BorderRadius.circular(26),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  AppStrings.menuLogout,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 8),
+                                Icon(
+                                  Icons.logout_rounded,
+                                  size: 18,
+                                  color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -686,7 +961,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return Divider(
       height: 1,
       thickness: 1,
-      color: isDark ? Colors.white10 : const Color(0xFFF1F5F9),
+      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
     );
   }
 
@@ -701,22 +976,22 @@ class _SettingScreenState extends State<SettingScreen> {
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.5,
-          color: isDark ? Colors.white70 : const Color(0xFF0F172A),
+          color: isDark ? Colors.white : Colors.black,
         ),
       ),
     );
   }
 
-  // Helper Wadah Kartu Putih Melengkung
+  // Helper Wadah Kartu Melengkung
   Widget _buildGroupCard({required List<Widget> children}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: isDark ? const Color(0xFF0F172A) : Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDark ? Colors.white10 : Colors.white.withValues(alpha: 0.9),
+          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
           width: 1.2,
         ),
         boxShadow: [
@@ -738,6 +1013,7 @@ class _SettingScreenState extends State<SettingScreen> {
   // Helper ListItem Setting Row (Sesuai Gambar)
   Widget _buildSettingItem({
     required String title,
+    IconData? leadingIcon,
     String? trailingText,
     IconData trailingIcon = Icons.chevron_right_rounded,
     required VoidCallback onTap,
@@ -754,13 +1030,26 @@ class _SettingScreenState extends State<SettingScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (leadingIcon != null) ...[
+                    Icon(
+                      leadingIcon,
+                      size: 20,
+                      color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                    ),
+                    const SizedBox(width: 14),
+                  ],
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    ),
+                  ),
+                ],
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -770,7 +1059,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       trailingText,
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                        color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -778,7 +1067,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   Icon(
                     trailingIcon,
                     size: 20,
-                    color: isDark ? Colors.white54 : const Color(0xFF94A3B8),
+                    color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
                   ),
                 ],
               ),

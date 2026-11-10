@@ -169,11 +169,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(AppConstants.keyUserName, _namaController.text.trim());
       await prefs.setString(AppConstants.keyUserEmail, _emailController.text.trim());
-      
+
       if (!mounted) return;
 
       setState(() => _isLoading = false);
-      
+
       if (context.mounted) {
         context.showSnackBar('Pendaftaran Berhasil! Silakan verifikasi kode OTP.');
       }
@@ -201,34 +201,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final Color bgColor = isDark ? AppDarkColors.bgLight : Colors.white;
     final Color textColor = isDark ? Colors.white : Colors.black;
-    final Color bodyColor = isDark ? Colors.white70 : Colors.black87;
+    final Color bodyColor = isDark ? Colors.white70 : const Color(0xFF64748B);
     final Color iconColor = isDark ? Colors.white : Colors.black;
     final Color columnColor = isDark ? AppDarkColors.white : Colors.white;
-    final Color primaryColor = AppColors.indigoPrimary;
+    const Color linkColor = Color(0xFF2563EB);
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      body: BackgroundWrapper(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // 1. Header
+                  // 1. Header dengan tombol kembali, judul terpusat & quick settings (Tema/Bahasa)
                   ScreenHeader(
                     title: AppStrings.titleDaftar,
                     centerTitle: true,
+                    actions: const [QuickThemeLanguageBar()],
                   ),
-                  
-                  const SizedBox(height: 8),
+
                   Text(
                     AppStrings.subtitleDaftar,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: bodyColor, fontSize: 13),
+                    style: TextStyle(
+                      color: bodyColor,
+                      fontSize: 13,
+                    ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
 
                   // 2. Input Nama Lengkap
                   _buildLabel(AppStrings.labelNamaLengkap, textColor),
@@ -238,13 +242,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     prefixIcon: Icon(Icons.person_outline_rounded, size: 20, color: iconColor),
                     validator: (value) => value == null || value.trim().isEmpty ? 'Nama lengkap wajib diisi' : null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // 3. Input Tempat & Tanggal Lahir Row
                   Row(
                     children: [
                       Expanded(
-                        flex: 4,
+                        flex: 5,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -252,7 +256,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             CustomInputBox(
                               controller: _tempatLahirController,
                               hintText: 'Kota',
-                              prefixIcon: Icon(Icons.location_city_rounded, size: 18, color: iconColor),
+                              prefixIcon: Icon(Icons.apartment_rounded, size: 18, color: iconColor),
                               validator: (value) => value == null || value.trim().isEmpty ? 'Wajib diisi' : null,
                             ),
                           ],
@@ -268,7 +272,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             CustomInputBox(
                               controller: _tanggalLahirController,
                               hintText: 'Pilih Tanggal',
-                              prefixIcon: Icon(Icons.calendar_today_rounded, size: 18, color: iconColor),
+                              prefixIcon: Icon(Icons.calendar_today_outlined, size: 18, color: iconColor),
                               onTap: _showDatePicker,
                               readOnly: true,
                               validator: (value) => value == null || value.trim().isEmpty ? 'Wajib diisi' : null,
@@ -278,16 +282,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
-                  // 5. Input Jenis Kelamin (Dropdown)
+                  // 4. Input Jenis Kelamin (Dropdown)
                   _buildLabel(AppStrings.labelJenisKelamin, textColor),
                   DropdownButtonFormField<String>(
                     initialValue: _selectedJenisKelamin,
                     decoration: InputBoxHelper.buildInputDecoration(
                       context: context,
                       hintText: AppStrings.hintJenisKelamin,
-                      prefixIcon: Icon(Icons.wc_rounded, size: 20, color: iconColor),
+                      prefixIcon: Icon(Icons.people_outline_rounded, size: 20, color: iconColor),
                     ),
                     dropdownColor: columnColor,
                     icon: Icon(Icons.arrow_drop_down_rounded, color: iconColor),
@@ -295,19 +299,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(color: textColor, fontSize: 14),
                     items: _genderList
                         .map((gender) => DropdownMenuItem(
-                          value: gender, 
-                          child: Text(
-                            gender == 'Laki-laki' ? AppStrings.genderMale : AppStrings.genderFemale, 
-                            style: TextStyle(color: textColor, fontSize: 14),
-                          ),
-                        ))
+                              value: gender,
+                              child: Text(
+                                gender == 'Laki-laki' ? AppStrings.genderMale : AppStrings.genderFemale,
+                                style: TextStyle(color: textColor, fontSize: 14),
+                              ),
+                            ))
                         .toList(),
                     onChanged: _isLoading ? null : (value) => setState(() => _selectedJenisKelamin = value),
                     validator: (value) => value == null || value.isEmpty ? 'Jenis kelamin wajib dipilih' : null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
-                  // 6. Input Alamat
+                  // 5. Input Alamat
                   _buildLabel(AppStrings.labelAlamat, textColor),
                   CustomInputBox(
                     controller: _alamatController,
@@ -315,9 +319,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     prefixIcon: Icon(Icons.map_outlined, size: 20, color: iconColor),
                     validator: (value) => value == null || value.trim().isEmpty ? 'Alamat wajib diisi' : null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
-                  // 7. Input Email
+                  // 6. Input Email
                   _buildLabel(AppStrings.labelEmailAddr, textColor),
                   CustomInputBox(
                     controller: _emailController,
@@ -330,9 +334,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
-                  // 8. Password Fields
+                  // 7. Password Fields
                   _buildLabel(AppStrings.labelPassword, textColor),
                   CustomInputBox(
                     controller: _passwordController,
@@ -340,22 +344,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     obscureText: _obscurePassword,
                     prefixIcon: Icon(Icons.lock_outline_rounded, size: 20, color: iconColor),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 18, color: iconColor),
+                      icon: Icon(
+                        _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        size: 20,
+                        color: iconColor,
+                      ),
                       onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                     ),
                     validator: (value) => value == null || value.trim().length < 6 ? 'Sandi minimal 6 karakter' : null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
-                  // 9. Input Konfirmasi Kata Sandi
+                  // 8. Input Konfirmasi Kata Sandi
                   _buildLabel(AppStrings.labelKonfirmasiPassword, textColor),
                   CustomInputBox(
                     controller: _konfirmasiPasswordController,
                     hintText: AppStrings.hintConfirmPassword,
                     obscureText: _obscureConfirmPassword,
-                    prefixIcon: Icon(Icons.lock_reset_rounded, size: 20, color: iconColor),
+                    prefixIcon: Icon(Icons.history_rounded, size: 20, color: iconColor),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 18, color: iconColor),
+                      icon: Icon(
+                        _obscureConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        size: 20,
+                        color: iconColor,
+                      ),
                       onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                     ),
                     validator: (value) {
@@ -364,65 +376,91 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 12),
 
-                  // 10. Checkbox Syarat & Ketentuan
+                  // 9. Checkbox Syarat & Ketentuan
                   Material(
                     color: Colors.transparent,
                     child: CheckboxListTile(
                       contentPadding: EdgeInsets.zero,
                       value: _cbSyaratKetentuan,
-                      title: Text(AppStrings.termsAndConditions, style: TextStyle(fontSize: 12, color: textColor)),
+                      title: Text(
+                        AppStrings.termsAndConditions,
+                        style: TextStyle(fontSize: 13, color: textColor),
+                      ),
                       onChanged: _isLoading ? null : (value) => setState(() => _cbSyaratKetentuan = value ?? false),
                       controlAffinity: ListTileControlAffinity.leading,
-                      activeColor: primaryColor,
+                      activeColor: const Color(0xFF2563EB),
                       checkColor: Colors.white,
-                      side: BorderSide(color: isDark ? Colors.white70 : Colors.black54, width: 1.5),
+                      side: BorderSide(
+                        color: isDark ? Colors.white70 : const Color(0xFF94A3B8),
+                        width: 1.5,
+                      ),
                     ),
                   ),
-                  
-                  const SizedBox(height: 24),
 
-                  // 11. Tombol Daftar
+                  const SizedBox(height: 18),
+
+                  // 10. Tombol Daftar (Gradien Biru ke Ungu sesuai referensi)
                   AppButton(
                     text: AppStrings.btnDaftar.toUpperCase(),
                     isLoading: _isLoading,
                     onPressed: _performRegister,
-                    backgroundColor: primaryColor,
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF1D4ED8),
+                        Color(0xFF6D28D9),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: 16,
+                    height: 50,
                   ),
-                  
-                  const SizedBox(height: 28),
 
-                  // 12. Footer Navigasi Ke Login
+                  const SizedBox(height: 22),
+
+                  // 11. Footer Navigasi Ke Login
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(AppStrings.promptSudahPunyaAkun, style: TextStyle(color: textColor, fontSize: 14)),
+                      Text(
+                        AppStrings.promptSudahPunyaAkun,
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                          fontSize: 13.5,
+                        ),
+                      ),
                       GestureDetector(
                         onTap: _isLoading ? null : () => Navigator.pushReplacementNamed(context, '/login'),
                         child: Text(
                           AppStrings.actionMasuk,
-                          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 14),
+                          style: const TextStyle(
+                            color: linkColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13.5,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
 
   Widget _buildLabel(String label, Color textColor) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 6.0),
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 14,
+          fontSize: 13.5,
           fontWeight: FontWeight.bold,
           color: textColor,
         ),

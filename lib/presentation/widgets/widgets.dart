@@ -13,4 +13,6 @@ export 'gemini_model_selector_sheet.dart';
 export 'language_option_widget.dart';
 export 'otp_input_field.dart';
 export 'screen_header.dart';
+export 'tech_circuit_painter.dart';
 export 'theme_mode_switch.dart';
+export 'quick_theme_language_bar.dart';

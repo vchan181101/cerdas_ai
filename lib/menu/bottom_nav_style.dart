@@ -41,17 +41,11 @@ class BottomNavStyle {
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
         ),
-        border: Border(
-          top: BorderSide(
-            color: const Color(0xFF334155).withValues(alpha: 0.5),
-            width: 1,
-          ),
-        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
+            color: Colors.black.withValues(alpha: 0.45),
+            blurRadius: 20,
+            offset: const Offset(0, -6),
           ),
         ],
       );
